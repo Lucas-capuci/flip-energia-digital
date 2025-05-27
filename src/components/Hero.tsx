@@ -39,22 +39,6 @@ const Hero = () => {
                 Calcular Economia
               </Button>
             </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 pt-8 border-t border-flip-blue-200">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-flip-blue-500">500+</div>
-                <div className="text-sm text-flip-gray-600">Projetos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-flip-blue-500">15+</div>
-                <div className="text-sm text-flip-gray-600">Anos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-flip-blue-500">98%</div>
-                <div className="text-sm text-flip-gray-600">Satisfação</div>
-              </div>
-            </div>
           </div>
 
           {/* Visual Elements */}
