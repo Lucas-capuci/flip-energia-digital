@@ -14,7 +14,7 @@ const AutomationSection = () => {
     {
       icon: Shield,
       title: 'Segurança Avançada',
-      description: 'Monitoramento 24h, cameras inteligentes e alertas em tempo real para total tranquilidade.',
+      description: 'Cameras inteligentes e alertas em tempo real para total tranquilidade.',
       color: 'bg-green-100 text-green-600'
     },
     {
