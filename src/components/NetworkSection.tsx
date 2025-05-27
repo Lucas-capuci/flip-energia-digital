@@ -126,36 +126,6 @@ const NetworkSection = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Technical Highlights */}
-        <div className="mt-16">
-          <Card className="bg-flip-blue-50">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl text-flip-gray-900">
-                Expertise Técnica
-              </CardTitle>
-              <CardDescription className="text-lg">
-                Mais de 15 anos projetando infraestrutura elétrica de alto padrão
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                <div>
-                  <div className="text-3xl font-bold text-flip-blue-500 mb-2">500+</div>
-                  <div className="text-flip-gray-600">Projetos Executados</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-flip-blue-500 mb-2">99.9%</div>
-                  <div className="text-flip-gray-600">Disponibilidade</div>
-                </div>
-                <div>
-                  <div className="text-3xl font-bold text-flip-blue-500 mb-2">24/7</div>
-                  <div className="text-flip-gray-600">Monitoramento</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </section>
   );
