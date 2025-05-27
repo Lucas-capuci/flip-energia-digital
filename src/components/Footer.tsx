@@ -1,19 +1,12 @@
-
 import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from 'lucide-react';
-
 const Footer = () => {
-  return (
-    <footer id="contato" className="bg-flip-gray-900 text-white">
+  return <footer id="contato" className="bg-flip-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <img 
-              src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png" 
-              alt="FLIP Engenharia" 
-              className="h-12 w-auto brightness-0 invert"
-            />
+            <img src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png" alt="FLIP Engenharia" className="h-12 w-auto brightness-0 invert" />
             <p className="text-flip-gray-300">
               Soluções integradas em energia solar, automação residencial e redes de distribuição privadas.
             </p>
@@ -36,7 +29,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300">
+                <span className="text-flip-gray-300 font-normal">
                   Rua das Soluções, 123<br />
                   São Paulo - SP, 01234-567
                 </span>
@@ -96,8 +89,6 @@ const Footer = () => {
           <p>&copy; 2024 FLIP Engenharia. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
