@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 
 const WhatsAppButton = () => {
   const handleWhatsAppClick = () => {
-    const phoneNumber = '5511999999999'; // Replace with actual WhatsApp number
+    const phoneNumber = '556293175498'; // Replace with actual WhatsApp number
     const message = 'Olá! Gostaria de saber mais sobre as soluções da FLIP Engenharia.';
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
