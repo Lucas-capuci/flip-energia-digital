@@ -72,18 +72,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Certifications */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Certificações</h3>
-            <div className="space-y-2 text-flip-gray-300">
-              <div>CREA-SP: 123456789</div>
-              <div>ISO 9001:2015</div>
-              <div>ISO 14001:2015</div>
-              <div>ABNT NBR 16690</div>
-              <div>Inmetro Classe A</div>
-            </div>
-          </div>
-        </div>
+
 
         <div className="border-t border-flip-gray-800 mt-12 pt-8 text-center text-flip-gray-400">
           <p>&copy; 2024 FLIP Engenharia. Todos os direitos reservados.</p>
