@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Sun, TrendingDown, Leaf, Home, Calculator, Send } from 'lucide-react';
 import { Button } from './ui/button';
@@ -6,7 +5,6 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
-
 const SolarSection = () => {
   const [formData, setFormData] = useState({
     nome: '',
@@ -17,26 +15,28 @@ const SolarSection = () => {
     espaco: '',
     observacoes: ''
   });
-
   const [calculatorData, setCalculatorData] = useState({
     consumo: '',
     tarifa: '0.75'
   });
-
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
-
   const handleCalculatorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCalculatorData({ ...calculatorData, [e.target.name]: e.target.value });
+    setCalculatorData({
+      ...calculatorData,
+      [e.target.name]: e.target.value
+    });
   };
-
   const calculateSavings = () => {
     const consumoMensal = parseFloat(calculatorData.consumo) || 0;
     const tarifa = parseFloat(calculatorData.tarifa) || 0;
     const custoMensal = consumoMensal * tarifa;
     const economiaPercentual = 0.9; // 90% de economia
-    
+
     const economiaMensal = custoMensal * economiaPercentual;
     const economia5Anos = economiaMensal * 12 * 5;
     const economia10Anos = economiaMensal * 12 * 10;
@@ -51,11 +51,8 @@ const SolarSection = () => {
       co2Reducao
     };
   };
-
   const savings = calculateSavings();
-
-  return (
-    <section id="energia-solar" className="py-20 bg-white">
+  return <section id="energia-solar" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
@@ -123,105 +120,7 @@ const SolarSection = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Quote Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Send className="h-5 w-5 mr-2 text-flip-blue-500" />
-                Solicite seu Orçamento
-              </CardTitle>
-              <CardDescription>
-                Preencha os dados abaixo e receba uma proposta personalizada
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="nome">Nome Completo</Label>
-                  <Input
-                    id="nome"
-                    name="nome"
-                    value={formData.nome}
-                    onChange={handleFormChange}
-                    placeholder="Seu nome completo"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleFormChange}
-                    placeholder="seu@email.com"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="telefone">Telefone</Label>
-                  <Input
-                    id="telefone"
-                    name="telefone"
-                    value={formData.telefone}
-                    onChange={handleFormChange}
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="consumo">Consumo Médio (kWh)</Label>
-                  <Input
-                    id="consumo"
-                    name="consumo"
-                    type="number"
-                    value={formData.consumo}
-                    onChange={handleFormChange}
-                    placeholder="300"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="endereco">Endereço da Instalação</Label>
-                <Input
-                  id="endereco"
-                  name="endereco"
-                  value={formData.endereco}
-                  onChange={handleFormChange}
-                  placeholder="Rua, número, bairro, cidade"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="espaco">Espaço Disponível</Label>
-                <Input
-                  id="espaco"
-                  name="espaco"
-                  value={formData.espaco}
-                  onChange={handleFormChange}
-                  placeholder="Área do telhado ou terreno em m²"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="observacoes">Observações</Label>
-                <Textarea
-                  id="observacoes"
-                  name="observacoes"
-                  value={formData.observacoes}
-                  onChange={handleFormChange}
-                  placeholder="Informações adicionais sobre o projeto"
-                  rows={3}
-                />
-              </div>
-
-              <Button className="w-full bg-flip-blue-500 hover:bg-flip-blue-600">
-                <Send className="h-4 w-4 mr-2" />
-                Enviar Solicitação
-              </Button>
-            </CardContent>
-          </Card>
+          
 
           {/* Calculator */}
           <Card>
@@ -238,31 +137,15 @@ const SolarSection = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="calc-consumo">Consumo Mensal (kWh)</Label>
-                  <Input
-                    id="calc-consumo"
-                    name="consumo"
-                    type="number"
-                    value={calculatorData.consumo}
-                    onChange={handleCalculatorChange}
-                    placeholder="300"
-                  />
+                  <Input id="calc-consumo" name="consumo" type="number" value={calculatorData.consumo} onChange={handleCalculatorChange} placeholder="300" />
                 </div>
                 <div>
                   <Label htmlFor="calc-tarifa">Tarifa (R$/kWh)</Label>
-                  <Input
-                    id="calc-tarifa"
-                    name="tarifa"
-                    type="number"
-                    step="0.01"
-                    value={calculatorData.tarifa}
-                    onChange={handleCalculatorChange}
-                    placeholder="0.75"
-                  />
+                  <Input id="calc-tarifa" name="tarifa" type="number" step="0.01" value={calculatorData.tarifa} onChange={handleCalculatorChange} placeholder="0.75" />
                 </div>
               </div>
 
-              {calculatorData.consumo && (
-                <div className="mt-6 space-y-4">
+              {calculatorData.consumo && <div className="mt-6 space-y-4">
                   <div className="bg-flip-blue-50 p-4 rounded-lg">
                     <h4 className="font-semibold text-flip-gray-900 mb-3">Economia Estimada:</h4>
                     <div className="space-y-2">
@@ -302,14 +185,11 @@ const SolarSection = () => {
                       </span>
                     </div>
                   </div>
-                </div>
-              )}
+                </div>}
             </CardContent>
           </Card>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default SolarSection;
