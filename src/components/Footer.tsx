@@ -1,13 +1,18 @@
-
 import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from 'lucide-react';
+
 const Footer = () => {
-  return <footer id="contato" className="bg-flip-gray-900 text-white">
+  return (
+    <footer id="contato" className="bg-flip-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <img src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png" alt="FLIP Engenharia" className="h-12 w-auto brightness-0 invert" />
+            <img
+              src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png"
+              alt="FLIP Engenharia"
+              className="h-12 w-auto brightness-0 invert"
+            />
             <p className="text-flip-gray-300">
               Soluções integradas em energia solar, automação residencial e redes de distribuição privadas.
             </p>
@@ -30,9 +35,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center">
                 <MapPin className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300 font-normal">
-                  Goiania-Go
-                </span>
+                <span className="text-flip-gray-300 font-normal">Goiania-Go</span>
               </div>
               <div className="flex items-center">
                 <Phone className="h-4 w-4 mr-3 text-flip-blue-400" />
@@ -71,13 +74,14 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-
-
+        </div> {/* ← ESTA DIV FECHA O GRID */}
 
         <div className="border-t border-flip-gray-800 mt-12 pt-8 text-center text-flip-gray-400">
           <p>&copy; 2024 FLIP Engenharia. Todos os direitos reservados.</p>
         </div>
       </div>
-    </footer>;
+    </footer>
+  );
 };
+
 export default Footer;
