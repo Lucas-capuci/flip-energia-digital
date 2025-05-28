@@ -1,7 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Zap, Home, Network } from 'lucide-react';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import QuestionnaireForm from './QuestionnaireForm';
 
 const Hero = () => {
   return (
@@ -24,13 +26,24 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                size="lg" 
-                className="bg-flip-blue-500 hover:bg-flip-blue-600 text-white px-8 py-3"
-              >
-                Solicitar Orçamento
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    size="lg" 
+                    className="bg-flip-blue-500 hover:bg-flip-blue-600 text-white px-8 py-3"
+                  >
+                    Solicitar Orçamento
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Questionário para Orçamento</DialogTitle>
+                  </DialogHeader>
+                  <QuestionnaireForm />
+                </DialogContent>
+              </Dialog>
+              
               <Button 
                 variant="outline" 
                 size="lg"
