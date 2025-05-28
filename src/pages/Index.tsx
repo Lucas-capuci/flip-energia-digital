@@ -14,30 +14,28 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
+      
       <section id="inicio">
         <Hero />
       </section>
 
       <section id="solucoes">
-        <SolarSection />
+        
         <AutomationSection />
         <NetworkSection />
       </section>
 
-      <section id="orcamento">
-        {/* Conteúdo da seção de Orçamento */}
-      </section>
+      {/* Removida a seção id="orcamento" vazia */}
 
       <section id="portfolio">
         {/* Conteúdo da seção de Portfólio */}
       </section>
 
       <section id="calculadora">
-        {/* Conteúdo da seção de Calculadora */}
+        <SolarSection />
       </section>
 
       <section id="contato">
-        <IntegrationSection />
         <Footer />
       </section>
 
