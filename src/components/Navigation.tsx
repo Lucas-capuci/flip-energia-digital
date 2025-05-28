@@ -1,8 +1,11 @@
+
 // src/components/Navigation.tsx
 
 import React, { useState } from 'react';
 import { Menu, X, Phone } from 'lucide-react';
 import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import QuestionnaireForm from './QuestionnaireForm';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +13,6 @@ const Navigation = () => {
   const navigationItems = [
     { label: 'Início', id: 'inicio' },
     { label: 'Soluções', id: 'solucoes' },
-    { label: 'Orçamento', id: 'orcamento' },
     { label: 'Portfólio', id: 'portfolio' },
     { label: 'Calculadora', id: 'calculadora' },
     { label: 'Contato', id: 'contato' }
@@ -49,6 +51,21 @@ const Navigation = () => {
                   {item.label}
                 </button>
               ))}
+              
+              {/* Botão de Orçamento separado */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium">
+                    Orçamento
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Questionário para Orçamento</DialogTitle>
+                  </DialogHeader>
+                  <QuestionnaireForm />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
@@ -89,6 +106,22 @@ const Navigation = () => {
                 {item.label}
               </button>
             ))}
+            
+            {/* Botão de Orçamento no mobile */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left">
+                  Orçamento
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Questionário para Orçamento</DialogTitle>
+                </DialogHeader>
+                <QuestionnaireForm />
+              </DialogContent>
+            </Dialog>
+            
             <div className="px-3 py-2">
               <Button
                 className="w-full bg-flip-blue-500 hover:bg-flip-blue-600 text-white"
