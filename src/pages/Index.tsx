@@ -1,3 +1,5 @@
+// src/pages/Index.tsx
+
 import React from 'react';
 import Navigation from '../components/Navigation';
 import Hero from '../components/Hero';
@@ -12,16 +14,33 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
-      <Hero />
-      
-      <div id="solucoes">
+      <section id="inicio">
+        <Hero />
+      </section>
+
+      <section id="solucoes">
         <SolarSection />
         <AutomationSection />
         <NetworkSection />
-      </div>
-      
-      <IntegrationSection />
-      <Footer />
+      </section>
+
+      <section id="orcamento">
+        {/* Conteúdo da seção de Orçamento */}
+      </section>
+
+      <section id="portfolio">
+        {/* Conteúdo da seção de Portfólio */}
+      </section>
+
+      <section id="calculadora">
+        {/* Conteúdo da seção de Calculadora */}
+      </section>
+
+      <section id="contato">
+        <IntegrationSection />
+        <Footer />
+      </section>
+
       <WhatsAppButton />
     </div>
   );
