@@ -6,6 +6,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import QuestionnaireForm from './QuestionnaireForm';
 
 const Hero = () => {
+  const handleCalculateClick = () => {
+    const calculatorSection = document.getElementById('calculadora');
+    if (calculatorSection) {
+      calculatorSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
     <section id="inicio" className="min-h-screen gradient-bg flex items-center pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -48,6 +58,7 @@ const Hero = () => {
                 variant="outline" 
                 size="lg"
                 className="border-flip-blue-500 text-flip-blue-500 hover:bg-flip-blue-50 px-8 py-3"
+                onClick={handleCalculateClick}
               >
                 Calcular Economia
               </Button>
