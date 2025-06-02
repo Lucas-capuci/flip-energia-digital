@@ -109,10 +109,11 @@
   }
   
   .gradient-text-glow-alternate {
-    @apply bg-gradient-to-r from-purple-500 via-purple-400 to-emerald-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent;
     position: relative;
     background-size: 200% 200%;
-    animation: gradient-shift 3s ease-in-out infinite, glow-alternate 4s ease-in-out infinite;
+    animation: gradient-shift 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
   }
   
   .gradient-bg {
@@ -129,15 +130,6 @@
     }
     50% {
       background-position: 100% 50%;
-    }
-  }
-  
-  @keyframes glow-alternate {
-    0%, 100% {
-      filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.6));
-    }
-    50% {
-      filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.6));
     }
   }
 }
