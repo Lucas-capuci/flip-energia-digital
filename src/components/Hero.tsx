@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, Zap, Home, Network } from 'lucide-react';
 import { Button } from './ui/button';
@@ -24,9 +23,8 @@ const Hero = () => {
           <div className="space-y-8 animate-fade-in">
             <div>
               <h1 className="text-4xl md:text-6xl font-bold text-flip-gray-900 leading-tight">
-                Soluções{' '}
-                <span className="gradient-text-glow-alternate">Energia</span>{' '}
-                Integrada
+                Soluções Integradas em{' '}
+                <span className="gradient-text-glow-alternate">Energia</span>
               </h1>
               <p className="mt-6 text-lg text-flip-gray-600 leading-relaxed">
                 Energia solar, automação residencial e redes de distribuição privadas. 
