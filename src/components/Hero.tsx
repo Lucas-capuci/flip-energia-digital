@@ -25,8 +25,8 @@ const Hero = () => {
             <div>
               <h1 className="text-4xl md:text-6xl font-bold text-flip-gray-900 leading-tight">
                 Soluções{' '}
-                <span className="gradient-text">Integradas</span>{' '}
-                em Engenharia
+                <span className="gradient-text-glow">Integradas</span>{' '}
+                em Energia
               </h1>
               <p className="mt-6 text-lg text-flip-gray-600 leading-relaxed">
                 Energia solar, automação residencial e redes de distribuição privadas. 

@@ -100,11 +100,28 @@
     @apply bg-gradient-to-r from-flip-blue-400 to-flip-blue-600 bg-clip-text text-transparent;
   }
   
+  .gradient-text-glow {
+    @apply bg-gradient-to-r from-purple-400 via-pink-500 to-purple-600 bg-clip-text text-transparent;
+    position: relative;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.4));
+  }
+  
   .gradient-bg {
     @apply bg-gradient-to-br from-flip-blue-50 to-white;
   }
   
   .hover-scale {
     @apply transition-transform duration-200 hover:scale-105;
+  }
+  
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 }
