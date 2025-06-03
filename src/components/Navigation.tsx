@@ -26,6 +26,10 @@ const Navigation = () => {
     }
   };
 
+  const navigateToProposals = () => {
+    window.location.href = '/propostas';
+  };
+
   return (
     <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-flip-blue-100 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,6 +70,14 @@ const Navigation = () => {
                   <QuestionnaireForm />
                 </DialogContent>
               </Dialog>
+
+              {/* Botão de Propostas */}
+              <button
+                onClick={navigateToProposals}
+                className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium"
+              >
+                Propostas
+              </button>
             </div>
           </div>
 
@@ -121,6 +133,14 @@ const Navigation = () => {
                 <QuestionnaireForm />
               </DialogContent>
             </Dialog>
+
+            {/* Botão de Propostas no mobile */}
+            <button
+              onClick={navigateToProposals}
+              className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left"
+            >
+              Propostas
+            </button>
             
             <div className="px-3 py-2">
               <Button
