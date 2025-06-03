@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FileText, Calculator, Zap, Sun, Plug, DollarSign, Clock, Leaf, LogOut } from 'lucide-react';
+import { FileText, Calculator, Zap, Sun, Plug, DollarSign, Clock, Leaf, LogOut, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
@@ -33,6 +33,10 @@ const ProposalGenerator = () => {
   });
 
   const [calculations, setCalculations] = useState<any>(null);
+
+  const navigateToHome = () => {
+    window.location.href = '/';
+  };
 
   const handleInputChange = (field: keyof FormData, value: string | number) => {
     const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
@@ -139,9 +143,19 @@ const ProposalGenerator = () => {
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-flip-blue-100 px-6 py-4">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <div>
-            <h1 className="text-2xl font-bold text-flip-gray-900">Gerador de Propostas</h1>
-            <p className="text-flip-gray-600">Flip Energy - Área Restrita</p>
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="outline" 
+              onClick={navigateToHome}
+              className="text-flip-blue-500 border-flip-blue-500 hover:bg-flip-blue-50"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar ao Menu
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-flip-gray-900">Gerador de Propostas</h1>
+              <p className="text-flip-gray-600">Flip Energy - Área Restrita</p>
+            </div>
           </div>
           <Button 
             variant="outline" 
