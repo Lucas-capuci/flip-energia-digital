@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
@@ -13,6 +13,10 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
+  const navigateToHome = () => {
+    window.location.href = '/';
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const success = login(username, password);
@@ -23,6 +27,18 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-flip-blue-50 to-white flex items-center justify-center px-4">
+      {/* Botão de voltar */}
+      <div className="absolute top-6 left-6">
+        <Button 
+          variant="outline" 
+          onClick={navigateToHome}
+          className="text-flip-blue-500 border-flip-blue-500 hover:bg-flip-blue-50"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar ao Menu
+        </Button>
+      </div>
+
       <Card className="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl border border-flip-blue-100">
         <div className="text-center mb-8">
           <div className="bg-flip-blue-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
