@@ -83,13 +83,6 @@ const LoginPage = () => {
             Entrar
           </Button>
         </form>
-
-        <div className="mt-6 text-center text-sm text-flip-gray-500">
-          <p>Credenciais de acesso:</p>
-          <p className="font-mono bg-flip-blue-50 px-2 py-1 rounded mt-1">
-            flip / 123456
-          </p>
-        </div>
       </Card>
     </div>
   );
