@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { FileText, Calculator, Zap, Sun, Plug, DollarSign, Clock, Leaf, LogOut } from 'lucide-react';
@@ -41,6 +40,16 @@ const ProposalGenerator = () => {
       ...prev,
       [field]: field === 'clientName' ? value : numValue
     }));
+  };
+
+  const formatFloatValue = (value: number): string => {
+    if (value === 0) return '';
+    return value.toString().replace('.', ',');
+  };
+
+  const parseFloatValue = (value: string): number => {
+    const normalizedValue = value.replace(',', '.');
+    return parseFloat(normalizedValue) || 0;
   };
 
   const calculateValues = () => {
@@ -186,11 +195,10 @@ const ProposalGenerator = () => {
                     Irradiação Local (kWh/m².dia)
                   </label>
                   <Input
-                    type="number"
-                    step="0.1"
-                    value={formData.localIrradiation || ''}
-                    onChange={(e) => handleInputChange('localIrradiation', e.target.value)}
-                    placeholder="Ex: 5"
+                    type="text"
+                    value={formatFloatValue(formData.localIrradiation)}
+                    onChange={(e) => handleInputChange('localIrradiation', parseFloatValue(e.target.value))}
+                    placeholder="Ex: 5,0"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
                   />
                 </div>
@@ -230,10 +238,9 @@ const ProposalGenerator = () => {
                     Tarifa de Energia (R$/kWh)
                   </label>
                   <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.energyTariff || ''}
-                    onChange={(e) => handleInputChange('energyTariff', e.target.value)}
+                    type="text"
+                    value={formatFloatValue(formData.energyTariff)}
+                    onChange={(e) => handleInputChange('energyTariff', parseFloatValue(e.target.value))}
                     placeholder="Ex: 0,85"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
                   />
@@ -259,10 +266,9 @@ const ProposalGenerator = () => {
                     Preço da Energia Excedente (R$/kWh)
                   </label>
                   <Input
-                    type="number"
-                    step="0.01"
-                    value={formData.excessPrice || ''}
-                    onChange={(e) => handleInputChange('excessPrice', e.target.value)}
+                    type="text"
+                    value={formatFloatValue(formData.excessPrice)}
+                    onChange={(e) => handleInputChange('excessPrice', parseFloatValue(e.target.value))}
                     placeholder="Ex: 0,50"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
                   />
