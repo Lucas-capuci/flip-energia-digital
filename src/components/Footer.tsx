@@ -41,12 +41,24 @@ const Footer = () => {
                 <Phone className="h-4 w-4 mr-3 text-flip-blue-400" />
                 <span className="text-flip-gray-300">(62) 98449-6914</span>
               </div>
+              <div className="flex flex-col gap-1">
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300">lucas.capuci@flipeng.com.br</span>
-                <span className="text-flip-gray-300">eduardo.gomes@flipeng.com.br</span>
-                <span className="text-flip-gray-300">joao.pedro@flipeng.br</span>
+                <span className="text-flip-gray-300">
+                  lucas.capuci@flipeng.com.br - Redes de distribuição
+                </span>
               </div>
+              <div className="flex items-center">
+                <span className="ml-7 text-flip-gray-300">
+                  eduardo.gomes@flipeng.com.br - Projetos Residencial
+                </span>
+              </div>
+              <div className="flex items-center">
+                <span className="ml-7 text-flip-gray-300">
+                  joao.pedro@flipeng.br - Energia solar
+                </span>
+              </div>
+            </div>
             </div>
           </div>
 
