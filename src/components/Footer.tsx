@@ -43,7 +43,9 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <Mail className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300">Lucascapuciarroyo@gmail.com</span>
+                <span className="text-flip-gray-300">lucas.capuci@flipeng.com.br</span>
+                <span className="text-flip-gray-300">eduardo.gomes@flipeng.com.br</span>
+                <span className="text-flip-gray-300">joao.pedro@flipeng.br</span>
               </div>
             </div>
           </div>
