@@ -79,3 +79,4 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
 };
 
 export default ProposalForm;
+
