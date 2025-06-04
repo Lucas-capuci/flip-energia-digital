@@ -35,7 +35,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             placeholder="Ex: 1500"
             className="border-flip-blue-200 focus:border-flip-blue-500"
             min="0"
-            step="any"
+            step="0.01"
           />
         </div>
 
@@ -60,14 +60,12 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             Eficiência do Sistema (%)
           </label>
           <Input
-            type="number"
-            value={formData.systemEfficiency || ''}
-            onChange={(e) => onInputChange('systemEfficiency', e.target.value)}
-            placeholder="Ex: 80"
+            type="text"
+            value={formatFloatValue(formData.systemEfficiency)}
+            onChange={(e) => onInputChange('systemEfficiency', parseFloatValue(e.target.value))}
+            placeholder="Ex: 80,5"
             className="border-flip-blue-200 focus:border-flip-blue-500"
-            min="0"
-            max="100"
-            step="any"
+            inputMode="decimal"
           />
         </div>
 
@@ -82,7 +80,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             placeholder="Ex: 550"
             className="border-flip-blue-200 focus:border-flip-blue-500"
             min="0"
-            step="any"
+            step="0.01"
           />
         </div>
       </div>
@@ -113,7 +111,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             placeholder="Ex: 50000"
             className="border-flip-blue-200 focus:border-flip-blue-500"
             min="0"
-            step="any"
+            step="0.01"
           />
         </div>
       </div>
@@ -144,7 +142,7 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             placeholder="Ex: 500"
             className="border-flip-blue-200 focus:border-flip-blue-500"
             min="0"
-            step="any"
+            step="0.01"
           />
         </div>
       </div>
