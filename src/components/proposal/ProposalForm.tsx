@@ -29,13 +29,12 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             Consumo Médio Mensal (kWh)
           </label>
           <Input
-            type="number"
-            value={formData.monthlyConsumption || ''}
-            onChange={(e) => onInputChange('monthlyConsumption', e.target.value)}
+            type="text"
+            value={formatFloatValue(formData.monthlyConsumption)}
+            onChange={(e) => onInputChange('monthlyConsumption', parseFloatValue(e.target.value))}
             placeholder="Ex: 1500"
             className="border-flip-blue-200 focus:border-flip-blue-500"
-            min="0"
-            step="0.01"
+            inputMode="decimal"
           />
         </div>
 
@@ -74,13 +73,12 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             Potência da Placa (Wp)
           </label>
           <Input
-            type="number"
-            value={formData.panelPower || ''}
-            onChange={(e) => onInputChange('panelPower', e.target.value)}
+            type="text"
+            value={formatFloatValue(formData.panelPower)}
+            onChange={(e) => onInputChange('panelPower', parseFloatValue(e.target.value))}
             placeholder="Ex: 550"
             className="border-flip-blue-200 focus:border-flip-blue-500"
-            min="0"
-            step="0.01"
+            inputMode="decimal"
           />
         </div>
       </div>
@@ -105,13 +103,12 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             Preço do Sistema (R$)
           </label>
           <Input
-            type="number"
-            value={formData.systemPrice || ''}
-            onChange={(e) => onInputChange('systemPrice', e.target.value)}
+            type="text"
+            value={formatFloatValue(formData.systemPrice)}
+            onChange={(e) => onInputChange('systemPrice', parseFloatValue(e.target.value))}
             placeholder="Ex: 50000"
             className="border-flip-blue-200 focus:border-flip-blue-500"
-            min="0"
-            step="0.01"
+            inputMode="decimal"
           />
         </div>
       </div>
@@ -136,13 +133,12 @@ const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) 
             Estimativa de Excedente (kWh)
           </label>
           <Input
-            type="number"
-            value={formData.excessEstimate || ''}
-            onChange={(e) => onInputChange('excessEstimate', e.target.value)}
+            type="text"
+            value={formatFloatValue(formData.excessEstimate)}
+            onChange={(e) => onInputChange('excessEstimate', parseFloatValue(e.target.value))}
             placeholder="Ex: 500"
             className="border-flip-blue-200 focus:border-flip-blue-500"
-            min="0"
-            step="0.01"
+            inputMode="decimal"
           />
         </div>
       </div>
