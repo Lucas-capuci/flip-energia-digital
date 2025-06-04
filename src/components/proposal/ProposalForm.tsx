@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from '../ui/input';
 import { FormData } from '../../utils/proposalCalculations';
 
@@ -8,176 +8,82 @@ interface ProposalFormProps {
 }
 
 const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) => {
-  const handleDecimalInputChange = (field: keyof FormData, value: string) => {
-    // Permite apenas números, vírgulas e pontos
+  const [localValues, setLocalValues] = useState<{ [key in keyof FormData]: string }>({
+    clientName: formData.clientName || '',
+    monthlyConsumption: formData.monthlyConsumption.toString(),
+    localIrradiation: formData.localIrradiation.toString(),
+    systemEfficiency: formData.systemEfficiency.toString(),
+    panelPower: formData.panelPower.toString(),
+    energyTariff: formData.energyTariff.toString(),
+    systemPrice: formData.systemPrice.toString(),
+    excessPrice: formData.excessPrice.toString(),
+    excessEstimate: formData.excessEstimate.toString(),
+  });
+
+  useEffect(() => {
+    // Atualiza localValues quando formData externo mudar
+    const updated = {} as typeof localValues;
+    (Object.keys(formData) as (keyof FormData)[]).forEach((key) => {
+      updated[key] = formData[key].toString();
+    });
+    setLocalValues(updated);
+  }, [formData]);
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    // Permite somente números, vírgulas e pontos
     const cleanValue = value.replace(/[^0-9.,]/g, '');
+    setLocalValues((prev) => ({ ...prev, [field]: cleanValue }));
+  };
 
-    // Substitui vírgula por ponto para conversão numérica
-    const normalizedValue = cleanValue.replace(',', '.');
-
-    const parsed = parseFloat(normalizedValue);
-
-    // Atualiza apenas se for um número válido
-    if (!isNaN(parsed)) {
-      onInputChange(field, parsed);
-    } else if (cleanValue === '') {
+  const handleBlur = (field: keyof FormData) => {
+    const str = localValues[field].replace(',', '.');
+    const num = parseFloat(str);
+    if (!isNaN(num)) {
+      onInputChange(field, num);
+    } else {
       onInputChange(field, 0);
     }
   };
 
-  const formatDisplayValue = (value: number): string => {
-    // Exibe o valor com vírgula, mesmo se for 0
-    return !isNaN(value) ? value.toString().replace('.', ',') : '';
-  };
+  const renderInput = (label: string, field: keyof FormData, placeholder: string) => (
+    <div>
+      <label className="block text-sm font-medium text-flip-gray-700 mb-2">
+        {label}
+      </label>
+      <Input
+        type="text"
+        value={localValues[field]}
+        onChange={(e) => handleChange(field, e.target.value)}
+        onBlur={() => handleBlur(field)}
+        placeholder={placeholder}
+        className="border-flip-blue-200 focus:border-flip-blue-500"
+        inputMode="decimal"
+      />
+    </div>
+  );
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-          Nome do Cliente
-        </label>
-        <Input
-          value={formData.clientName}
-          onChange={(e) => onInputChange('clientName', e.target.value)}
-          placeholder="Ex: João da Silva"
-          className="border-flip-blue-200 focus:border-flip-blue-500"
-        />
+      {renderInput('Nome do Cliente', 'clientName', 'Ex: João da Silva')}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {renderInput('Consumo Médio Mensal (kWh)', 'monthlyConsumption', 'Ex: 1500')}
+        {renderInput('Irradiação Local (kWh/m².dia)', 'localIrradiation', 'Ex: 5,0')}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Consumo Médio Mensal (kWh)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.monthlyConsumption)}
-            onChange={(e) =>
-              handleDecimalInputChange('monthlyConsumption', e.target.value)
-            }
-            placeholder="Ex: 1500 ou 0,85"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Irradiação Local (kWh/m².dia)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.localIrradiation)}
-            onChange={(e) =>
-              handleDecimalInputChange('localIrradiation', e.target.value)
-            }
-            placeholder="Ex: 5,0"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
+        {renderInput('Eficiência do Sistema (%)', 'systemEfficiency', 'Ex: 80,5')}
+        {renderInput('Potência da Placa (Wp)', 'panelPower', 'Ex: 550')}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Eficiência do Sistema (%)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.systemEfficiency)}
-            onChange={(e) =>
-              handleDecimalInputChange('systemEfficiency', e.target.value)
-            }
-            placeholder="Ex: 80,5"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Potência da Placa (Wp)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.panelPower)}
-            onChange={(e) =>
-              handleDecimalInputChange('panelPower', e.target.value)
-            }
-            placeholder="Ex: 550"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
+        {renderInput('Tarifa de Energia (R$/kWh)', 'energyTariff', 'Ex: 0,85')}
+        {renderInput('Preço do Sistema (R$)', 'systemPrice', 'Ex: 50000')}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Tarifa de Energia (R$/kWh)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.energyTariff)}
-            onChange={(e) =>
-              handleDecimalInputChange('energyTariff', e.target.value)
-            }
-            placeholder="Ex: 0,85"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Preço do Sistema (R$)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.systemPrice)}
-            onChange={(e) =>
-              handleDecimalInputChange('systemPrice', e.target.value)
-            }
-            placeholder="Ex: 50000"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Preço da Energia Excedente (R$/kWh)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.excessPrice)}
-            onChange={(e) =>
-              handleDecimalInputChange('excessPrice', e.target.value)
-            }
-            placeholder="Ex: 0,50"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-flip-gray-700 mb-2">
-            Estimativa de Excedente (kWh)
-          </label>
-          <Input
-            type="text"
-            value={formatDisplayValue(formData.excessEstimate)}
-            onChange={(e) =>
-              handleDecimalInputChange('excessEstimate', e.target.value)
-            }
-            placeholder="Ex: 500"
-            className="border-flip-blue-200 focus:border-flip-blue-500"
-            inputMode="decimal"
-          />
-        </div>
+        {renderInput('Preço da Energia Excedente (R$/kWh)', 'excessPrice', 'Ex: 0,50')}
+        {renderInput('Estimativa de Excedente (kWh)', 'excessEstimate', 'Ex: 500')}
       </div>
     </div>
   );
