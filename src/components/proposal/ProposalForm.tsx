@@ -4,45 +4,34 @@ import { FormData } from '../../utils/proposalCalculations';
 
 interface ProposalFormProps {
   formData: FormData;
-  onInputChange: (field: keyof FormData, value: string | number) => void;
+  onInputChange: (field: keyof FormData, value: number | string) => void;
 }
 
 const ProposalForm: React.FC<ProposalFormProps> = ({ formData, onInputChange }) => {
-  const [localValues, setLocalValues] = useState<{ [key in keyof FormData]: string }>({
-    clientName: formData.clientName || '',
-    monthlyConsumption: formData.monthlyConsumption.toString(),
-    localIrradiation: formData.localIrradiation.toString(),
-    systemEfficiency: formData.systemEfficiency.toString(),
-    panelPower: formData.panelPower.toString(),
-    energyTariff: formData.energyTariff.toString(),
-    systemPrice: formData.systemPrice.toString(),
-    excessPrice: formData.excessPrice.toString(),
-    excessEstimate: formData.excessEstimate.toString(),
+  const [localValues, setLocalValues] = useState<{ [key in keyof FormData]: string }>(() => {
+    const initialValues: { [key in keyof FormData]: string } = {} as any;
+    for (const key in formData) {
+      initialValues[key as keyof FormData] = formData[key as keyof FormData]?.toString?.() || '';
+    }
+    return initialValues;
   });
 
   useEffect(() => {
-    // Atualiza localValues quando formData externo mudar
-    const updated = {} as typeof localValues;
-    (Object.keys(formData) as (keyof FormData)[]).forEach((key) => {
-      updated[key] = formData[key].toString();
-    });
-    setLocalValues(updated);
+    const updatedValues: { [key in keyof FormData]: string } = {} as any;
+    for (const key in formData) {
+      updatedValues[key as keyof FormData] = formData[key as keyof FormData]?.toString?.() || '';
+    }
+    setLocalValues(updatedValues);
   }, [formData]);
 
   const handleChange = (field: keyof FormData, value: string) => {
-    // Permite somente números, vírgulas e pontos
-    const cleanValue = value.replace(/[^0-9.,]/g, '');
+    const cleanValue = value.replace(',', '.');
     setLocalValues((prev) => ({ ...prev, [field]: cleanValue }));
   };
 
   const handleBlur = (field: keyof FormData) => {
-    const str = localValues[field].replace(',', '.');
-    const num = parseFloat(str);
-    if (!isNaN(num)) {
-      onInputChange(field, num);
-    } else {
-      onInputChange(field, 0);
-    }
+    const num = parseFloat(localValues[field]);
+    onInputChange(field, isNaN(num) ? 0 : num);
   };
 
   const renderInput = (label: string, field: keyof FormData, placeholder: string) => (
