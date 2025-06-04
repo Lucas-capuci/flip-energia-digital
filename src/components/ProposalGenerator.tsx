@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { FileText, Calculator, Zap, Sun, Plug, DollarSign, Clock, Leaf, LogOut } from 'lucide-react';
+import { FileText, Calculator, Zap, Sun, Plug, DollarSign, Clock, Leaf, LogOut, ArrowLeft } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import jsPDF from 'jspdf';
+import { Link } from 'react-router-dom';
 
 interface FormData {
   clientName: string;
@@ -42,11 +44,13 @@ const ProposalGenerator = () => {
     }));
   };
 
+  // Format for display in inputs
   const formatFloatValue = (value: number): string => {
     if (value === 0) return '';
     return value.toString().replace('.', ',');
   };
 
+  // Parse from input strings to numbers
   const parseFloatValue = (value: string): number => {
     const normalizedValue = value.replace(',', '.');
     return parseFloat(normalizedValue) || 0;
@@ -139,9 +143,22 @@ const ProposalGenerator = () => {
       {/* Header */}
       <div className="bg-white/90 backdrop-blur-sm border-b border-flip-blue-100 px-6 py-4">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <div>
-            <h1 className="text-2xl font-bold text-flip-gray-900">Gerador de Propostas</h1>
-            <p className="text-flip-gray-600">Flip Energy - Área Restrita</p>
+          <div className="flex items-center space-x-4">
+            <Button 
+              variant="outline" 
+              size="sm"
+              asChild
+              className="text-flip-blue-500 border-flip-blue-500 hover:bg-flip-blue-50"
+            >
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Voltar ao Menu
+              </Link>
+            </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-flip-gray-900">Gerador de Propostas</h1>
+              <p className="text-flip-gray-600">Flip Energy - Área Restrita</p>
+            </div>
           </div>
           <Button 
             variant="outline" 
@@ -187,6 +204,8 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('monthlyConsumption', e.target.value)}
                     placeholder="Ex: 1500"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    min="0"
+                    step="any"
                   />
                 </div>
 
@@ -200,6 +219,7 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('localIrradiation', parseFloatValue(e.target.value))}
                     placeholder="Ex: 5,0"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    inputMode="decimal"
                   />
                 </div>
               </div>
@@ -215,6 +235,9 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('systemEfficiency', e.target.value)}
                     placeholder="Ex: 80"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    min="0"
+                    max="100"
+                    step="0.1"
                   />
                 </div>
 
@@ -228,6 +251,8 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('panelPower', e.target.value)}
                     placeholder="Ex: 550"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    min="0"
+                    step="any"
                   />
                 </div>
               </div>
@@ -243,6 +268,7 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('energyTariff', parseFloatValue(e.target.value))}
                     placeholder="Ex: 0,85"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    inputMode="decimal"
                   />
                 </div>
 
@@ -256,6 +282,8 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('systemPrice', e.target.value)}
                     placeholder="Ex: 50000"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    min="0"
+                    step="any"
                   />
                 </div>
               </div>
@@ -271,6 +299,7 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('excessPrice', parseFloatValue(e.target.value))}
                     placeholder="Ex: 0,50"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    inputMode="decimal"
                   />
                 </div>
 
@@ -284,6 +313,8 @@ const ProposalGenerator = () => {
                     onChange={(e) => handleInputChange('excessEstimate', e.target.value)}
                     placeholder="Ex: 500"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    min="0"
+                    step="any"
                   />
                 </div>
               </div>
