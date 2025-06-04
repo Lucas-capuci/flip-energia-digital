@@ -4,7 +4,7 @@ import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from 'lucide-react
 const Footer = () => {
   return (
     <footer id="contato" className="bg-flip-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="w-full max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
@@ -42,23 +42,23 @@ const Footer = () => {
                 <span className="text-flip-gray-300">(62) 98449-6914</span>
               </div>
               <div className="flex flex-col gap-1">
-              <div className="flex items-center">
-                <Mail className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300">
-                  lucas.capuci@flipeng.com.br - Redes de distribuição
-                </span>
+                <div className="flex items-center">
+                  <Mail className="h-4 w-4 mr-3 text-flip-blue-400" />
+                  <span className="text-flip-gray-300">
+                    lucas.capuci@flipeng.com.br - Redes de distribuição
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span className="ml-7 text-flip-gray-300">
+                    eduardo.gomes@flipeng.com.br - Projetos Residencial
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span className="ml-7 text-flip-gray-300">
+                    joao.pedro@flipeng.br - Energia solar
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center">
-                <span className="ml-7 text-flip-gray-300">
-                  eduardo.gomes@flipeng.com.br - Projetos Residencial
-                </span>
-              </div>
-              <div className="flex items-center">
-                <span className="ml-7 text-flip-gray-300">
-                  joao.pedro@flipeng.br - Energia solar
-                </span>
-              </div>
-            </div>
             </div>
           </div>
 
@@ -88,7 +88,7 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-        </div> {/* ← ESTA DIV FECHA O GRID */}
+        </div>
 
         <div className="border-t border-flip-gray-800 mt-12 pt-8 text-center text-flip-gray-400">
           <p>&copy; 2024 FLIP Engenharia. Todos os direitos reservados.</p>
