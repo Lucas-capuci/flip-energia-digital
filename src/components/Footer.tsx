@@ -1,97 +1,188 @@
+
 import React from 'react';
-import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin } from 'lucide-react';
+import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, ArrowRight, Zap, Home, Network } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer id="contato" className="bg-flip-gray-900 text-white">
-      <div className="w-full max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-16 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer id="contato" className="relative bg-gradient-to-br from-flip-gray-900 via-flip-gray-800 to-flip-blue-900 text-white overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 left-20 w-32 h-32 border border-white rounded-full"></div>
+        <div className="absolute bottom-32 right-32 w-24 h-24 border border-white rounded-full"></div>
+        <div className="absolute top-1/2 left-1/3 w-16 h-16 border border-white rounded-full"></div>
+      </div>
+
+      <div className="relative w-full max-w-screen-xl mx-auto px-6 sm:px-10 lg:px-16 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-12">
           {/* Company Info */}
-          <div className="space-y-4">
-            <img
-              src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png"
-              alt="FLIP Engenharia"
-              className="h-12 w-auto brightness-0 invert"
-            />
-            <p className="text-flip-gray-300">
-              Soluções integradas em energia solar, automação residencial e redes de distribuição privadas.
-            </p>
+          <div className="lg:col-span-1 space-y-6">
+            <div className="space-y-4">
+              <img
+                src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png"
+                alt="FLIP Engenharia"
+                className="h-16 w-auto brightness-0 invert drop-shadow-md"
+              />
+              <p className="text-flip-gray-300 leading-relaxed text-sm">
+                Soluções integradas em energia solar, automação residencial e redes de distribuição privadas com tecnologia de ponta.
+              </p>
+            </div>
+            
             <div className="flex space-x-4">
-              <a href="#" className="text-flip-gray-300 hover:text-white transition-colors">
-                <Instagram className="h-5 w-5" />
+              <a 
+                href="#" 
+                className="group bg-flip-blue-600/20 p-3 rounded-full border border-flip-blue-400/30 hover:bg-flip-blue-500 hover:border-flip-blue-400 transition-all duration-300"
+              >
+                <Instagram className="h-5 w-5 text-flip-blue-300 group-hover:text-white transition-colors" />
               </a>
-              <a href="#" className="text-flip-gray-300 hover:text-white transition-colors">
-                <Facebook className="h-5 w-5" />
+              <a 
+                href="#" 
+                className="group bg-flip-blue-600/20 p-3 rounded-full border border-flip-blue-400/30 hover:bg-flip-blue-500 hover:border-flip-blue-400 transition-all duration-300"
+              >
+                <Facebook className="h-5 w-5 text-flip-blue-300 group-hover:text-white transition-colors" />
               </a>
-              <a href="#" className="text-flip-gray-300 hover:text-white transition-colors">
-                <Linkedin className="h-5 w-5" />
+              <a 
+                href="#" 
+                className="group bg-flip-blue-600/20 p-3 rounded-full border border-flip-blue-400/30 hover:bg-flip-blue-500 hover:border-flip-blue-400 transition-all duration-300"
+              >
+                <Linkedin className="h-5 w-5 text-flip-blue-300 group-hover:text-white transition-colors" />
               </a>
             </div>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Contato</h3>
+          {/* Contact Info */}
+          <div className="lg:col-span-1 space-y-6">
+            <h3 className="text-xl font-bold text-white mb-6 relative">
+              Contato
+              <div className="absolute -bottom-2 left-0 w-12 h-1 bg-gradient-to-r from-flip-blue-400 to-flip-blue-600 rounded-full"></div>
+            </h3>
+            
+            <div className="space-y-4">
+              <div className="flex items-start group">
+                <div className="bg-flip-blue-600/20 p-2 rounded-lg mr-4 group-hover:bg-flip-blue-500 transition-colors">
+                  <MapPin className="h-4 w-4 text-flip-blue-400 group-hover:text-white" />
+                </div>
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Goiânia-GO</span>
+              </div>
+              
+              <div className="flex items-start group">
+                <div className="bg-flip-blue-600/20 p-2 rounded-lg mr-4 group-hover:bg-flip-blue-500 transition-colors">
+                  <Phone className="h-4 w-4 text-flip-blue-400 group-hover:text-white" />
+                </div>
+                <a href="tel:+5562984496914" className="text-flip-gray-300 hover:text-white transition-colors">
+                  (62) 98449-6914
+                </a>
+              </div>
+            </div>
+
             <div className="space-y-3">
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300 font-normal">Goiania-Go</span>
-              </div>
-              <div className="flex items-center">
-                <Phone className="h-4 w-4 mr-3 text-flip-blue-400" />
-                <span className="text-flip-gray-300">(62) 98449-6914</span>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center">
-                  <Mail className="h-4 w-4 mr-3 text-flip-blue-400" />
-                  <span className="text-flip-gray-300">
-                    lucas.capuci@flipeng.com.br - Redes de distribuição
-                  </span>
+              <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-blue-400/50 transition-colors group">
+                <div className="flex items-start">
+                  <Mail className="h-4 w-4 mr-3 text-flip-blue-400 mt-1 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <a href="mailto:lucas.capuci@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                      lucas.capuci@flipeng.com.br
+                    </a>
+                    <p className="text-flip-gray-400 text-xs">Redes de distribuição</p>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <span className="ml-7 text-flip-gray-300">
-                    eduardo.gomes@flipeng.com.br - Projetos Residencial
-                  </span>
+              </div>
+              
+              <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-blue-400/50 transition-colors group">
+                <div className="flex items-start">
+                  <Mail className="h-4 w-4 mr-3 text-flip-blue-400 mt-1 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <a href="mailto:eduardo.gomes@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                      eduardo.gomes@flipeng.com.br
+                    </a>
+                    <p className="text-flip-gray-400 text-xs">Projetos Residencial</p>
+                  </div>
                 </div>
-                <div className="flex items-center">
-                  <span className="ml-7 text-flip-gray-300">
-                    joao.pedro@flipeng.br - Energia solar
-                  </span>
+              </div>
+              
+              <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-blue-400/50 transition-colors group">
+                <div className="flex items-start">
+                  <Mail className="h-4 w-4 mr-3 text-flip-blue-400 mt-1 flex-shrink-0" />
+                  <div className="space-y-1">
+                    <a href="mailto:joao.pedro@flipeng.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                      joao.pedro@flipeng.br
+                    </a>
+                    <p className="text-flip-gray-400 text-xs">Energia solar</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Services */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Serviços</h3>
-            <ul className="space-y-2 text-flip-gray-300">
-              <li>
-                <a href="#energia-solar" className="hover:text-white transition-colors">
-                  Energia Solar
-                </a>
-              </li>
-              <li>
-                <a href="#automacao" className="hover:text-white transition-colors">
-                  Automação Residencial
-                </a>
-              </li>
-              <li>
-                <a href="#redes" className="hover:text-white transition-colors">
-                  Redes de Distribuição
-                </a>
-              </li>
-              <li>
-                <a href="#calculadora" className="hover:text-white transition-colors">
-                  Calculadora de Economia
-                </a>
-              </li>
-            </ul>
+          <div className="lg:col-span-1 space-y-6">
+            <h3 className="text-xl font-bold text-white mb-6 relative">
+              Serviços
+              <div className="absolute -bottom-2 left-0 w-12 h-1 bg-gradient-to-r from-flip-blue-400 to-flip-blue-600 rounded-full"></div>
+            </h3>
+            
+            <div className="space-y-3">
+              <a href="#energia-solar" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+                <Zap className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Energia Solar</span>
+                <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
+              </a>
+              
+              <a href="#automacao" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+                <Home className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Automação Residencial</span>
+                <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
+              </a>
+              
+              <a href="#redes" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+                <Network className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Redes de Distribuição</span>
+                <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
+              </a>
+              
+              <a href="#calculadora" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 border border-flip-blue-400/30">
+                <div className="h-5 w-5 bg-gradient-to-br from-flip-blue-400 to-flip-blue-600 rounded mr-3 flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">%</span>
+                </div>
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Calculadora de Economia</span>
+                <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
+              </a>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="lg:col-span-1 space-y-6">
+            <h3 className="text-xl font-bold text-white mb-6 relative">
+              Comece Agora
+              <div className="absolute -bottom-2 left-0 w-12 h-1 bg-gradient-to-r from-flip-blue-400 to-flip-blue-600 rounded-full"></div>
+            </h3>
+            
+            <div className="bg-gradient-to-br from-flip-blue-600/20 to-flip-blue-800/20 p-6 rounded-xl border border-flip-blue-400/30">
+              <p className="text-flip-gray-300 text-sm mb-4 leading-relaxed">
+                Transforme sua energia com nossas soluções sustentáveis e tecnológicas.
+              </p>
+              
+              <a 
+                href="#calculadora" 
+                className="inline-flex items-center bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 group w-full justify-center"
+              >
+                Calcular Economia
+                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="border-t border-flip-gray-800 mt-12 pt-8 text-center text-flip-gray-400">
-          <p>&copy; 2024 FLIP Engenharia. Todos os direitos reservados.</p>
+        {/* Bottom Section */}
+        <div className="border-t border-flip-gray-700/50 mt-16 pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-flip-gray-400 text-sm">
+              &copy; 2024 FLIP Engenharia. Todos os direitos reservados.
+            </p>
+            <div className="flex items-center space-x-6 text-sm">
+              <a href="#" className="text-flip-gray-400 hover:text-white transition-colors">Política de Privacidade</a>
+              <a href="#" className="text-flip-gray-400 hover:text-white transition-colors">Termos de Uso</a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
