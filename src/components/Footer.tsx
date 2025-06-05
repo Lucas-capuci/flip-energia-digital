@@ -3,6 +3,13 @@ import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, ArrowRight, Zap, Home, Network } from 'lucide-react';
 
 const Footer = () => {
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer id="contato" className="relative bg-gradient-to-br from-flip-gray-900 via-flip-gray-800 to-flip-blue-900 text-white overflow-hidden">
       {/* Background Pattern */}
@@ -121,31 +128,43 @@ const Footer = () => {
             </h3>
             
             <div className="space-y-3">
-              <a href="#energia-solar" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+              <button 
+                onClick={() => scrollToSection('calculadora')} 
+                className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 w-full text-left"
+              >
                 <Zap className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Energia Solar</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </a>
+              </button>
               
-              <a href="#automacao" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+              <button 
+                onClick={() => scrollToSection('solucoes')} 
+                className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 w-full text-left"
+              >
                 <Home className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Automação Residencial</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </a>
+              </button>
               
-              <a href="#redes" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300">
+              <button 
+                onClick={() => scrollToSection('solucoes')} 
+                className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 w-full text-left"
+              >
                 <Network className="h-5 w-5 text-flip-blue-400 mr-3 group-hover:text-flip-blue-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Redes de Distribuição</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </a>
+              </button>
               
-              <a href="#calculadora" className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 border border-flip-blue-400/30">
+              <button 
+                onClick={() => scrollToSection('parceiros')} 
+                className="group flex items-center p-3 rounded-lg hover:bg-flip-blue-600/20 transition-all duration-300 border border-flip-blue-400/30 w-full text-left"
+              >
                 <div className="h-5 w-5 bg-gradient-to-br from-flip-blue-400 to-flip-blue-600 rounded mr-3 flex items-center justify-center">
                   <span className="text-xs font-bold text-white">%</span>
                 </div>
-                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Calculadora de Economia</span>
+                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Seja um Parceiro Flip</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-blue-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </a>
+              </button>
             </div>
           </div>
 
@@ -161,13 +180,13 @@ const Footer = () => {
                 Transforme sua energia com nossas soluções sustentáveis e tecnológicas.
               </p>
               
-              <a 
-                href="#calculadora" 
+              <button 
+                onClick={() => scrollToSection('calculadora')}
                 className="inline-flex items-center bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 group w-full justify-center"
               >
                 Calcular Economia
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </a>
+              </button>
             </div>
           </div>
         </div>

@@ -48,6 +48,45 @@ export type Database = {
         }
         Relationships: []
       }
+      partner_registrations: {
+        Row: {
+          average_consumption: string | null
+          city: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          invoice_url: string | null
+          phone: string
+          state: string
+          updated_at: string
+        }
+        Insert: {
+          average_consumption?: string | null
+          city: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          invoice_url?: string | null
+          phone: string
+          state: string
+          updated_at?: string
+        }
+        Update: {
+          average_consumption?: string | null
+          city?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          invoice_url?: string | null
+          phone?: string
+          state?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

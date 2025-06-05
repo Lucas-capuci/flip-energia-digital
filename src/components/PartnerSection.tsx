@@ -4,6 +4,8 @@ import { Zap, Check, Upload, Shield } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent } from './ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const PartnerSection = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +17,7 @@ const PartnerSection = () => {
     averageConsumption: '',
     invoice: null as File | null
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -25,11 +28,75 @@ const PartnerSection = () => {
     setFormData(prev => ({ ...prev, invoice: file }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Dados do formulário:', formData);
-    // Aqui seria integrado com o backend da Flip
-    alert('Cadastro realizado com sucesso! Entraremos em contato em breve.');
+    setIsSubmitting(true);
+
+    try {
+      let invoice_url = null;
+
+      // Upload da fatura se foi fornecida
+      if (formData.invoice) {
+        const fileExt = formData.invoice.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('invoices')
+          .upload(`partner-invoices/${fileName}`, formData.invoice);
+
+        if (uploadError) {
+          console.error('Erro no upload:', uploadError);
+          toast.error('Erro ao fazer upload da fatura. Continuando sem anexo...');
+        } else {
+          const { data: { publicUrl } } = supabase.storage
+            .from('invoices')
+            .getPublicUrl(`partner-invoices/${fileName}`);
+          invoice_url = publicUrl;
+        }
+      }
+
+      // Inserir dados no banco
+      const { error } = await supabase
+        .from('partner_registrations')
+        .insert({
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          city: formData.city,
+          state: formData.state,
+          average_consumption: formData.averageConsumption || null,
+          invoice_url
+        });
+
+      if (error) {
+        console.error('Erro ao salvar dados:', error);
+        toast.error('Erro ao processar cadastro. Tente novamente.');
+        return;
+      }
+
+      toast.success('Cadastro realizado com sucesso! Entraremos em contato em breve.');
+      
+      // Limpar formulário
+      setFormData({
+        fullName: '',
+        email: '',
+        phone: '',
+        city: '',
+        state: '',
+        averageConsumption: '',
+        invoice: null
+      });
+
+      // Limpar input de arquivo
+      const fileInput = document.getElementById('invoice-upload') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
+    } catch (error) {
+      console.error('Erro inesperado:', error);
+      toast.error('Erro inesperado. Tente novamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const benefits = [
@@ -120,6 +187,7 @@ const PartnerSection = () => {
                     onChange={(e) => handleInputChange('fullName', e.target.value)}
                     placeholder="Ex: João da Silva"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -135,6 +203,7 @@ const PartnerSection = () => {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       placeholder="seu@email.com"
                       className="border-flip-blue-200 focus:border-flip-blue-500"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -149,6 +218,7 @@ const PartnerSection = () => {
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       placeholder="(62) 99999-9999"
                       className="border-flip-blue-200 focus:border-flip-blue-500"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -164,6 +234,7 @@ const PartnerSection = () => {
                       onChange={(e) => handleInputChange('city', e.target.value)}
                       placeholder="Ex: Goiânia"
                       className="border-flip-blue-200 focus:border-flip-blue-500"
+                      disabled={isSubmitting}
                     />
                   </div>
 
@@ -177,6 +248,7 @@ const PartnerSection = () => {
                       onChange={(e) => handleInputChange('state', e.target.value)}
                       placeholder="Ex: GO"
                       className="border-flip-blue-200 focus:border-flip-blue-500"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -190,6 +262,7 @@ const PartnerSection = () => {
                     onChange={(e) => handleInputChange('averageConsumption', e.target.value)}
                     placeholder="Ex: 500 kWh/mês"
                     className="border-flip-blue-200 focus:border-flip-blue-500"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -205,10 +278,11 @@ const PartnerSection = () => {
                       onChange={handleFileUpload}
                       className="hidden"
                       id="invoice-upload"
+                      disabled={isSubmitting}
                     />
                     <label
                       htmlFor="invoice-upload"
-                      className="cursor-pointer text-flip-blue-600 hover:text-flip-blue-700 font-medium"
+                      className={`cursor-pointer text-flip-blue-600 hover:text-flip-blue-700 font-medium ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       Clique para selecionar o arquivo
                     </label>
@@ -226,10 +300,11 @@ const PartnerSection = () => {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700 text-white text-lg font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700 text-white text-lg font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                 >
                   <Zap className="h-5 w-5 mr-2" />
-                  Quero Economizar Agora
+                  {isSubmitting ? 'Processando...' : 'Quero Economizar Agora'}
                 </Button>
               </form>
             </CardContent>
