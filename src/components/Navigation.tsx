@@ -13,6 +13,7 @@ const Navigation = () => {
   const navigationItems = [
     { label: 'Início', id: 'inicio' },
     { label: 'Soluções', id: 'solucoes' },
+    { label: 'Parceiros Flip', id: 'parceiros' },
     { label: 'Portfólio', id: 'portfolio' },
     { label: 'Calculadora', id: 'calculadora' },
     { label: 'Contato', id: 'contato' }
@@ -50,7 +51,11 @@ const Navigation = () => {
                 <button
                   key={item.label}
                   onClick={() => scrollToSection(item.id)}
-                  className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium"
+                  className={`transition-colors duration-200 font-medium ${
+                    item.label === 'Parceiros Flip' 
+                      ? 'text-flip-blue-600 hover:text-flip-blue-700 font-semibold' 
+                      : 'text-flip-gray-600 hover:text-flip-blue-500'
+                  }`}
                 >
                   {item.label}
                 </button>
@@ -113,7 +118,11 @@ const Navigation = () => {
               <button
                 key={item.label}
                 onClick={() => scrollToSection(item.id)}
-                className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left"
+                className={`block px-3 py-2 font-medium w-full text-left ${
+                  item.label === 'Parceiros Flip' 
+                    ? 'text-flip-blue-600 font-semibold' 
+                    : 'text-flip-gray-600 hover:text-flip-blue-500'
+                }`}
               >
                 {item.label}
               </button>

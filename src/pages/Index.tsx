@@ -8,6 +8,7 @@ import SolarSection from '../components/SolarSection';
 import AutomationSection from '../components/AutomationSection';
 import NetworkSection from '../components/NetworkSection';
 import IntegrationSection from '../components/IntegrationSection';
+import PartnerSection from '../components/PartnerSection';
 import WhatsAppButton from '../components/WhatsAppButton';
 import Footer from '../components/Footer';
 
@@ -27,6 +28,10 @@ const Index = () => {
       <section id="solucoes">
         <AutomationSection />
         <NetworkSection />
+      </section>
+
+      <section id="parceiros">
+        <PartnerSection />
       </section>
 
       <section id="portfolio">
