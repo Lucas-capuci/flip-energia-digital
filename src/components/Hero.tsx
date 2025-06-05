@@ -110,7 +110,7 @@ const Hero = () => {
                 <div className="text-sm text-slate-600">Economia</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-emerald-600">500+</div>
+                <div className="text-3xl font-bold text-emerald-600">100+</div>
                 <div className="text-sm text-slate-600">Projetos</div>
               </div>
               <div className="text-center">
