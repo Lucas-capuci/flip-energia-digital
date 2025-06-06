@@ -7,39 +7,46 @@ import { Link } from 'react-router-dom';
 const HomeHub = () => {
   const sections = [
     {
-      title: "Como Funciona",
-      description: "Descubra como nossa tecnologia solar pode revolucionar sua energia, com economia de até 95% na conta de luz.",
+      title: "Energia Solar",
+      description: "Descubra como nossa tecnologia solar pode revolucionar sua energia, com economia de até 95% na conta de luz e retorno do investimento garantido.",
       icon: Zap,
-      link: "/como-funciona",
+      link: "/solar",
       color: "from-flip-blue-500 to-cyan-500"
     },
     {
-      title: "Soluções Inteligentes",
-      description: "Automação residencial e redes de distribuição privadas para máximo conforto e eficiência energética.",
+      title: "Redes de Distribuição",
+      description: "Infraestrutura elétrica segura e confiável para condomínios, empresas e propriedades rurais com sistemas de distribuição privados.",
       icon: Network,
-      link: "/solucoes",
+      link: "/redes-distribuicao",
+      color: "from-emerald-500 to-teal-500"
+    },
+    {
+      title: "Projetos Elétricos",
+      description: "Automação residencial e projetos elétricos completos para máximo conforto, eficiência energética e modernidade em sua propriedade.",
+      icon: Home,
+      link: "/projetos-eletricos",
       color: "from-purple-500 to-pink-500"
     },
     {
       title: "Seja um Parceiro",
-      description: "Junte-se à rede Flip e tenha acesso a condições especiais, suporte técnico e oportunidades de negócio.",
+      description: "Junte-se à rede Flip e tenha acesso a condições especiais, suporte técnico e oportunidades de negócio no setor energético.",
       icon: Users,
       link: "/seja-parceiro",
-      color: "from-emerald-500 to-teal-500"
-    },
-    {
-      title: "Portfólio",
-      description: "Conheça nossos projetos realizados e veja como transformamos energia em economia e sustentabilidade.",
-      icon: Briefcase,
-      link: "/portfolio",
       color: "from-orange-500 to-red-500"
     },
     {
+      title: "Portfólio",
+      description: "Conheça nossos projetos realizados e veja como transformamos energia em economia e sustentabilidade para nossos clientes.",
+      icon: Briefcase,
+      link: "/portfolio",
+      color: "from-indigo-500 to-purple-500"
+    },
+    {
       title: "Contato",
-      description: "Entre em contato conosco para tirar dúvidas, solicitar orçamentos ou conhecer nossas soluções.",
+      description: "Entre em contato conosco para tirar dúvidas, solicitar orçamentos ou conhecer nossas soluções personalizadas para seu projeto.",
       icon: Phone,
       link: "/contato",
-      color: "from-indigo-500 to-purple-500"
+      color: "from-pink-500 to-rose-500"
     }
   ];
 
@@ -48,14 +55,14 @@ const HomeHub = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-            Explore Nossas{' '}
+            Nossas{' '}
             <span className="bg-gradient-to-r from-flip-blue-600 to-purple-600 bg-clip-text text-transparent">
               Soluções
             </span>
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Descubra como podemos transformar sua propriedade em um ecossistema energético inteligente, 
-            sustentável e econômico.
+            sustentável e econômico com nossas soluções especializadas.
           </p>
         </div>
 

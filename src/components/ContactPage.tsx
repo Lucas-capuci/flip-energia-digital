@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -26,7 +25,6 @@ const ContactPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Aqui você pode implementar o envio do formulário
     console.log('Formulário enviado:', formData);
   };
 
@@ -34,7 +32,7 @@ const ContactPage = () => {
     {
       icon: MapPin,
       title: 'Endereço',
-      content: 'Rua das Flores, 123 - Centro\nGoiânia, GO - CEP: 74000-000',
+      content: 'Avenida PL-3 n 205\nCEP: 74884-115\nGoiânia, GO',
       color: 'text-blue-600'
     },
     {
@@ -78,10 +76,6 @@ const ContactPage = () => {
             Estamos prontos para transformar suas ideias em realidade. 
             Entre em contato conosco e descubra como podemos ajudar.
           </p>
-          <div className="mt-8 animate-bounce">
-            <div className="w-6 h-6 border-2 border-white rounded-full mx-auto opacity-70"></div>
-            <p className="text-sm mt-2 opacity-70">Role para baixo</p>
-          </div>
         </div>
       </div>
 

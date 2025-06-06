@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowRight, Zap, Home, Network, Sparkles, Play } from 'lucide-react';
 import { Button } from './ui/button';
@@ -170,6 +171,12 @@ const Hero = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Indicador para rolar para baixo */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-6 border-2 border-flip-blue-600 rounded-full mx-auto opacity-70"></div>
+          <p className="text-sm mt-2 opacity-70 text-flip-blue-600">Role para baixo</p>
         </div>
       </div>
     </section>
