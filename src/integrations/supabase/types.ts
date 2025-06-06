@@ -48,6 +48,39 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          assunto: string
+          created_at: string
+          email: string
+          empresa: string | null
+          id: string
+          mensagem: string
+          nome: string
+          telefone: string
+        }
+        Insert: {
+          assunto: string
+          created_at?: string
+          email: string
+          empresa?: string | null
+          id?: string
+          mensagem: string
+          nome: string
+          telefone: string
+        }
+        Update: {
+          assunto?: string
+          created_at?: string
+          email?: string
+          empresa?: string | null
+          id?: string
+          mensagem?: string
+          nome?: string
+          telefone?: string
+        }
+        Relationships: []
+      }
       partner_registrations: {
         Row: {
           average_consumption: string | null

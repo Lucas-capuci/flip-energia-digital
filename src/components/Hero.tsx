@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, Zap, Home, Network, Sparkles, Play } from 'lucide-react';
+import { ArrowRight, Zap, Home, Network, Sparkles, Play, ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Link } from 'react-router-dom';
@@ -29,7 +29,7 @@ const Hero = () => {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[calc(100vh-200px)]">
           {/* Content com animações mais modernas */}
           <div className="space-y-8 animate-fade-in">
             {/* Badge moderno */}
@@ -83,7 +83,7 @@ const Hero = () => {
                 </DialogContent>
               </Dialog>
               
-              <Link to="/como-funciona">
+              <Link to="/solar">
                 <Button 
                   variant="outline" 
                   size="lg"
@@ -172,11 +172,13 @@ const Hero = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Indicador para rolar para baixo */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-6 border-2 border-flip-blue-600 rounded-full mx-auto opacity-70"></div>
-          <p className="text-sm mt-2 opacity-70 text-flip-blue-600">Role para baixo</p>
+      {/* Indicador para rolar para baixo - posicionado no centro abaixo do conteúdo */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+        <div className="flex flex-col items-center animate-bounce">
+          <div className="text-sm text-flip-blue-600 mb-2 opacity-70">Role para baixo</div>
+          <ChevronDown className="w-6 h-6 text-flip-blue-600 opacity-70" />
         </div>
       </div>
     </section>

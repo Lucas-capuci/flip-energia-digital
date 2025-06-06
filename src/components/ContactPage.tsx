@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
@@ -5,6 +6,10 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Textarea } from './ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from './ui/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import QuestionnaireForm from './QuestionnaireForm';
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +20,8 @@ const ContactPage = () => {
     assunto: '',
     mensagem: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -23,9 +30,44 @@ const ContactPage = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulário enviado:', formData);
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([formData]);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Mensagem enviada com sucesso!",
+        description: "Entraremos em contato em até 24 horas.",
+      });
+
+      // Limpar formulário
+      setFormData({
+        nome: '',
+        email: '',
+        telefone: '',
+        empresa: '',
+        assunto: '',
+        mensagem: ''
+      });
+
+    } catch (error) {
+      console.error('Erro ao enviar mensagem:', error);
+      toast({
+        title: "Erro ao enviar mensagem",
+        description: "Tente novamente ou entre em contato por telefone.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -44,7 +86,7 @@ const ContactPage = () => {
     {
       icon: Mail,
       title: 'E-mail',
-      content: 'contato@flipengenharia.com.br\nvendas@flipengenharia.com.br',
+      content: 'Lucas.capuci@flipeng.com.br\nEduardo.gomes@flipeng.com.br\nJoao.pedro@flipeng.com.br',
       color: 'text-purple-600'
     },
     {
@@ -103,6 +145,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="mt-1"
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div>
@@ -115,6 +158,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="mt-1"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -129,6 +173,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="mt-1"
+                      disabled={isSubmitting}
                     />
                   </div>
                   <div>
@@ -139,6 +184,7 @@ const ContactPage = () => {
                       value={formData.empresa}
                       onChange={handleChange}
                       className="mt-1"
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -152,6 +198,7 @@ const ContactPage = () => {
                     onChange={handleChange}
                     required
                     className="mt-1"
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -166,12 +213,17 @@ const ContactPage = () => {
                     rows={5}
                     className="mt-1"
                     placeholder="Descreva seu projeto ou dúvida..."
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-flip-blue-600 hover:bg-flip-blue-700">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-flip-blue-600 hover:bg-flip-blue-700"
+                  disabled={isSubmitting}
+                >
                   <Send className="w-4 h-4 mr-2" />
-                  Enviar Mensagem
+                  {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
                 </Button>
               </form>
             </CardContent>
@@ -234,9 +286,19 @@ const ContactPage = () => {
                 <p className="mb-4 opacity-90">
                   Solicite um orçamento personalizado para seu projeto.
                 </p>
-                <Button variant="secondary" className="bg-white text-flip-blue-600 hover:bg-gray-100">
-                  Solicitar Orçamento
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="secondary" className="bg-white text-flip-blue-600 hover:bg-gray-100">
+                      Solicitar Orçamento
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Questionário para Orçamento</DialogTitle>
+                    </DialogHeader>
+                    <QuestionnaireForm />
+                  </DialogContent>
+                </Dialog>
               </CardContent>
             </Card>
           </div>
