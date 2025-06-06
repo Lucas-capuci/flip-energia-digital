@@ -1,34 +1,30 @@
 
-// src/components/Navigation.tsx
-
 import React, { useState } from 'react';
 import { Menu, X, Phone } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Link, useLocation } from 'react-router-dom';
 import QuestionnaireForm from './QuestionnaireForm';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const navigationItems = [
-    { label: 'Início', id: 'inicio' },
-    { label: 'Soluções', id: 'solucoes' },
-    { label: 'Parceiros Flip', id: 'parceiros' },
-    { label: 'Portfólio', id: 'portfolio' },
-    { label: 'Calculadora', id: 'calculadora' },
-    { label: 'Contato', id: 'contato' }
+    { label: 'Início', path: '/' },
+    { label: 'Como Funciona', path: '/como-funciona' },
+    { label: 'Soluções', path: '/solucoes' },
+    { label: 'Seja Parceiro', path: '/seja-parceiro' },
+    { label: 'Portfólio', path: '/portfolio' },
+    { label: 'Contato', path: '/contato' }
   ];
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setIsOpen(false);
-    }
-  };
 
   const navigateToProposals = () => {
     window.location.href = '/propostas';
+  };
+
+  const isActivePath = (path: string) => {
+    return location.pathname === path;
   };
 
   return (
@@ -37,28 +33,32 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <img
-              src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png"
-              alt="FLIP Engenharia"
-              className="h-12 w-auto"
-            />
+            <Link to="/">
+              <img
+                src="/lovable-uploads/3e92ace1-6d32-4bd6-a522-f7a41940d2f8.png"
+                alt="FLIP Engenharia"
+                className="h-12 w-auto"
+              />
+            </Link>
           </div>
 
           {/* Navegação Desktop */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               {navigationItems.map((item) => (
-                <button
+                <Link
                   key={item.label}
-                  onClick={() => scrollToSection(item.id)}
+                  to={item.path}
                   className={`transition-colors duration-200 font-medium ${
-                    item.label === 'Parceiros Flip' 
-                      ? 'text-flip-blue-600 hover:text-flip-blue-700 font-semibold' 
-                      : 'text-flip-gray-600 hover:text-flip-blue-500'
+                    isActivePath(item.path)
+                      ? 'text-flip-blue-600 font-semibold border-b-2 border-flip-blue-600'
+                      : item.label === 'Seja Parceiro' 
+                        ? 'text-flip-blue-600 hover:text-flip-blue-700 font-semibold' 
+                        : 'text-flip-gray-600 hover:text-flip-blue-500'
                   }`}
                 >
                   {item.label}
-                </button>
+                </Link>
               ))}
               
               {/* Botão de Orçamento separado */}
@@ -88,13 +88,12 @@ const Navigation = () => {
 
           {/* Botão de Contato */}
           <div className="hidden md:block">
-            <Button
-              className="bg-flip-blue-500 hover:bg-flip-blue-600 text-white"
-              onClick={() => scrollToSection('contato')}
-            >
-              <Phone className="w-4 h-4 mr-2" />
-              Contato
-            </Button>
+            <Link to="/contato">
+              <Button className="bg-flip-blue-500 hover:bg-flip-blue-600 text-white">
+                <Phone className="w-4 h-4 mr-2" />
+                Contato
+              </Button>
+            </Link>
           </div>
 
           {/* Botão do Menu Mobile */}
@@ -115,17 +114,20 @@ const Navigation = () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-flip-blue-100">
             {navigationItems.map((item) => (
-              <button
+              <Link
                 key={item.label}
-                onClick={() => scrollToSection(item.id)}
+                to={item.path}
+                onClick={() => setIsOpen(false)}
                 className={`block px-3 py-2 font-medium w-full text-left ${
-                  item.label === 'Parceiros Flip' 
-                    ? 'text-flip-blue-600 font-semibold' 
-                    : 'text-flip-gray-600 hover:text-flip-blue-500'
+                  isActivePath(item.path)
+                    ? 'text-flip-blue-600 font-semibold bg-flip-blue-50'
+                    : item.label === 'Seja Parceiro' 
+                      ? 'text-flip-blue-600 font-semibold' 
+                      : 'text-flip-gray-600 hover:text-flip-blue-500'
                 }`}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
             
             {/* Botão de Orçamento no mobile */}
@@ -152,13 +154,12 @@ const Navigation = () => {
             </button>
             
             <div className="px-3 py-2">
-              <Button
-                className="w-full bg-flip-blue-500 hover:bg-flip-blue-600 text-white"
-                onClick={() => scrollToSection('contato')}
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                Contato
-              </Button>
+              <Link to="/contato" onClick={() => setIsOpen(false)}>
+                <Button className="w-full bg-flip-blue-500 hover:bg-flip-blue-600 text-white">
+                  <Phone className="w-4 h-4 mr-2" />
+                  Contato
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

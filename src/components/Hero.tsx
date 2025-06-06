@@ -1,21 +1,11 @@
-
 import React, { useState } from 'react';
 import { ArrowRight, Zap, Home, Network, Sparkles, Play } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Link } from 'react-router-dom';
 import QuestionnaireForm from './QuestionnaireForm';
 
 const Hero = () => {
-  const handleCalculateClick = () => {
-    const calculatorSection = document.getElementById('calculadora');
-    if (calculatorSection) {
-      calculatorSection.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  };
-
   return (
     <section id="inicio" className="min-h-screen relative overflow-hidden">
       {/* Background moderno com gradientes animados */}
@@ -92,15 +82,16 @@ const Hero = () => {
                 </DialogContent>
               </Dialog>
               
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="group border-2 border-flip-blue-500/50 text-flip-blue-700 hover:bg-flip-blue-50 hover:border-flip-blue-500 px-10 py-4 rounded-2xl backdrop-blur-sm bg-white/50 shadow-lg hover:shadow-xl transition-all duration-300"
-                onClick={handleCalculateClick}
-              >
-                <Play className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform" />
-                Calcular Economia
-              </Button>
+              <Link to="/como-funciona">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="group border-2 border-flip-blue-500/50 text-flip-blue-700 hover:bg-flip-blue-50 hover:border-flip-blue-500 px-10 py-4 rounded-2xl backdrop-blur-sm bg-white/50 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Play className="mr-3 h-5 w-5 group-hover:scale-110 transition-transform" />
+                  Calcular Economia
+                </Button>
+              </Link>
             </div>
 
             {/* Stats modernos */}
