@@ -1,17 +1,17 @@
 
 import React from 'react';
 import Navigation from '../components/Navigation';
-import ContactPage from '../components/ContactPage';
+import NetworkSection from '../components/NetworkSection';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
 
-const Contato = () => {
+const RedesDistribuicao = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
       
       <main className="pt-16">
-        <ContactPage />
+        <NetworkSection />
       </main>
 
       <Footer />
@@ -20,4 +20,4 @@ const Contato = () => {
   );
 };
 
-export default Contato;
+export default RedesDistribuicao;

@@ -1,17 +1,17 @@
 
 import React from 'react';
 import Navigation from '../components/Navigation';
-import ContactPage from '../components/ContactPage';
+import SolarSection from '../components/SolarSection';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
 
-const Contato = () => {
+const Solar = () => {
   return (
     <div className="min-h-screen">
       <Navigation />
       
       <main className="pt-16">
-        <ContactPage />
+        <SolarSection />
       </main>
 
       <Footer />
@@ -20,4 +20,4 @@ const Contato = () => {
   );
 };
 
-export default Contato;
+export default Solar;

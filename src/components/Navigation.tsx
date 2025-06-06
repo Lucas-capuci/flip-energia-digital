@@ -12,8 +12,9 @@ const Navigation = () => {
 
   const navigationItems = [
     { label: 'Início', path: '/' },
-    { label: 'Como Funciona', path: '/como-funciona' },
-    { label: 'Soluções', path: '/solucoes' },
+    { label: 'Solar', path: '/solar' },
+    { label: 'Redes de Distribuição', path: '/redes-distribuicao' },
+    { label: 'Projetos Elétricos', path: '/projetos-eletricos' },
     { label: 'Seja Parceiro', path: '/seja-parceiro' },
     { label: 'Portfólio', path: '/portfolio' },
     { label: 'Contato', path: '/contato' }
@@ -44,12 +45,12 @@ const Navigation = () => {
 
           {/* Navegação Desktop */}
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+            <div className="ml-10 flex items-baseline space-x-6">
               {navigationItems.map((item) => (
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`transition-colors duration-200 font-medium ${
+                  className={`transition-colors duration-200 font-medium text-sm ${
                     isActivePath(item.path)
                       ? 'text-flip-blue-600 font-semibold border-b-2 border-flip-blue-600'
                       : item.label === 'Seja Parceiro' 
@@ -64,7 +65,7 @@ const Navigation = () => {
               {/* Botão de Orçamento separado */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium">
+                  <button className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm">
                     Orçamento
                   </button>
                 </DialogTrigger>
@@ -79,7 +80,7 @@ const Navigation = () => {
               {/* Botão de Propostas */}
               <button
                 onClick={navigateToProposals}
-                className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium"
+                className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm"
               >
                 Propostas
               </button>

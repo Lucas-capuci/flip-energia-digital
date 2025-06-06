@@ -6,8 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
-import ComoFunciona from "./pages/ComoFunciona";
-import Solucoes from "./pages/Solucoes";
+import Solar from "./pages/Solar";
+import RedesDistribuicao from "./pages/RedesDistribuicao";
+import ProjetosEletricos from "./pages/ProjetosEletricos";
 import SejaParceiro from "./pages/SejaParceiro";
 import Portfolio from "./pages/Portfolio";
 import Contato from "./pages/Contato";
@@ -25,8 +26,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/como-funciona" element={<ComoFunciona />} />
-            <Route path="/solucoes" element={<Solucoes />} />
+            <Route path="/solar" element={<Solar />} />
+            <Route path="/redes-distribuicao" element={<RedesDistribuicao />} />
+            <Route path="/projetos-eletricos" element={<ProjetosEletricos />} />
             <Route path="/seja-parceiro" element={<SejaParceiro />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/contato" element={<Contato />} />
