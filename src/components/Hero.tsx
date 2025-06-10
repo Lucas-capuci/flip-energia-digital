@@ -10,8 +10,8 @@ const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Trigger animations after component mounts
-    const timer = setTimeout(() => setIsVisible(true), 100);
+    // Trigger animations after component mounts with more delay
+    const timer = setTimeout(() => setIsVisible(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -36,32 +36,32 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Main content container com altura reduzida */}
-      <div className="relative z-10 flex-1 flex items-center">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-12 items-center min-h-[70vh]">
-            {/* Content com tamanhos reduzidos */}
-            <div className={`space-y-4 lg:space-y-6 transition-all duration-1000 ease-out ${
+      {/* Main content container com altura ajustada para todas as resoluções */}
+      <div className="relative z-10 flex-1 flex items-center min-h-0">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 xl:gap-12 items-center">
+            {/* Content com animações mais lentas */}
+            <div className={`space-y-3 sm:space-y-4 lg:space-y-6 transition-all duration-[1500ms] ease-out ${
               isVisible 
                 ? 'opacity-100 translate-y-0' 
-                : 'opacity-0 translate-y-8'
+                : 'opacity-0 translate-y-12'
             }`}>
-              {/* Badge menor */}
-              <div className={`inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 shadow-sm transition-all duration-700 delay-300 ${
+              {/* Badge menor com animação mais lenta */}
+              <div className={`inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-slate-200/60 shadow-sm transition-all duration-[1000ms] delay-[800ms] ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-4'
+                  : 'opacity-0 translate-y-6'
               }`}>
                 <Sparkles className="w-3 h-3 text-flip-blue-500 mr-2" />
                 <span className="text-xs font-medium text-slate-700">Tecnologia Sustentável</span>
               </div>
 
-              <div className={`transition-all duration-1000 delay-200 ${
+              <div className={`transition-all duration-[1500ms] delay-[600ms] ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-8'
+                  : 'opacity-0 translate-y-12'
               }`}>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-slate-900 leading-tight">
                   Soluções{' '}
                   <span className="relative inline-block">
                     <span className="bg-gradient-to-r from-flip-blue-600 to-flip-blue-700 bg-clip-text text-transparent">
@@ -77,23 +77,23 @@ const Hero = () => {
                     <div className="absolute -inset-1 bg-gradient-to-r from-slate-700/8 to-slate-800/8 blur-lg -z-10"></div>
                   </span>
                 </h1>
-                <p className="mt-4 lg:mt-6 text-base lg:text-lg text-slate-600 leading-relaxed max-w-xl">
+                <p className="mt-3 lg:mt-4 xl:mt-6 text-sm sm:text-base lg:text-lg text-slate-600 leading-relaxed max-w-xl">
                   Energia solar, automação residencial e redes de distribuição privadas. 
                   Transformamos sua propriedade em um <span className="font-semibold text-flip-blue-700">ecossistema energético inteligente</span>, 
                   sustentável e econômico.
                 </p>
               </div>
 
-              <div className={`flex flex-col sm:flex-row gap-3 lg:gap-4 transition-all duration-1000 delay-500 ${
+              <div className={`flex flex-col sm:flex-row gap-3 lg:gap-4 transition-all duration-[1500ms] delay-[1200ms] ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-8'
+                  : 'opacity-0 translate-y-12'
               }`}>
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button 
                       size="lg" 
-                      className="group bg-flip-blue-600 hover:bg-flip-blue-700 text-white px-6 lg:px-8 py-2.5 lg:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                      className="group bg-flip-blue-600 hover:bg-flip-blue-700 text-white px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     >
                       <span className="flex items-center">
                         Solicitar Orçamento
@@ -113,7 +113,7 @@ const Hero = () => {
                   <Button 
                     variant="outline" 
                     size="lg"
-                    className="group border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 px-6 lg:px-8 py-2.5 lg:py-3 rounded-xl backdrop-blur-sm bg-white/60 shadow-md hover:shadow-lg transition-all duration-300"
+                    className="group border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 lg:py-3 text-sm sm:text-base rounded-xl backdrop-blur-sm bg-white/60 shadow-md hover:shadow-lg transition-all duration-300"
                   >
                     <Play className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
                     Calcular Economia
@@ -121,51 +121,51 @@ const Hero = () => {
                 </Link>
               </div>
 
-              {/* Stats menores */}
-              <div className={`grid grid-cols-3 gap-3 lg:gap-4 pt-4 lg:pt-6 transition-all duration-1000 delay-700 ${
+              {/* Stats menores com animação mais lenta */}
+              <div className={`grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 pt-3 sm:pt-4 lg:pt-6 transition-all duration-[1500ms] delay-[1800ms] ${
                 isVisible 
                   ? 'opacity-100 translate-y-0' 
-                  : 'opacity-0 translate-y-8'
+                  : 'opacity-0 translate-y-12'
               }`}>
                 <div className="text-center">
-                  <div className="text-xl lg:text-2xl font-bold text-flip-blue-700">95%</div>
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-flip-blue-700">95%</div>
                   <div className="text-xs text-slate-500">Economia</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl lg:text-2xl font-bold text-slate-700">100+</div>
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-700">100+</div>
                   <div className="text-xs text-slate-500">Projetos</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-xl lg:text-2xl font-bold text-slate-600">24/7</div>
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-slate-600">24/7</div>
                   <div className="text-xs text-slate-500">Suporte</div>
                 </div>
               </div>
             </div>
 
-            {/* Visual Elements menores */}
-            <div className={`relative transition-all duration-1200 delay-400 ${
+            {/* Visual Elements menores com animação mais lenta */}
+            <div className={`relative transition-all duration-[1800ms] delay-[1000ms] ${
               isVisible 
                 ? 'opacity-100 translate-x-0' 
-                : 'opacity-0 translate-x-8'
+                : 'opacity-0 translate-x-12'
             }`}>
-              {/* Cards menores */}
-              <div className="grid grid-cols-1 gap-4 lg:gap-6">
+              {/* Cards menores e mais responsivos */}
+              <div className="grid grid-cols-1 gap-3 sm:gap-4 lg:gap-6">
                 {/* Energy Card */}
-                <div className={`group relative transition-all duration-700 delay-600 ${
+                <div className={`group relative transition-all duration-[1000ms] delay-[1400ms] ${
                   isVisible 
                     ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-6'
+                    : 'opacity-0 translate-y-8'
                 }`}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-flip-blue-300/20 to-slate-300/15 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-500"></div>
-                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
-                    <div className="flex items-center space-x-3 lg:space-x-4">
-                      <div className="bg-gradient-to-br from-flip-blue-500 to-flip-blue-600 p-2.5 lg:p-3 rounded-xl shadow-md">
-                        <Zap className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
+                    <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+                      <div className="bg-gradient-to-br from-flip-blue-500 to-flip-blue-600 p-2 lg:p-3 rounded-xl shadow-md">
+                        <Zap className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-base lg:text-lg font-bold text-slate-900">Energia Solar</h3>
-                        <p className="text-slate-600 mt-1 text-sm">Economia de até 95% na conta de luz</p>
-                        <div className="mt-1.5 lg:mt-2 text-lg lg:text-xl font-bold text-flip-blue-600">R$ 2.500</div>
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900">Energia Solar</h3>
+                        <p className="text-slate-600 mt-1 text-xs sm:text-sm">Economia de até 95% na conta de luz</p>
+                        <div className="mt-1 sm:mt-1.5 lg:mt-2 text-base sm:text-lg lg:text-xl font-bold text-flip-blue-600">R$ 2.500</div>
                         <div className="text-xs text-slate-500">economia anual média</div>
                       </div>
                     </div>
@@ -173,21 +173,21 @@ const Hero = () => {
                 </div>
 
                 {/* Automation Card */}
-                <div className={`group relative ml-4 lg:ml-8 transition-all duration-700 delay-800 ${
+                <div className={`group relative ml-2 sm:ml-4 lg:ml-8 transition-all duration-[1000ms] delay-[1800ms] ${
                   isVisible 
                     ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-6'
+                    : 'opacity-0 translate-y-8'
                 }`}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-slate-300/15 to-slate-400/10 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-500"></div>
-                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
-                    <div className="flex items-center space-x-3 lg:space-x-4">
-                      <div className="bg-gradient-to-br from-slate-600 to-slate-700 p-2.5 lg:p-3 rounded-xl shadow-md">
-                        <Home className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
+                    <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+                      <div className="bg-gradient-to-br from-slate-600 to-slate-700 p-2 lg:p-3 rounded-xl shadow-md">
+                        <Home className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-base lg:text-lg font-bold text-slate-900">Automação</h3>
-                        <p className="text-slate-600 mt-1 text-sm">Conforto e eficiência inteligente</p>
-                        <div className="mt-1.5 lg:mt-2 text-lg lg:text-xl font-bold text-slate-700">30%</div>
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900">Automação</h3>
+                        <p className="text-slate-600 mt-1 text-xs sm:text-sm">Conforto e eficiência inteligente</p>
+                        <div className="mt-1 sm:mt-1.5 lg:mt-2 text-base sm:text-lg lg:text-xl font-bold text-slate-700">30%</div>
                         <div className="text-xs text-slate-500">redução no consumo</div>
                       </div>
                     </div>
@@ -195,21 +195,21 @@ const Hero = () => {
                 </div>
 
                 {/* Network Card */}
-                <div className={`group relative transition-all duration-700 delay-1000 ${
+                <div className={`group relative transition-all duration-[1000ms] delay-[2200ms] ${
                   isVisible 
                     ? 'opacity-100 translate-y-0' 
-                    : 'opacity-0 translate-y-6'
+                    : 'opacity-0 translate-y-8'
                 }`}>
                   <div className="absolute -inset-1 bg-gradient-to-r from-slate-300/15 to-flip-blue-300/10 rounded-2xl blur opacity-15 group-hover:opacity-30 transition duration-500"></div>
-                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
-                    <div className="flex items-center space-x-3 lg:space-x-4">
-                      <div className="bg-gradient-to-br from-flip-blue-600 to-flip-blue-700 p-2.5 lg:p-3 rounded-xl shadow-md">
-                        <Network className="h-5 w-5 lg:h-6 lg:w-6 text-white" />
+                  <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-slate-200/40">
+                    <div className="flex items-center space-x-2 sm:space-x-3 lg:space-x-4">
+                      <div className="bg-gradient-to-br from-flip-blue-600 to-flip-blue-700 p-2 lg:p-3 rounded-xl shadow-md">
+                        <Network className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-base lg:text-lg font-bold text-slate-900">Redes Privadas</h3>
-                        <p className="text-slate-600 mt-1 text-sm">Infraestrutura segura e confiável</p>
-                        <div className="mt-1.5 lg:mt-2 text-lg lg:text-xl font-bold text-flip-blue-600">99.9%</div>
+                        <h3 className="text-sm sm:text-base lg:text-lg font-bold text-slate-900">Redes Privadas</h3>
+                        <p className="text-slate-600 mt-1 text-xs sm:text-sm">Infraestrutura segura e confiável</p>
+                        <div className="mt-1 sm:mt-1.5 lg:mt-2 text-base sm:text-lg lg:text-xl font-bold text-flip-blue-600">99.9%</div>
                         <div className="text-xs text-slate-500">disponibilidade</div>
                       </div>
                     </div>
@@ -221,11 +221,11 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Indicador para rolar mais abaixo e menor */}
-      <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-1000 delay-1200 ${
+      {/* Indicador para rolar mais abaixo posicionado bem mais baixo */}
+      <div className={`absolute bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-20 transition-all duration-[1500ms] delay-[2500ms] ${
         isVisible 
           ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-4'
+          : 'opacity-0 translate-y-6'
       }`}>
         <div className="flex flex-col items-center animate-bounce">
           <div className="text-xs text-slate-500 mb-1 opacity-60">Role para baixo</div>

@@ -36,7 +36,9 @@ const Footer = () => {
             
             <div className="flex space-x-4">
               <a 
-                href="#" 
+                href="https://www.instagram.com/flip_energy/profilecard/?igsh=MTE0Z3ZzeWM5aWxhOA%3D%3D"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="group bg-flip-blue-600/20 p-3 rounded-full border border-flip-blue-400/30 hover:bg-flip-blue-500 hover:border-flip-blue-400 transition-all duration-300"
               >
                 <Instagram className="h-5 w-5 text-flip-blue-300 group-hover:text-white transition-colors" />
