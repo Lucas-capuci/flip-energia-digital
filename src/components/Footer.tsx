@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, ArrowRight, Zap, Home, Network } from 'lucide-react';
 
@@ -25,7 +24,7 @@ const Footer = () => {
           <div className="lg:col-span-1 space-y-6">
             <div className="space-y-4">
               <img
-                src="/lovable-uploads/991c4431-4337-4433-bb3e-106163a18763.png"
+                src="/lovable-uploads/128626de-5c4d-45a6-a710-143c406139e6.png"
                 alt="FLIP Engenharia"
                 className="h-16 w-auto drop-shadow-md"
               />

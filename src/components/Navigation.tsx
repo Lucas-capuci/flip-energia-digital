@@ -36,7 +36,7 @@ const Navigation = () => {
           <div className="flex items-center">
             <Link to="/">
               <img
-                src="/lovable-uploads/991c4431-4337-4433-bb3e-106163a18763.png"
+                src="/lovable-uploads/128626de-5c4d-45a6-a710-143c406139e6.png"
                 alt="FLIP Engenharia"
                 className="h-12 w-auto"
               />
