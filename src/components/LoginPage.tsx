@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Home } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -23,6 +24,20 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-flip-blue-50 to-white flex items-center justify-center px-4">
+      <div className="absolute top-4 left-4">
+        <Button 
+          variant="outline" 
+          size="sm"
+          asChild
+          className="text-flip-red-500 border-flip-red-500 hover:bg-flip-red-50"
+        >
+          <Link to="/#inicio">
+            <Home className="h-4 w-4 mr-2" />
+            Ir para Hero
+          </Link>
+        </Button>
+      </div>
+
       <Card className="w-full max-w-md p-8 bg-white/90 backdrop-blur-sm shadow-xl rounded-2xl border border-flip-blue-100">
         <div className="text-center mb-8">
           <div className="bg-flip-blue-100 p-3 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
