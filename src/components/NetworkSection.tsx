@@ -119,20 +119,20 @@ const NetworkSection = () => {
   ];
 
   return (
-    <section id="redes" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="redes" className="responsive-py-lg bg-gradient-to-br from-slate-50 via-blue-50/20 to-purple-50/20 overflow-hidden">
+      <div className="responsive-container">
         {/* Header moderno */}
-        <div className="text-center mb-20 animate-fade-in">
-          <div className="flex justify-center mb-8">
+        <div className="text-center responsive-py-md animate-fade-in">
+          <div className="flex justify-center mb-4 sm:mb-6 lg:mb-8">
             <div className="relative">
-              <div className="absolute -inset-3 bg-gradient-to-r from-flip-blue-500/30 via-flip-red-500/30 to-purple-500/30 rounded-full blur-2xl animate-pulse"></div>
-              <div className="relative bg-white p-6 rounded-full shadow-2xl border-2 border-gray-100">
-                <Network className="h-12 w-12 text-flip-blue-600" />
+              <div className="absolute -inset-2 sm:-inset-3 bg-gradient-to-r from-flip-blue-500/30 via-flip-red-500/30 to-purple-500/30 rounded-full blur-xl sm:blur-2xl animate-pulse"></div>
+              <div className="relative bg-white p-4 sm:p-5 lg:p-6 rounded-full shadow-xl sm:shadow-2xl border-2 border-gray-100">
+                <Network className="responsive-icon-xl text-flip-blue-600" />
               </div>
             </div>
           </div>
           
-          <h2 className="text-5xl md:text-6xl font-bold mb-6">
+          <h2 className="responsive-text-5xl font-bold mb-4 sm:mb-6">
             <span className="bg-gradient-to-r from-flip-gray-900 to-flip-gray-700 bg-clip-text text-transparent">
               Redes de Distribuição
             </span>
@@ -142,9 +142,9 @@ const NetworkSection = () => {
             </span>
           </h2>
           
-          <div className="w-32 h-1 bg-gradient-to-r from-flip-blue-500 via-flip-red-500 to-purple-500 mx-auto mb-6 rounded-full"></div>
+          <div className="w-20 sm:w-24 lg:w-32 h-1 bg-gradient-to-r from-flip-blue-500 via-flip-red-500 to-purple-500 mx-auto mb-4 sm:mb-6 rounded-full"></div>
           
-          <p className="text-xl text-flip-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="responsive-text-xl text-flip-gray-600 max-w-4xl mx-auto leading-relaxed">
             Projetamos e executamos redes elétricas de média e baixa tensão para 
             garantir <span className="font-bold text-flip-blue-600 bg-flip-blue-50 px-2 py-1 rounded">autonomia</span>, 
             <span className="font-bold text-flip-red-600 bg-flip-red-50 px-2 py-1 rounded">segurança</span> e eficiência energética total.
@@ -152,26 +152,26 @@ const NetworkSection = () => {
         </div>
 
         {/* Benefits com estilo moderno */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+        <div className="responsive-grid-3 responsive-gap-lg mb-12 sm:mb-16 lg:mb-20">
           {benefits.map((benefit, index) => (
             <div 
               key={benefit.title} 
               className="group relative animate-fade-in"
               style={{ animationDelay: benefit.delay }}
             >
-              <div className={`absolute -inset-1 bg-gradient-to-r ${benefit.gradient} rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+              <div className={`absolute -inset-1 bg-gradient-to-r ${benefit.gradient} rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
               
-              <Card className="relative bg-white/90 backdrop-blur-sm rounded-3xl border-2 border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 h-full">
-                <CardHeader className="text-center pb-4">
-                  <div className={`bg-gradient-to-br ${benefit.iconBg} p-5 rounded-2xl w-fit mx-auto mb-6 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
-                    <benefit.icon className="h-8 w-8 text-white" />
+              <Card className="responsive-card h-full">
+                <CardHeader className="text-center pb-2 sm:pb-4">
+                  <div className={`bg-gradient-to-br ${benefit.iconBg} p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl w-fit mx-auto mb-4 sm:mb-6 shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
+                    <benefit.icon className="responsive-icon-lg text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-bold text-flip-gray-900 mb-3">
+                  <CardTitle className="responsive-text-2xl font-bold text-flip-gray-900 mb-2 sm:mb-3">
                     {benefit.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-flip-gray-600 leading-relaxed">
+                <CardContent className="pt-0 responsive-card-padding">
+                  <p className="text-flip-gray-600 leading-relaxed responsive-text-base">
                     {benefit.description}
                   </p>
                 </CardContent>
@@ -181,35 +181,35 @@ const NetworkSection = () => {
         </div>
 
         {/* Network Features */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl md:text-4xl font-bold text-flip-gray-900 mb-4">
+        <div className="mb-12 sm:mb-16">
+          <div className="text-center mb-8 sm:mb-12">
+            <h3 className="responsive-text-4xl font-bold text-flip-gray-900 mb-4">
               Tecnologia de <span className="bg-gradient-to-r from-flip-blue-600 to-flip-red-600 bg-clip-text text-transparent">Distribuição</span>
             </h3>
-            <div className="w-20 h-1 bg-gradient-to-r from-flip-blue-500 to-flip-red-500 mx-auto mb-4 rounded-full"></div>
-            <p className="text-lg text-flip-gray-600 max-w-3xl mx-auto">
+            <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-flip-blue-500 to-flip-red-500 mx-auto mb-4 rounded-full"></div>
+            <p className="responsive-text-lg text-flip-gray-600 max-w-3xl mx-auto">
               Infraestrutura elétrica de alta performance para máxima confiabilidade
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="responsive-grid-3 responsive-gap">
             {networkFeatures.map((feature, index) => (
               <div 
                 key={feature.title}
                 className="group relative"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className={`absolute -inset-1 bg-gradient-to-r ${feature.color} rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-300`}></div>
+                <div className={`absolute -inset-1 bg-gradient-to-r ${feature.color} rounded-xl sm:rounded-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-300`}></div>
                 
-                <Card className="relative bg-white/95 backdrop-blur-sm rounded-2xl border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
-                  <CardContent className="p-6">
-                    <div className={`bg-gradient-to-r ${feature.color} p-3 rounded-xl w-fit mb-4 shadow-md transform group-hover:scale-110 transition-transform duration-300`}>
-                      <feature.icon className="h-6 w-6 text-white" />
+                <Card className="responsive-card h-full">
+                  <CardContent className="responsive-card-padding">
+                    <div className={`bg-gradient-to-r ${feature.color} p-2 sm:p-3 rounded-lg sm:rounded-xl w-fit mb-3 sm:mb-4 shadow-md transform group-hover:scale-110 transition-transform duration-300`}>
+                      <feature.icon className="responsive-icon-md text-white" />
                     </div>
-                    <h4 className="font-bold text-flip-gray-900 mb-2 text-lg group-hover:text-flip-blue-700 transition-colors">
+                    <h4 className="font-bold text-flip-gray-900 mb-2 responsive-text-lg group-hover:text-flip-blue-700 transition-colors">
                       {feature.title}
                     </h4>
-                    <p className="text-flip-gray-600 text-sm leading-relaxed">
+                    <p className="text-flip-gray-600 responsive-text-sm leading-relaxed">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -219,38 +219,38 @@ const NetworkSection = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="responsive-grid-2 responsive-gap-lg">
           {/* Applications com bordas coloridas */}
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-flip-blue-500/20 to-flip-red-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-flip-blue-500/20 to-flip-red-500/20 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             
-            <Card className="relative bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-gray-100 shadow-2xl h-full">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-flip-blue-500 to-flip-red-500 rounded-t-3xl"></div>
+            <Card className="responsive-card h-full">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-flip-blue-500 to-flip-red-500 rounded-t-2xl sm:rounded-t-3xl"></div>
               
-              <CardHeader className="bg-gradient-to-r from-gray-50 to-white rounded-t-3xl border-b border-gray-100">
-                <CardTitle className="flex items-center text-2xl">
+              <CardHeader className="bg-gradient-to-r from-gray-50 to-white rounded-t-2xl sm:rounded-t-3xl border-b border-gray-100">
+                <CardTitle className="flex items-center responsive-text-2xl">
                   <div className="p-2 bg-gradient-to-r from-flip-blue-500 to-flip-red-500 rounded-lg mr-3">
-                    <Zap className="h-6 w-6 text-white" />
+                    <Zap className="responsive-icon-md text-white" />
                   </div>
                   Aplicações
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-600 responsive-text-base">
                   Ideal para diversos tipos de empreendimentos
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="space-y-4">
+              <CardContent className="responsive-card-padding">
+                <div className="space-y-3 sm:space-y-4">
                   {applications.map((application, index) => (
                     <div 
                       key={index} 
-                      className="flex items-center p-4 bg-gradient-to-r from-white/80 to-flip-blue-50/30 rounded-xl hover:from-flip-blue-50/50 hover:to-flip-red-50/30 transition-all duration-300 group/item border-2 border-transparent hover:border-gray-200"
+                      className="flex items-center p-3 sm:p-4 bg-gradient-to-r from-white/80 to-flip-blue-50/30 rounded-lg sm:rounded-xl hover:from-flip-blue-50/50 hover:to-flip-red-50/30 transition-all duration-300 group/item border-2 border-transparent hover:border-gray-200"
                     >
-                      <span className="text-2xl mr-4">{application.icon}</span>
-                      <span className="text-flip-gray-700 font-medium group-hover/item:text-flip-blue-700 transition-colors flex-1">
+                      <span className="text-xl sm:text-2xl mr-3 sm:mr-4">{application.icon}</span>
+                      <span className="text-flip-gray-700 font-medium group-hover/item:text-flip-blue-700 transition-colors flex-1 responsive-text-base">
                         {application.text}
                       </span>
                       <div className="bg-gradient-to-r from-green-500 to-green-600 p-1 rounded-lg opacity-0 group-hover/item:opacity-100 transition-opacity">
-                        <CheckCircle className="h-4 w-4 text-white" />
+                        <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                       </div>
                     </div>
                   ))}
@@ -261,37 +261,37 @@ const NetworkSection = () => {
 
           {/* Services com ícones coloridos */}
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-flip-red-500/20 to-purple-500/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-flip-red-500/20 to-purple-500/20 rounded-2xl sm:rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             
-            <Card className="relative bg-white/95 backdrop-blur-sm rounded-3xl border-2 border-gray-100 shadow-2xl h-full">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-flip-red-500 to-purple-500 rounded-t-3xl"></div>
+            <Card className="responsive-card h-full">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-flip-red-500 to-purple-500 rounded-t-2xl sm:rounded-t-3xl"></div>
               
-              <CardHeader className="bg-gradient-to-r from-gray-50 to-white rounded-t-3xl border-b border-gray-100">
-                <CardTitle className="flex items-center text-2xl">
+              <CardHeader className="bg-gradient-to-r from-gray-50 to-white rounded-t-2xl sm:rounded-t-3xl border-b border-gray-100">
+                <CardTitle className="flex items-center responsive-text-2xl">
                   <div className="p-2 bg-gradient-to-r from-flip-red-500 to-purple-500 rounded-lg mr-3">
-                    <Shield className="h-6 w-6 text-white" />
+                    <Shield className="responsive-icon-md text-white" />
                   </div>
                   Nossos Serviços
                 </CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardDescription className="text-gray-600 responsive-text-base">
                   Soluções completas em infraestrutura elétrica
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8">
-                <div className="grid grid-cols-1 gap-4">
+              <CardContent className="responsive-card-padding">
+                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                   {services.map((service, index) => (
                     <div 
                       key={index}
-                      className="flex items-start space-x-4 p-4 bg-gradient-to-r from-white/80 to-gray-50/30 rounded-xl hover:from-gray-100/50 hover:to-gray-50/50 transition-all duration-300 group/service border-2 border-transparent hover:border-gray-200"
+                      className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gradient-to-r from-white/80 to-gray-50/30 rounded-lg sm:rounded-xl hover:from-gray-100/50 hover:to-gray-50/50 transition-all duration-300 group/service border-2 border-transparent hover:border-gray-200"
                     >
-                      <div className={`bg-gradient-to-r ${service.color} p-3 rounded-xl shadow-md group-hover/service:shadow-lg transition-all duration-300 transform group-hover/service:scale-110`}>
-                        <service.icon className="h-5 w-5 text-white" />
+                      <div className={`bg-gradient-to-r ${service.color} p-2 sm:p-3 rounded-lg sm:rounded-xl shadow-md group-hover/service:shadow-lg transition-all duration-300 transform group-hover/service:scale-110 flex-shrink-0`}>
+                        <service.icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-flip-gray-900 mb-1 group-hover/service:text-flip-blue-700 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-flip-gray-900 mb-1 group-hover/service:text-flip-blue-700 transition-colors responsive-text-base">
                           {service.title}
                         </h4>
-                        <p className="text-sm text-flip-gray-600 leading-relaxed">
+                        <p className="responsive-text-sm text-flip-gray-600 leading-relaxed">
                           {service.description}
                         </p>
                       </div>
