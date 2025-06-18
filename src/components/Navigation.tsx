@@ -36,7 +36,7 @@ const Navigation = () => {
           <div className="flex items-center">
             <Link to="/">
               <img
-                src="/lovable-uploads/5e3aa9af-1a74-4c56-acc9-be5b96f6e37d.png"
+                src="/lovable-uploads/991c4431-4337-4433-bb3e-106163a18763.png"
                 alt="FLIP Engenharia"
                 className="h-12 w-auto"
               />
@@ -54,7 +54,7 @@ const Navigation = () => {
                     isActivePath(item.path)
                       ? 'text-flip-blue-600 font-semibold border-b-2 border-flip-blue-600'
                       : item.label === 'Seja Parceiro' 
-                        ? 'text-flip-blue-600 hover:text-flip-blue-700 font-semibold' 
+                        ? 'text-flip-red-500 hover:text-flip-red-600 font-semibold' 
                         : 'text-flip-gray-600 hover:text-flip-blue-500'
                   }`}
                 >
@@ -123,7 +123,7 @@ const Navigation = () => {
                   isActivePath(item.path)
                     ? 'text-flip-blue-600 font-semibold bg-flip-blue-50'
                     : item.label === 'Seja Parceiro' 
-                      ? 'text-flip-blue-600 font-semibold' 
+                      ? 'text-flip-red-500 font-semibold' 
                       : 'text-flip-gray-600 hover:text-flip-blue-500'
                 }`}
               >
