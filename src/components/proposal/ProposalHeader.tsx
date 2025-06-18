@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LogOut, ArrowLeft } from 'lucide-react';
+import { LogOut, ArrowLeft, Home } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -21,6 +21,17 @@ const ProposalHeader: React.FC = () => {
             <Link to="/">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Voltar ao Menu
+            </Link>
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            asChild
+            className="text-flip-red-500 border-flip-red-500 hover:bg-flip-red-50"
+          >
+            <Link to="/#inicio">
+              <Home className="h-4 w-4 mr-2" />
+              Ir para Hero
             </Link>
           </Button>
           <div>
