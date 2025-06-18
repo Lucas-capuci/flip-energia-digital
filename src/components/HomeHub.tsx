@@ -11,48 +11,42 @@ const HomeHub = () => {
       description: "Descubra como nossa tecnologia solar pode revolucionar sua energia, com economia de até 95% na conta de luz e retorno do investimento garantido.",
       icon: Zap,
       link: "/solar",
-      color: "from-flip-blue-500 to-cyan-500",
-      isHighlight: true
+      color: "from-flip-blue-500 to-cyan-500"
     },
     {
       title: "Redes de Distribuição",
       description: "Infraestrutura elétrica segura e confiável para condomínios, empresas e propriedades rurais com sistemas de distribuição privados.",
       icon: Network,
       link: "/redes-distribuicao",
-      color: "from-emerald-500 to-teal-500",
-      isHighlight: false
+      color: "from-emerald-500 to-teal-500"
     },
     {
       title: "Projetos Elétricos",
       description: "Automação residencial e projetos elétricos completos para máximo conforto, eficiência energética e modernidade em sua propriedade.",
       icon: Home,
       link: "/projetos-eletricos",
-      color: "from-purple-500 to-pink-500",
-      isHighlight: false
+      color: "from-purple-500 to-pink-500"
     },
     {
       title: "Seja um Parceiro",
       description: "Junte-se à rede Flip e tenha acesso a condições especiais, suporte técnico e oportunidades de negócio no setor energético.",
       icon: Users,
       link: "/seja-parceiro",
-      color: "from-flip-blue-500 to-flip-blue-600",
-      isHighlight: false
+      color: "from-orange-500 to-red-500"
     },
     {
       title: "Portfólio",
       description: "Conheça nossos projetos realizados e veja como transformamos energia em economia e sustentabilidade para nossos clientes.",
       icon: Briefcase,
       link: "/portfolio",
-      color: "from-indigo-500 to-purple-500",
-      isHighlight: false
+      color: "from-indigo-500 to-purple-500"
     },
     {
       title: "Contato",
       description: "Entre em contato conosco para tirar dúvidas, solicitar orçamentos ou conhecer nossas soluções personalizadas para seu projeto.",
       icon: Phone,
       link: "/contato",
-      color: "from-pink-500 to-rose-500",
-      isHighlight: true
+      color: "from-pink-500 to-rose-500"
     }
   ];
 
@@ -86,11 +80,7 @@ const HomeHub = () => {
                 
                 <Link to={section.link}>
                   <Button 
-                    className={`group/btn w-full ${
-                      section.isHighlight 
-                        ? 'bg-gradient-to-r from-flip-red-500 to-flip-red-600 hover:from-flip-red-600 hover:to-flip-red-700' 
-                        : 'bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700'
-                    } text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300`}
+                    className="group/btn w-full bg-gradient-to-r from-flip-blue-500 to-flip-blue-600 hover:from-flip-blue-600 hover:to-flip-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
                   >
                     Ver mais
                     <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />

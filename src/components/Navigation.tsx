@@ -54,7 +54,7 @@ const Navigation = () => {
                     isActivePath(item.path)
                       ? 'text-flip-blue-600 font-semibold border-b-2 border-flip-blue-600'
                       : item.label === 'Seja Parceiro' 
-                        ? 'text-flip-blue-500 hover:text-flip-blue-600 font-semibold' 
+                        ? 'text-flip-red-500 hover:text-flip-red-600 font-semibold' 
                         : 'text-flip-gray-600 hover:text-flip-blue-500'
                   }`}
                 >
@@ -65,7 +65,7 @@ const Navigation = () => {
               {/* Botão de Orçamento separado */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="bg-flip-red-500 hover:bg-flip-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium text-sm shadow-md">
+                  <button className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm">
                     Orçamento
                   </button>
                 </DialogTrigger>
@@ -90,7 +90,7 @@ const Navigation = () => {
           {/* Botão de Contato */}
           <div className="hidden md:block">
             <Link to="/contato">
-              <Button className="bg-flip-red-500 hover:bg-flip-red-600 text-white shadow-md">
+              <Button className="bg-flip-blue-500 hover:bg-flip-blue-600 text-white">
                 <Phone className="w-4 h-4 mr-2" />
                 Contato
               </Button>
@@ -123,7 +123,7 @@ const Navigation = () => {
                   isActivePath(item.path)
                     ? 'text-flip-blue-600 font-semibold bg-flip-blue-50'
                     : item.label === 'Seja Parceiro' 
-                      ? 'text-flip-blue-500 font-semibold' 
+                      ? 'text-flip-red-500 font-semibold' 
                       : 'text-flip-gray-600 hover:text-flip-blue-500'
                 }`}
               >
@@ -134,7 +134,7 @@ const Navigation = () => {
             {/* Botão de Orçamento no mobile */}
             <Dialog>
               <DialogTrigger asChild>
-                <button className="block px-3 py-2 bg-flip-red-500 hover:bg-flip-red-600 text-white font-medium w-full text-left rounded-lg mx-3 mt-2 shadow-md">
+                <button className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left">
                   Orçamento
                 </button>
               </DialogTrigger>
@@ -156,7 +156,7 @@ const Navigation = () => {
             
             <div className="px-3 py-2">
               <Link to="/contato" onClick={() => setIsOpen(false)}>
-                <Button className="w-full bg-flip-red-500 hover:bg-flip-red-600 text-white shadow-md">
+                <Button className="w-full bg-flip-blue-500 hover:bg-flip-blue-600 text-white">
                   <Phone className="w-4 h-4 mr-2" />
                   Contato
                 </Button>
