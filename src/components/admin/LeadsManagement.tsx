@@ -1,28 +1,44 @@
-
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
-import { Eye, Download, Filter, Search, Calendar, Edit } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
+import LeadsFilters from './leads/LeadsFilters';
+import LeadsTable from './leads/LeadsTable';
+import EditLeadDialog from './leads/EditLeadDialog';
+
+interface Lead {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  property_type: string;
+  services: string[];
+  created_at: string;
+  description?: string;
+}
+
+interface Partner {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  city: string;
+  state: string;
+  average_consumption?: string;
+  created_at: string;
+}
 
 const LeadsManagement = () => {
-  const [budgetRequests, setBudgetRequests] = useState([]);
-  const [partnerRegistrations, setPartnerRegistrations] = useState([]);
-  const [filteredBudgetRequests, setFilteredBudgetRequests] = useState([]);
-  const [filteredPartnerRegistrations, setFilteredPartnerRegistrations] = useState([]);
+  const [budgetRequests, setBudgetRequests] = useState<Lead[]>([]);
+  const [partnerRegistrations, setPartnerRegistrations] = useState<Partner[]>([]);
+  const [filteredBudgetRequests, setFilteredBudgetRequests] = useState<Lead[]>([]);
+  const [filteredPartnerRegistrations, setFilteredPartnerRegistrations] = useState<Partner[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterService, setFilterService] = useState('all');
   const [filterDate, setFilterDate] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
-  const [editingLead, setEditingLead] = useState(null);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
@@ -49,7 +65,6 @@ const LeadsManagement = () => {
     try {
       setIsLoading(true);
       
-      // Fetch budget requests
       const { data: budgetData, error: budgetError } = await supabase
         .from('budget_requests')
         .select('*')
@@ -57,7 +72,6 @@ const LeadsManagement = () => {
 
       if (budgetError) throw budgetError;
 
-      // Fetch partner registrations
       const { data: partnerData, error: partnerError } = await supabase
         .from('partner_registrations')
         .select('*')
@@ -83,7 +97,6 @@ const LeadsManagement = () => {
     let filteredBudget = budgetRequests;
     let filteredPartner = partnerRegistrations;
 
-    // Filtro por texto de busca
     if (searchTerm) {
       filteredBudget = filteredBudget.filter(request =>
         request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -99,7 +112,6 @@ const LeadsManagement = () => {
       );
     }
 
-    // Filtro por serviço (apenas para budget requests)
     if (filterService !== 'all') {
       filteredBudget = filteredBudget.filter(request =>
         request.services.some(service => 
@@ -108,10 +120,9 @@ const LeadsManagement = () => {
       );
     }
 
-    // Filtro por data
     if (filterDate !== 'all') {
       const today = new Date();
-      const filterDate_fn = (date) => {
+      const filterDate_fn = (date: string) => {
         const itemDate = new Date(date);
         switch (filterDate) {
           case 'today':
@@ -135,18 +146,7 @@ const LeadsManagement = () => {
     setFilteredPartnerRegistrations(filteredPartner);
   };
 
-  const getStatusBadge = (request) => {
-    const createdDate = new Date(request.created_at);
-    const currentDate = new Date();
-    const daysSinceCreated = Math.floor((currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysSinceCreated === 0) return <Badge variant="default">Novo</Badge>;
-    if (daysSinceCreated <= 3) return <Badge variant="secondary">Em Análise</Badge>;
-    if (daysSinceCreated <= 7) return <Badge variant="outline">Aguardando</Badge>;
-    return <Badge variant="destructive">Atrasado</Badge>;
-  };
-
-  const handleEditLead = (lead) => {
+  const handleEditLead = (lead: Lead) => {
     setEditingLead(lead);
     form.reset({
       name: lead.name,
@@ -159,7 +159,33 @@ const LeadsManagement = () => {
     setIsEditDialogOpen(true);
   };
 
-  const onSubmitEdit = async (data) => {
+  const handleDeleteLead = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('budget_requests')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchData();
+      toast({
+        title: 'Lead removido',
+        description: 'O lead foi removido com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível remover o lead.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const onSubmitEdit = async (data: any) => {
+    if (!editingLead) return;
+
     try {
       const { error } = await supabase
         .from('budget_requests')
@@ -215,110 +241,30 @@ const LeadsManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Filter className="h-5 w-5" />
-            <span>Filtros e Busca</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Buscar por nome ou email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={filterService} onValueChange={setFilterService}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filtrar por serviço" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os serviços</SelectItem>
-                <SelectItem value="solar">Energia Solar</SelectItem>
-                <SelectItem value="eletrica">Instalação Elétrica</SelectItem>
-                <SelectItem value="redes">Redes de Distribuição</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={filterDate} onValueChange={setFilterDate}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filtrar por período" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os períodos</SelectItem>
-                <SelectItem value="today">Hoje</SelectItem>
-                <SelectItem value="week">Esta semana</SelectItem>
-                <SelectItem value="month">Este mês</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={exportData} variant="outline" className="flex items-center space-x-2">
-              <Download className="h-4 w-4" />
-              <span>Exportar CSV</span>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <LeadsFilters
+        searchTerm={searchTerm}
+        filterService={filterService}
+        filterDate={filterDate}
+        onSearchChange={setSearchTerm}
+        onServiceFilterChange={setFilterService}
+        onDateFilterChange={setFilterDate}
+        onExport={exportData}
+      />
 
-      {/* Budget Requests */}
       <Card>
         <CardHeader>
           <CardTitle>Solicitações de Orçamento ({filteredBudgetRequests.length})</CardTitle>
           <CardDescription>Leads gerados através do formulário de orçamento</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>Tipo de Imóvel</TableHead>
-                <TableHead>Serviços</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Data</TableHead>
-                <TableHead>Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredBudgetRequests.map((request) => (
-                <TableRow key={request.id}>
-                  <TableCell className="font-medium">{request.name}</TableCell>
-                  <TableCell>{request.email}</TableCell>
-                  <TableCell>{request.phone}</TableCell>
-                  <TableCell className="capitalize">{request.property_type}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {request.services.map((service, index) => (
-                        <Badge key={index} variant="outline" className="text-xs">
-                          {service}
-                        </Badge>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <TableCell>{getStatusBadge(request)}</TableCell>
-                  <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEditLead(request)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <LeadsTable
+            leads={filteredBudgetRequests}
+            onEdit={handleEditLead}
+            onDelete={handleDeleteLead}
+          />
         </CardContent>
       </Card>
 
-      {/* Partner Registrations */}
       <Card>
         <CardHeader>
           <CardTitle>Cadastros de Parceiros ({filteredPartnerRegistrations.length})</CardTitle>
@@ -354,106 +300,13 @@ const LeadsManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Edit Lead Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Editar Lead</DialogTitle>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome completo" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="email@exemplo.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Telefone</FormLabel>
-                      <FormControl>
-                        <Input placeholder="(11) 99999-9999" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="property_type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo de Imóvel</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o tipo" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="residencial">Residencial</SelectItem>
-                          <SelectItem value="comercial">Comercial</SelectItem>
-                          <SelectItem value="industrial">Industrial</SelectItem>
-                          <SelectItem value="rural">Rural</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Descrição</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Detalhes adicionais" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button type="submit">Salvar Alterações</Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      <EditLeadDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        lead={editingLead}
+        form={form}
+        onSubmit={onSubmitEdit}
+      />
     </div>
   );
 };
