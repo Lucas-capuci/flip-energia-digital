@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, ArrowRight, Zap, Home, Network } from 'lucide-react';
 
@@ -86,8 +87,8 @@ const Footer = () => {
               <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-red-400/50 transition-colors group">
                 <div className="flex items-start">
                   <Mail className="h-4 w-4 mr-3 text-flip-red-400 mt-1 flex-shrink-0" />
-                  <div className="space-y-1">
-                    <a href="mailto:lucas.capuci@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <a href="mailto:lucas.capuci@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors break-all">
                       lucas.capuci@flipeng.com.br
                     </a>
                     <p className="text-flip-gray-400 text-xs">Redes de distribuição</p>
@@ -98,8 +99,8 @@ const Footer = () => {
               <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-red-400/50 transition-colors group">
                 <div className="flex items-start">
                   <Mail className="h-4 w-4 mr-3 text-flip-red-400 mt-1 flex-shrink-0" />
-                  <div className="space-y-1">
-                    <a href="mailto:eduardo.gomes@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <a href="mailto:eduardo.gomes@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors break-all">
                       eduardo.gomes@flipeng.com.br
                     </a>
                     <p className="text-flip-gray-400 text-xs">Projetos Residencial</p>
@@ -110,8 +111,8 @@ const Footer = () => {
               <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-red-400/50 transition-colors group">
                 <div className="flex items-start">
                   <Mail className="h-4 w-4 mr-3 text-flip-red-400 mt-1 flex-shrink-0" />
-                  <div className="space-y-1">
-                    <a href="mailto:joao.pedro@flipeng.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <a href="mailto:joao.pedro@flipeng.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors break-all">
                       joao.pedro@flipeng.br
                     </a>
                     <p className="text-flip-gray-400 text-xs">Energia solar</p>
@@ -129,35 +130,35 @@ const Footer = () => {
             </h3>
             
             <div className="space-y-3">
-              <button 
-                onClick={() => scrollToSection('calculadora')} 
+              <a 
+                href="/solar"
                 className="group flex items-center p-3 rounded-lg hover:bg-flip-red-600/20 transition-all duration-300 w-full text-left"
               >
                 <Zap className="h-5 w-5 text-flip-red-400 mr-3 group-hover:text-flip-red-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Energia Solar</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-red-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </button>
+              </a>
               
-              <button 
-                onClick={() => scrollToSection('solucoes')} 
+              <a 
+                href="/solucoes"
                 className="group flex items-center p-3 rounded-lg hover:bg-flip-red-600/20 transition-all duration-300 w-full text-left"
               >
                 <Home className="h-5 w-5 text-flip-red-400 mr-3 group-hover:text-flip-red-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Automação Residencial</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-red-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </button>
+              </a>
               
-              <button 
-                onClick={() => scrollToSection('solucoes')} 
+              <a 
+                href="/redes-distribuicao"
                 className="group flex items-center p-3 rounded-lg hover:bg-flip-red-600/20 transition-all duration-300 w-full text-left"
               >
                 <Network className="h-5 w-5 text-flip-red-400 mr-3 group-hover:text-flip-red-300" />
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Redes de Distribuição</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-red-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </button>
+              </a>
               
-              <button 
-                onClick={() => scrollToSection('parceiros')} 
+              <a 
+                href="/seja-parceiro"
                 className="group flex items-center p-3 rounded-lg hover:bg-flip-red-600/20 transition-all duration-300 border border-flip-red-400/30 w-full text-left"
               >
                 <div className="h-5 w-5 bg-gradient-to-br from-flip-red-400 to-flip-red-600 rounded mr-3 flex items-center justify-center">
@@ -165,7 +166,7 @@ const Footer = () => {
                 </div>
                 <span className="text-flip-gray-300 group-hover:text-white transition-colors">Seja um Parceiro Flip</span>
                 <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-red-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </button>
+              </a>
             </div>
           </div>
 
@@ -181,13 +182,13 @@ const Footer = () => {
                 Transforme sua energia com nossas soluções sustentáveis e tecnológicas.
               </p>
               
-              <button 
-                onClick={() => scrollToSection('calculadora')}
+              <a 
+                href="/solar"
                 className="inline-flex items-center bg-gradient-to-r from-flip-red-500 to-flip-red-600 hover:from-flip-red-600 hover:to-flip-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 group w-full justify-center"
               >
                 Calcular Economia
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
             </div>
           </div>
         </div>
