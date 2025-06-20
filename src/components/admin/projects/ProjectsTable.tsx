@@ -1,10 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Button } from '../../ui/button';
 import { Badge } from '../../ui/badge';
 import { Checkbox } from '../../ui/checkbox';
-import { Edit, Trash2 } from 'lucide-react';
+import { Input } from '../../ui/input';
+import { Edit, Trash2, Check, X } from 'lucide-react';
 
 interface Project {
   id: string;
@@ -25,14 +26,21 @@ interface ProjectsTableProps {
   selectedProjects: Set<string>;
   onProjectSelection: (projectId: string, checked: boolean) => void;
   onDelete: (id: string) => void;
+  onEdit: (project: Project) => void;
+  onProgressUpdate: (id: string, progress: number) => void;
 }
 
 const ProjectsTable: React.FC<ProjectsTableProps> = ({
   projects,
   selectedProjects,
   onProjectSelection,
-  onDelete
+  onDelete,
+  onEdit,
+  onProgressUpdate
 }) => {
+  const [editingProgress, setEditingProgress] = useState<string | null>(null);
+  const [progressValue, setProgressValue] = useState<number>(0);
+
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: any }> = {
       planejamento: { label: 'Planejamento', variant: 'secondary' },
@@ -60,6 +68,22 @@ const ProjectsTable: React.FC<ProjectsTableProps> = ({
     const today = new Date();
     const endDate = new Date(project.end_date);
     return endDate < today;
+  };
+
+  const handleProgressEdit = (projectId: string, currentProgress: number) => {
+    setEditingProgress(projectId);
+    setProgressValue(currentProgress);
+  };
+
+  const handleProgressSave = (projectId: string) => {
+    const clampedProgress = Math.max(0, Math.min(100, progressValue));
+    onProgressUpdate(projectId, clampedProgress);
+    setEditingProgress(null);
+  };
+
+  const handleProgressCancel = () => {
+    setEditingProgress(null);
+    setProgressValue(0);
   };
 
   return (
@@ -102,15 +126,49 @@ const ProjectsTable: React.FC<ProjectsTableProps> = ({
             </TableCell>
             <TableCell>{getStatusBadge(project.status)}</TableCell>
             <TableCell>
-              <div className="flex items-center space-x-2">
-                <div className="w-16 bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full ${getProgressColor(project.progress)}`}
-                    style={{ width: `${project.progress}%` }}
+              {editingProgress === project.id ? (
+                <div className="flex items-center space-x-2">
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={progressValue}
+                    onChange={(e) => setProgressValue(Number(e.target.value))}
+                    className="w-16 h-8"
                   />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleProgressSave(project.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleProgressCancel}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                 </div>
-                <span className="text-sm text-gray-600">{project.progress}%</span>
-              </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <div className="w-16 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${getProgressColor(project.progress)}`}
+                      style={{ width: `${project.progress}%` }}
+                    />
+                  </div>
+                  <span 
+                    className="text-sm text-gray-600 cursor-pointer hover:text-blue-600"
+                    onClick={() => handleProgressEdit(project.id, project.progress)}
+                  >
+                    {project.progress}%
+                  </span>
+                </div>
+              )}
             </TableCell>
             <TableCell>{new Date(project.start_date).toLocaleDateString()}</TableCell>
             <TableCell>
@@ -119,7 +177,11 @@ const ProjectsTable: React.FC<ProjectsTableProps> = ({
             <TableCell>R$ {project.value.toLocaleString()}</TableCell>
             <TableCell>
               <div className="flex space-x-1">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onEdit(project)}
+                >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button 

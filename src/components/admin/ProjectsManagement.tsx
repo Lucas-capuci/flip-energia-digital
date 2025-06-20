@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import ProjectsTable from './projects/ProjectsTable';
 import ProjectsFilters from './projects/ProjectsFilters';
 import CreateProjectDialog from './projects/CreateProjectDialog';
+import EditProjectDialog from './projects/EditProjectDialog';
 
 interface Project {
   id: string;
@@ -32,12 +33,14 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('todos');
   const [typeFilter, setTypeFilter] = useState('todos');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
-  const form = useForm({
+  const createForm = useForm({
     defaultValues: {
       name: '',
       client: '',
@@ -46,6 +49,20 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
       start_date: '',
       end_date: '',
       value: '',
+      description: ''
+    }
+  });
+
+  const editForm = useForm({
+    defaultValues: {
+      name: '',
+      client: '',
+      type: '',
+      status: 'planejamento',
+      start_date: '',
+      end_date: '',
+      value: '',
+      progress: '',
       description: ''
     }
   });
@@ -113,7 +130,7 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
     setFilteredProjects(filtered);
   };
 
-  const onSubmit = async (data: any) => {
+  const onCreateSubmit = async (data: any) => {
     try {
       const projectData = {
         name: data.name,
@@ -134,8 +151,8 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
       if (error) throw error;
 
       await fetchProjects();
-      setIsDialogOpen(false);
-      form.reset();
+      setIsCreateDialogOpen(false);
+      createForm.reset();
       
       toast({
         title: 'Projeto criado',
@@ -146,6 +163,49 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
       toast({
         title: 'Erro',
         description: 'Não foi possível criar o projeto.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const onEditSubmit = async (data: any) => {
+    if (!editingProject) return;
+
+    try {
+      const projectData = {
+        name: data.name,
+        client: data.client,
+        type: data.type,
+        status: data.status,
+        start_date: data.start_date,
+        end_date: data.end_date || null,
+        value: parseFloat(data.value),
+        progress: parseInt(data.progress),
+        description: data.description || null,
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('projects')
+        .update(projectData)
+        .eq('id', editingProject.id);
+
+      if (error) throw error;
+
+      await fetchProjects();
+      setIsEditDialogOpen(false);
+      setEditingProject(null);
+      editForm.reset();
+      
+      toast({
+        title: 'Projeto atualizado',
+        description: 'O projeto foi atualizado com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error updating project:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o projeto.',
         variant: 'destructive',
       });
     }
@@ -170,6 +230,38 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
       toast({
         title: 'Erro',
         description: 'Não foi possível excluir o projeto.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleProgressUpdate = async (id: string, progress: number) => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .update({ 
+          progress: progress,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchProjects();
+      toast({
+        title: 'Progresso atualizado',
+        description: 'O progresso do projeto foi atualizado com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o progresso.',
         variant: 'destructive',
       });
     }
@@ -208,10 +300,10 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
                 onTypeChange={setTypeFilter}
               />
               <CreateProjectDialog
-                isOpen={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                form={form}
-                onSubmit={onSubmit}
+                isOpen={isCreateDialogOpen}
+                onOpenChange={setIsCreateDialogOpen}
+                form={createForm}
+                onSubmit={onCreateSubmit}
               />
             </div>
           </CardTitle>
@@ -219,6 +311,10 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
             Gerencie todos os projetos conectados ao Supabase. 
             <span className="text-red-600 font-medium">
               Critério para "atrasado": data de fim menor que hoje e status não concluído/cancelado.
+            </span>
+            <br />
+            <span className="text-blue-600 font-medium">
+              Clique na porcentagem para editar o progresso ou use o botão de editar para alterar outros dados.
             </span>
           </CardDescription>
         </CardHeader>
@@ -228,9 +324,19 @@ const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) 
             selectedProjects={selectedProjects}
             onProjectSelection={handleProjectSelection}
             onDelete={deleteProject}
+            onEdit={handleEditProject}
+            onProgressUpdate={handleProgressUpdate}
           />
         </CardContent>
       </Card>
+
+      <EditProjectDialog
+        project={editingProject!}
+        isOpen={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        form={editForm}
+        onSubmit={onEditSubmit}
+      />
     </div>
   );
 };
