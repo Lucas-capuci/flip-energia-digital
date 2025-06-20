@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Button } from '../../ui/button';
 import { Badge } from '../../ui/badge';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, RefreshCw, History } from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -14,24 +14,46 @@ interface Lead {
   services: string[];
   created_at: string;
   description?: string;
+  status?: string;
 }
 
 interface LeadsTableProps {
   leads: Lead[];
   onEdit: (lead: Lead) => void;
   onDelete: (id: string) => void;
+  onUpdateStatus: (lead: Lead) => void;
+  onViewHistory: (leadId: string) => void;
 }
 
-const LeadsTable: React.FC<LeadsTableProps> = ({ leads, onEdit, onDelete }) => {
-  const getStatusBadge = (request: Lead) => {
-    const createdDate = new Date(request.created_at);
-    const currentDate = new Date();
-    const daysSinceCreated = Math.floor((currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (daysSinceCreated === 0) return <Badge variant="default">Novo</Badge>;
-    if (daysSinceCreated <= 3) return <Badge variant="secondary">Em Análise</Badge>;
-    if (daysSinceCreated <= 7) return <Badge variant="outline">Aguardando</Badge>;
-    return <Badge variant="destructive">Atrasado</Badge>;
+const LeadsTable: React.FC<LeadsTableProps> = ({ 
+  leads, 
+  onEdit, 
+  onDelete, 
+  onUpdateStatus, 
+  onViewHistory 
+}) => {
+  const getStatusBadge = (lead: Lead) => {
+    if (!lead.status) {
+      const createdDate = new Date(lead.created_at);
+      const currentDate = new Date();
+      const daysSinceCreated = Math.floor((currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (daysSinceCreated === 0) return <Badge variant="default">Novo</Badge>;
+      if (daysSinceCreated <= 3) return <Badge variant="secondary">Em Análise</Badge>;
+      if (daysSinceCreated <= 7) return <Badge variant="outline">Aguardando</Badge>;
+      return <Badge variant="destructive">Atrasado</Badge>;
+    }
+
+    switch (lead.status) {
+      case 'novo': return <Badge variant="default">Novo</Badge>;
+      case 'em_analise': return <Badge variant="secondary">Em Análise</Badge>;
+      case 'proposta_enviada': return <Badge variant="outline">Proposta Enviada</Badge>;
+      case 'negociacao': return <Badge variant="secondary">Negociação</Badge>;
+      case 'aprovado': return <Badge className="bg-green-500">Aprovado</Badge>;
+      case 'rejeitado': return <Badge variant="destructive">Rejeitado</Badge>;
+      case 'cancelado': return <Badge variant="destructive">Cancelado</Badge>;
+      default: return <Badge variant="outline">{lead.status}</Badge>;
+    }
   };
 
   return (
@@ -72,14 +94,32 @@ const LeadsTable: React.FC<LeadsTableProps> = ({ leads, onEdit, onDelete }) => {
                   variant="outline" 
                   size="sm"
                   onClick={() => onEdit(request)}
+                  title="Editar"
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm"
+                  onClick={() => onUpdateStatus(request)}
+                  title="Atualizar Status"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onViewHistory(request.id)}
+                  title="Ver Histórico"
+                >
+                  <History className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
                   onClick={() => onDelete(request.id)}
                   className="text-red-600 hover:text-red-800"
+                  title="Excluir"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

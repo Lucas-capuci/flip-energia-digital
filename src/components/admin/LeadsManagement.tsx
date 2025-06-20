@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../integrations/supabase/client';
@@ -9,6 +8,8 @@ import { useToast } from '../../hooks/use-toast';
 import LeadsTable from './leads/LeadsTable';
 import LeadsFilters from './leads/LeadsFilters';
 import EditLeadDialog from './leads/EditLeadDialog';
+import StatusUpdateDialog from './leads/StatusUpdateDialog';
+import StatusHistoryDialog from './leads/StatusHistoryDialog';
 
 interface Lead {
   id: string;
@@ -19,6 +20,7 @@ interface Lead {
   services: string[];
   created_at: string;
   description?: string;
+  status?: string;
 }
 
 const LeadsManagement = () => {
@@ -28,6 +30,8 @@ const LeadsManagement = () => {
   const [filterDate, setFilterDate] = useState('all');
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [statusUpdateLead, setStatusUpdateLead] = useState<Lead | null>(null);
+  const [historyLeadId, setHistoryLeadId] = useState<string | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -100,6 +104,51 @@ const LeadsManagement = () => {
     },
   });
 
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ leadId, status, observation }: { leadId: string; status: string; observation: string }) => {
+      // Update the lead status
+      const { error: leadError } = await supabase
+        .from('budget_requests')
+        .update({ status })
+        .eq('id', leadId);
+
+      if (leadError) {
+        throw new Error(leadError.message);
+      }
+
+      // Add status history entry
+      const { error: historyError } = await supabase
+        .from('lead_status_history')
+        .insert([{
+          lead_id: leadId,
+          status,
+          observation,
+          changed_by: 'Usuário Admin' // In a real app, this would be the current user
+        }]);
+
+      if (historyError) {
+        throw new Error(historyError.message);
+      }
+
+      return { leadId, status };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['lead-status-history'] });
+      toast({
+        title: 'Status atualizado com sucesso!',
+      });
+      setStatusUpdateLead(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao atualizar status.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
   const deleteLeadMutation = useMutation({
     mutationFn: async (id: string) => {
       const { data, error } = await supabase.from('budget_requests').delete().eq('id', id);
@@ -133,6 +182,24 @@ const LeadsManagement = () => {
 
   const handleDelete = async (id: string) => {
     await deleteLeadMutation.mutateAsync(id);
+  };
+
+  const handleUpdateStatus = (lead: Lead) => {
+    setStatusUpdateLead(lead);
+  };
+
+  const handleStatusUpdate = async (status: string, observation: string) => {
+    if (statusUpdateLead) {
+      await updateStatusMutation.mutateAsync({
+        leadId: statusUpdateLead.id,
+        status,
+        observation
+      });
+    }
+  };
+
+  const handleViewHistory = (leadId: string) => {
+    setHistoryLeadId(leadId);
   };
 
   const filteredLeads = leads?.filter((lead) => {
@@ -217,6 +284,8 @@ const LeadsManagement = () => {
             leads={filteredLeads}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            onUpdateStatus={handleUpdateStatus}
+            onViewHistory={handleViewHistory}
           />
         </CardContent>
       </Card>
@@ -226,6 +295,19 @@ const LeadsManagement = () => {
         isOpen={!!editingLead}
         onClose={() => setEditingLead(null)}
         onSave={handleSave}
+      />
+
+      <StatusUpdateDialog
+        isOpen={!!statusUpdateLead}
+        onClose={() => setStatusUpdateLead(null)}
+        onUpdate={handleStatusUpdate}
+        currentStatus={statusUpdateLead?.status || 'novo'}
+      />
+
+      <StatusHistoryDialog
+        isOpen={!!historyLeadId}
+        onClose={() => setHistoryLeadId(null)}
+        leadId={historyLeadId || ''}
       />
     </div>
   );

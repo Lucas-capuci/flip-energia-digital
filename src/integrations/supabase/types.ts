@@ -20,6 +20,7 @@ export type Database = {
           phone: string
           property_type: string
           services: string[]
+          status: string | null
           updated_at: string
         }
         Insert: {
@@ -32,6 +33,7 @@ export type Database = {
           phone: string
           property_type: string
           services?: string[]
+          status?: string | null
           updated_at?: string
         }
         Update: {
@@ -44,6 +46,7 @@ export type Database = {
           phone?: string
           property_type?: string
           services?: string[]
+          status?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -80,6 +83,41 @@ export type Database = {
           telefone?: string
         }
         Relationships: []
+      }
+      lead_status_history: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          observation: string | null
+          status: string
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          observation?: string | null
+          status: string
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          observation?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_status_history_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "budget_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       partner_registrations: {
         Row: {
