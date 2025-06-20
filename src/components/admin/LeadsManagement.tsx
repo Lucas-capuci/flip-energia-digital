@@ -39,10 +39,13 @@ const LeadsManagement = () => {
   const { data: leadsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
+      console.log('Fetching leads...');
       const { data, error } = await supabase.from('budget_requests').select('*').order('created_at', { ascending: false });
       if (error) {
+        console.error('Error fetching leads:', error);
         throw new Error(error.message);
       }
+      console.log('Leads fetched:', data);
       return data || [];
     },
   });
@@ -55,23 +58,44 @@ const LeadsManagement = () => {
 
   const createLeadMutation = useMutation({
     mutationFn: async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
-      const { data, error } = await supabase.from('budget_requests').insert([{
-        ...newLead,
+      console.log('Creating lead with data:', newLead);
+      
+      // Ensure all required fields are present
+      const leadData = {
+        name: newLead.name,
+        email: newLead.email,
+        phone: newLead.phone,
+        property_type: newLead.property_type,
+        services: newLead.services,
+        description: newLead.description || '',
         status: 'novo'
-      }]).select();
+      };
+
+      console.log('Sending lead data to Supabase:', leadData);
+      
+      const { data, error } = await supabase
+        .from('budget_requests')
+        .insert([leadData])
+        .select();
+        
       if (error) {
+        console.error('Supabase error:', error);
         throw new Error(error.message);
       }
+      console.log('Lead created successfully:', data);
       return data;
     },
     onSuccess: () => {
+      console.log('Lead creation successful, refetching data...');
       queryClient.invalidateQueries({ queryKey: ['leads'] });
+      refetch();
       toast({
         title: 'Lead criado com sucesso!',
       });
       setShowCreateDialog(false);
     },
     onError: (error: any) => {
+      console.error('Lead creation failed:', error);
       toast({
         title: 'Erro ao criar lead.',
         description: error.message,
@@ -82,24 +106,38 @@ const LeadsManagement = () => {
 
   const updateLeadMutation = useMutation({
     mutationFn: async (updatedLead: Lead) => {
+      console.log('Updating lead:', updatedLead);
       const { data, error } = await supabase
         .from('budget_requests')
-        .update(updatedLead)
-        .eq('id', updatedLead.id);
+        .update({
+          name: updatedLead.name,
+          email: updatedLead.email,
+          phone: updatedLead.phone,
+          property_type: updatedLead.property_type,
+          services: updatedLead.services,
+          description: updatedLead.description,
+          status: updatedLead.status
+        })
+        .eq('id', updatedLead.id)
+        .select();
 
       if (error) {
+        console.error('Update error:', error);
         throw new Error(error.message);
       }
       return data;
     },
     onSuccess: () => {
+      console.log('Lead update successful');
       queryClient.invalidateQueries({ queryKey: ['leads'] });
+      refetch();
       toast({
         title: 'Lead atualizado com sucesso!',
       });
       setEditingLead(null);
     },
     onError: (error: any) => {
+      console.error('Lead update failed:', error);
       toast({
         title: 'Erro ao atualizar lead.',
         description: error.message,
@@ -110,6 +148,8 @@ const LeadsManagement = () => {
 
   const updateStatusMutation = useMutation({
     mutationFn: async ({ leadId, status, observation }: { leadId: string; status: string; observation: string }) => {
+      console.log('Updating status for lead:', leadId, 'to:', status);
+      
       // Update the lead status
       const { error: leadError } = await supabase
         .from('budget_requests')
@@ -117,6 +157,7 @@ const LeadsManagement = () => {
         .eq('id', leadId);
 
       if (leadError) {
+        console.error('Lead status update error:', leadError);
         throw new Error(leadError.message);
       }
 
@@ -127,24 +168,28 @@ const LeadsManagement = () => {
           lead_id: leadId,
           status,
           observation,
-          changed_by: 'Usuário Admin' // In a real app, this would be the current user
+          changed_by: 'Usuário Admin'
         }]);
 
       if (historyError) {
+        console.error('Status history error:', historyError);
         throw new Error(historyError.message);
       }
 
       return { leadId, status };
     },
     onSuccess: () => {
+      console.log('Status update successful');
       queryClient.invalidateQueries({ queryKey: ['leads'] });
       queryClient.invalidateQueries({ queryKey: ['lead-status-history'] });
+      refetch();
       toast({
         title: 'Status atualizado com sucesso!',
       });
       setStatusUpdateLead(null);
     },
     onError: (error: any) => {
+      console.error('Status update failed:', error);
       toast({
         title: 'Erro ao atualizar status.',
         description: error.message,
@@ -155,19 +200,24 @@ const LeadsManagement = () => {
 
   const deleteLeadMutation = useMutation({
     mutationFn: async (id: string) => {
+      console.log('Deleting lead:', id);
       const { error } = await supabase.from('budget_requests').delete().eq('id', id);
       if (error) {
+        console.error('Delete error:', error);
         throw new Error(error.message);
       }
       return { id };
     },
     onSuccess: () => {
+      console.log('Lead deletion successful');
       queryClient.invalidateQueries({ queryKey: ['leads'] });
+      refetch();
       toast({
         title: 'Lead removido com sucesso!',
       });
     },
     onError: (error: any) => {
+      console.error('Lead deletion failed:', error);
       toast({
         title: 'Erro ao remover lead.',
         description: error.message,
@@ -207,6 +257,7 @@ const LeadsManagement = () => {
   };
 
   const handleCreateLead = async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
+    console.log('HandleCreateLead called with:', newLead);
     await createLeadMutation.mutateAsync(newLead);
   };
 

@@ -6,6 +6,7 @@ import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { Checkbox } from '../../ui/checkbox';
+import { Textarea } from '../../ui/textarea';
 import { useForm } from 'react-hook-form';
 
 interface Lead {
@@ -36,15 +37,29 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
   onClose,
   onSave
 }) => {
-  const { register, handleSubmit, setValue, watch, reset } = useForm<Lead>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm<Lead>({
     defaultValues: {
-      services: []
+      name: '',
+      email: '',
+      phone: '',
+      property_type: '',
+      services: [],
+      description: ''
     }
   });
 
   const selectedServices = watch('services') || [];
+  const selectedPropertyType = watch('property_type');
 
   const onSubmit = (data: Lead) => {
+    console.log('Submitting lead data:', data);
+    
+    // Ensure all required fields are present
+    if (!data.name || !data.email || !data.phone || !data.property_type || !data.services.length) {
+      console.error('Missing required fields:', data);
+      return;
+    }
+
     onSave(data);
     reset();
   };
@@ -76,8 +91,9 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
               <Input 
                 id="name"
                 placeholder="Nome completo" 
-                {...register('name', { required: true })} 
+                {...register('name', { required: 'Nome é obrigatório' })} 
               />
+              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
             <div>
               <Label htmlFor="email">Email *</Label>
@@ -85,8 +101,9 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
                 id="email"
                 type="email" 
                 placeholder="email@exemplo.com" 
-                {...register('email', { required: true })} 
+                {...register('email', { required: 'Email é obrigatório' })} 
               />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
           </div>
 
@@ -96,13 +113,14 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
               <Input 
                 id="phone"
                 placeholder="(11) 99999-9999" 
-                {...register('phone', { required: true })} 
+                {...register('phone', { required: 'Telefone é obrigatório' })} 
               />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
             </div>
             <div>
               <Label htmlFor="property_type">Tipo de Imóvel *</Label>
               <Select 
-                value={watch('property_type')} 
+                value={selectedPropertyType} 
                 onValueChange={(value) => setValue('property_type', value)}
               >
                 <SelectTrigger>
@@ -115,6 +133,7 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
                   <SelectItem value="rural">Rural</SelectItem>
                 </SelectContent>
               </Select>
+              {errors.property_type && <p className="text-red-500 text-sm">Tipo de imóvel é obrigatório</p>}
             </div>
           </div>
 
@@ -134,14 +153,16 @@ const CreateLeadDialog: React.FC<CreateLeadDialogProps> = ({
                 </div>
               ))}
             </div>
+            {selectedServices.length === 0 && <p className="text-red-500 text-sm">Selecione pelo menos um serviço</p>}
           </div>
 
           <div>
             <Label htmlFor="description">Descrição</Label>
-            <Input 
+            <Textarea 
               id="description"
               placeholder="Detalhes adicionais sobre o projeto" 
               {...register('description')} 
+              rows={3}
             />
           </div>
 
