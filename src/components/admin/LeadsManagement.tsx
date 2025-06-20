@@ -6,22 +6,44 @@ import { Badge } from '../ui/badge';
 import { Input } from '../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Eye, Download, Filter, Search, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
+import { Eye, Download, Filter, Search, Calendar, Edit } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useForm } from 'react-hook-form';
 
 const LeadsManagement = () => {
   const [budgetRequests, setBudgetRequests] = useState([]);
   const [partnerRegistrations, setPartnerRegistrations] = useState([]);
+  const [filteredBudgetRequests, setFilteredBudgetRequests] = useState([]);
+  const [filteredPartnerRegistrations, setFilteredPartnerRegistrations] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterService, setFilterService] = useState('all');
   const [filterDate, setFilterDate] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
+  const [editingLead, setEditingLead] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  const form = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      property_type: '',
+      services: [],
+      description: ''
+    }
+  });
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [budgetRequests, partnerRegistrations, searchTerm, filterService, filterDate]);
 
   const fetchData = async () => {
     try {
@@ -57,8 +79,63 @@ const LeadsManagement = () => {
     }
   };
 
+  const applyFilters = () => {
+    let filteredBudget = budgetRequests;
+    let filteredPartner = partnerRegistrations;
+
+    // Filtro por texto de busca
+    if (searchTerm) {
+      filteredBudget = filteredBudget.filter(request =>
+        request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        request.phone.includes(searchTerm)
+      );
+
+      filteredPartner = filteredPartner.filter(partner =>
+        partner.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        partner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        partner.phone.includes(searchTerm) ||
+        partner.city.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtro por serviço (apenas para budget requests)
+    if (filterService !== 'all') {
+      filteredBudget = filteredBudget.filter(request =>
+        request.services.some(service => 
+          service.toLowerCase().includes(filterService.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por data
+    if (filterDate !== 'all') {
+      const today = new Date();
+      const filterDate_fn = (date) => {
+        const itemDate = new Date(date);
+        switch (filterDate) {
+          case 'today':
+            return itemDate.toDateString() === today.toDateString();
+          case 'week':
+            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return itemDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
+            return itemDate >= monthAgo;
+          default:
+            return true;
+        }
+      };
+
+      filteredBudget = filteredBudget.filter(request => filterDate_fn(request.created_at));
+      filteredPartner = filteredPartner.filter(partner => filterDate_fn(partner.created_at));
+    }
+
+    setFilteredBudgetRequests(filteredBudget);
+    setFilteredPartnerRegistrations(filteredPartner);
+  };
+
   const getStatusBadge = (request) => {
-    // Simple logic for demo - you can implement more complex status tracking
     const createdDate = new Date(request.created_at);
     const currentDate = new Date();
     const daysSinceCreated = Math.floor((currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -69,10 +146,57 @@ const LeadsManagement = () => {
     return <Badge variant="destructive">Atrasado</Badge>;
   };
 
+  const handleEditLead = (lead) => {
+    setEditingLead(lead);
+    form.reset({
+      name: lead.name,
+      email: lead.email,
+      phone: lead.phone,
+      property_type: lead.property_type,
+      services: lead.services || [],
+      description: lead.description || ''
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const onSubmitEdit = async (data) => {
+    try {
+      const { error } = await supabase
+        .from('budget_requests')
+        .update({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          property_type: data.property_type,
+          services: data.services,
+          description: data.description
+        })
+        .eq('id', editingLead.id);
+
+      if (error) throw error;
+
+      await fetchData();
+      setIsEditDialogOpen(false);
+      setEditingLead(null);
+      
+      toast({
+        title: 'Lead atualizado',
+        description: 'O lead foi atualizado com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error updating lead:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível atualizar o lead.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const exportData = () => {
     const csvContent = "data:text/csv;charset=utf-8," 
       + "Nome,Email,Telefone,Tipo,Serviços,Data\n"
-      + budgetRequests.map(row => 
+      + filteredBudgetRequests.map(row => 
           `${row.name},${row.email},${row.phone},${row.property_type},"${row.services.join(', ')}",${new Date(row.created_at).toLocaleDateString()}`
         ).join("\n");
 
@@ -143,7 +267,7 @@ const LeadsManagement = () => {
       {/* Budget Requests */}
       <Card>
         <CardHeader>
-          <CardTitle>Solicitações de Orçamento ({budgetRequests.length})</CardTitle>
+          <CardTitle>Solicitações de Orçamento ({filteredBudgetRequests.length})</CardTitle>
           <CardDescription>Leads gerados através do formulário de orçamento</CardDescription>
         </CardHeader>
         <CardContent>
@@ -161,7 +285,7 @@ const LeadsManagement = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {budgetRequests.map((request) => (
+              {filteredBudgetRequests.map((request) => (
                 <TableRow key={request.id}>
                   <TableCell className="font-medium">{request.name}</TableCell>
                   <TableCell>{request.email}</TableCell>
@@ -179,8 +303,12 @@ const LeadsManagement = () => {
                   <TableCell>{getStatusBadge(request)}</TableCell>
                   <TableCell>{new Date(request.created_at).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleEditLead(request)}
+                    >
+                      <Edit className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -193,7 +321,7 @@ const LeadsManagement = () => {
       {/* Partner Registrations */}
       <Card>
         <CardHeader>
-          <CardTitle>Cadastros de Parceiros ({partnerRegistrations.length})</CardTitle>
+          <CardTitle>Cadastros de Parceiros ({filteredPartnerRegistrations.length})</CardTitle>
           <CardDescription>Pessoas interessadas em ser parceiros</CardDescription>
         </CardHeader>
         <CardContent>
@@ -207,11 +335,10 @@ const LeadsManagement = () => {
                 <TableHead>Estado</TableHead>
                 <TableHead>Consumo Médio</TableHead>
                 <TableHead>Data</TableHead>
-                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {partnerRegistrations.map((partner) => (
+              {filteredPartnerRegistrations.map((partner) => (
                 <TableRow key={partner.id}>
                   <TableCell className="font-medium">{partner.full_name}</TableCell>
                   <TableCell>{partner.email}</TableCell>
@@ -220,17 +347,113 @@ const LeadsManagement = () => {
                   <TableCell>{partner.state}</TableCell>
                   <TableCell>{partner.average_consumption || 'N/A'}</TableCell>
                   <TableCell>{new Date(partner.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell>
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Lead Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Editar Lead</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmitEdit)} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nome completo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="email@exemplo.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <Input placeholder="(11) 99999-9999" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="property_type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Imóvel</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o tipo" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="residencial">Residencial</SelectItem>
+                          <SelectItem value="comercial">Comercial</SelectItem>
+                          <SelectItem value="industrial">Industrial</SelectItem>
+                          <SelectItem value="rural">Rural</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Detalhes adicionais" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-2">
+                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit">Salvar Alterações</Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
