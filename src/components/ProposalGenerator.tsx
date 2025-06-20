@@ -1,90 +1,42 @@
 
-import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { FileText, Calculator, Zap } from 'lucide-react';
-import { Card } from './ui/card';
-import { 
-  FormData, 
-  CalculationResults, 
-  calculateProposalValues 
-} from '../utils/proposalCalculations';
-import ProposalForm from './proposal/ProposalForm';
-import CalculationResultsDisplay from './proposal/CalculationResults';
-import PDFGenerator, { generateProposalPDF } from './proposal/PDFGenerator';
+import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Calculator, Users } from 'lucide-react';
 import ProposalHeader from './proposal/ProposalHeader';
+import ProposalForm from './proposal/ProposalForm';
+import AdminDashboard from './admin/AdminDashboard';
 
 const ProposalGenerator = () => {
-  const [formData, setFormData] = useState<FormData>({
-    clientName: '',
-    monthlyConsumption: 0,
-    localIrradiation: 0,
-    systemEfficiency: 0,
-    panelPower: 0,
-    energyTariff: 0,
-    systemPrice: 0,
-    excessPrice: 0,
-    excessEstimate: 0
-  });
-
-  const [calculations, setCalculations] = useState<CalculationResults | null>(null);
-
-  const handleInputChange = (field: keyof FormData, value: string | number) => {
-    const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
-    setFormData(prev => ({
-      ...prev,
-      [field]: field === 'clientName' ? value : numValue
-    }));
-  };
-
-  const calculateValues = () => {
-    const results = calculateProposalValues(formData);
-    setCalculations(results);
-    return results;
-  };
-
-  const generatePDF = () => {
-    const results = calculations || calculateValues();
-    generateProposalPDF(formData, results);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flip-blue-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <ProposalHeader />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs defaultValue="proposals" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="proposals" className="flex items-center space-x-2">
+              <Calculator className="h-4 w-4" />
+              <span>Gerador de Propostas</span>
+            </TabsTrigger>
+            <TabsTrigger value="dashboard" className="flex items-center space-x-2">
+              <Users className="h-4 w-4" />
+              <span>Dashboard Administrativo</span>
+            </TabsTrigger>
+          </TabsList>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Formulário */}
-          <Card className="p-6 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl">
-            <div className="flex items-center mb-6">
-              <Calculator className="h-6 w-6 text-flip-blue-500 mr-3" />
-              <h2 className="text-xl font-semibold text-flip-gray-900">Dados do Projeto</h2>
+          <TabsContent value="proposals" className="space-y-6">
+            <div className="bg-white rounded-lg shadow-sm border border-flip-blue-100 p-6">
+              <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
+                Calcular Proposta Comercial
+              </h2>
+              <ProposalForm />
             </div>
+          </TabsContent>
 
-            <ProposalForm 
-              formData={formData} 
-              onInputChange={handleInputChange} 
-            />
-
-            <PDFGenerator 
-              formData={formData}
-              calculations={calculations as CalculationResults} 
-              onGeneratePDF={generatePDF}
-            />
-          </Card>
-
-          {/* Prévia dos Cálculos */}
-          <Card className="p-6 bg-white/90 backdrop-blur-sm shadow-lg rounded-2xl">
-            <div className="flex items-center mb-6">
-              <Zap className="h-6 w-6 text-flip-blue-500 mr-3" />
-              <h2 className="text-xl font-semibold text-flip-gray-900">Prévia dos Cálculos</h2>
-            </div>
-
-            <CalculationResultsDisplay 
-              calculations={calculations} 
-              onCalculate={calculateValues} 
-            />
-          </Card>
-        </div>
+          <TabsContent value="dashboard" className="space-y-6">
+            <AdminDashboard />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
