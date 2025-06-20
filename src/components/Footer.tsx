@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, ArrowRight, Zap, Home, Network } from 'lucide-react';
 
@@ -77,8 +76,8 @@ const Footer = () => {
                 <div className="bg-flip-blue-600/20 p-2 rounded-lg mr-4 group-hover:bg-flip-red-500 transition-colors">
                   <Phone className="h-4 w-4 text-flip-blue-400 group-hover:text-white" />
                 </div>
-                <a href="tel:+5562984496914" className="text-flip-gray-300 hover:text-white transition-colors">
-                  (62) 98449-6914
+                <a href="tel:+5562931754984" className="text-flip-gray-300 hover:text-white transition-colors">
+                  (62) 93175-4984
                 </a>
               </div>
             </div>
