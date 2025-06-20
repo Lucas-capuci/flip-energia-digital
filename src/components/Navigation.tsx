@@ -82,7 +82,7 @@ const Navigation = () => {
                 onClick={navigateToProposals}
                 className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm"
               >
-                Propostas
+                Restrito
               </button>
             </div>
           </div>
@@ -151,7 +151,7 @@ const Navigation = () => {
               onClick={navigateToProposals}
               className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left"
             >
-              Propostas
+              Restrito
             </button>
             
             <div className="px-3 py-2">
