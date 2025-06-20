@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-import { useForm } from 'react-hook-form';
-import LeadsFilters from './leads/LeadsFilters';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../../../integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
+import { Button } from '../../ui/button';
+import { Badge } from '../../ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
+import { Edit, Trash2, Plus } from 'lucide-react';
+import { useToast } from '../../../hooks/use-toast';
 import LeadsTable from './leads/LeadsTable';
+import LeadsFilters from './leads/LeadsFilters';
 import EditLeadDialog from './leads/EditLeadDialog';
 
 interface Lead {
@@ -18,229 +22,187 @@ interface Lead {
   description?: string;
 }
 
-interface Partner {
-  id: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  city: string;
-  state: string;
-  average_consumption?: string;
-  created_at: string;
-}
-
 const LeadsManagement = () => {
-  const [budgetRequests, setBudgetRequests] = useState<Lead[]>([]);
-  const [partnerRegistrations, setPartnerRegistrations] = useState<Partner[]>([]);
-  const [filteredBudgetRequests, setFilteredBudgetRequests] = useState<Lead[]>([]);
-  const [filteredPartnerRegistrations, setFilteredPartnerRegistrations] = useState<Partner[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterService, setFilterService] = useState('all');
   const [filterDate, setFilterDate] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const form = useForm({
-    defaultValues: {
-      name: '',
-      email: '',
-      phone: '',
-      property_type: '',
-      services: [],
-      description: ''
-    }
+  const { data: leadsData, isLoading, isError, refetch } = useQuery({
+    queryKey: ['leads'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('leads').select('*');
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data || [];
+    },
   });
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    applyFilters();
-  }, [budgetRequests, partnerRegistrations, searchTerm, filterService, filterDate]);
-
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      
-      const { data: budgetData, error: budgetError } = await supabase
-        .from('budget_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (budgetError) throw budgetError;
-
-      const { data: partnerData, error: partnerError } = await supabase
-        .from('partner_registrations')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (partnerError) throw partnerError;
-
-      setBudgetRequests(budgetData || []);
-      setPartnerRegistrations(partnerData || []);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível carregar os dados.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
+    if (leadsData) {
+      setLeads(leadsData);
     }
-  };
+  }, [leadsData]);
 
-  const applyFilters = () => {
-    let filteredBudget = budgetRequests;
-    let filteredPartner = partnerRegistrations;
-
-    if (searchTerm) {
-      filteredBudget = filteredBudget.filter(request =>
-        request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        request.phone.includes(searchTerm)
-      );
-
-      filteredPartner = filteredPartner.filter(partner =>
-        partner.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        partner.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        partner.phone.includes(searchTerm) ||
-        partner.city.toLowerCase().includes(searchTerm.toLowerCase())
-      );
+  const createLeadMutation = useMutation(
+    async (newLead: Omit<Lead, 'id'>) => {
+      const { data, error } = await supabase.from('leads').insert([newLead]);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['leads'] });
+        toast({
+          title: 'Lead criado com sucesso!',
+        });
+        setShowCreateDialog(false);
+      },
+      onError: (error: any) => {
+        toast({
+          title: 'Erro ao criar lead.',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     }
+  );
 
-    if (filterService !== 'all') {
-      filteredBudget = filteredBudget.filter(request =>
-        request.services.some(service => 
-          service.toLowerCase().includes(filterService.toLowerCase())
-        )
-      );
+  const updateLeadMutation = useMutation(
+    async (updatedLead: Lead) => {
+      const { data, error } = await supabase
+        .from('leads')
+        .update(updatedLead)
+        .eq('id', updatedLead.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['leads'] });
+        toast({
+          title: 'Lead atualizado com sucesso!',
+        });
+        setEditingLead(null);
+      },
+      onError: (error: any) => {
+        toast({
+          title: 'Erro ao atualizar lead.',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     }
+  );
 
-    if (filterDate !== 'all') {
-      const today = new Date();
-      const filterDate_fn = (date: string) => {
-        const itemDate = new Date(date);
-        switch (filterDate) {
-          case 'today':
-            return itemDate.toDateString() === today.toDateString();
-          case 'week':
-            const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-            return itemDate >= weekAgo;
-          case 'month':
-            const monthAgo = new Date(today.getFullYear(), today.getMonth() - 1, today.getDate());
-            return itemDate >= monthAgo;
-          default:
-            return true;
-        }
-      };
-
-      filteredBudget = filteredBudget.filter(request => filterDate_fn(request.created_at));
-      filteredPartner = filteredPartner.filter(partner => filterDate_fn(partner.created_at));
+  const deleteLeadMutation = useMutation(
+    async (id: string) => {
+      const { data, error } = await supabase.from('leads').delete().eq('id', id);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['leads'] });
+        toast({
+          title: 'Lead removido com sucesso!',
+        });
+      },
+      onError: (error: any) => {
+        toast({
+          title: 'Erro ao remover lead.',
+          description: error.message,
+          variant: 'destructive',
+        });
+      },
     }
+  );
 
-    setFilteredBudgetRequests(filteredBudget);
-    setFilteredPartnerRegistrations(filteredPartner);
-  };
-
-  const handleEditLead = (lead: Lead) => {
+  const handleEdit = (lead: Lead) => {
     setEditingLead(lead);
-    form.reset({
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      property_type: lead.property_type,
-      services: lead.services || [],
-      description: lead.description || ''
-    });
-    setIsEditDialogOpen(true);
   };
 
-  const handleDeleteLead = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('budget_requests')
-        .delete()
-        .eq('id', id);
+  const handleSave = async (lead: Lead) => {
+    await updateLeadMutation.mutateAsync(lead);
+  };
 
-      if (error) throw error;
+  const handleDelete = async (id: string) => {
+    await deleteLeadMutation.mutateAsync(id);
+  };
 
-      await fetchData();
-      toast({
-        title: 'Lead removido',
-        description: 'O lead foi removido com sucesso.',
-      });
-    } catch (error) {
-      console.error('Error deleting lead:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível remover o lead.',
-        variant: 'destructive',
-      });
+  const filteredLeads = leads?.filter((lead) => {
+    const searchTermLower = searchTerm.toLowerCase();
+    const nameMatch = lead.name.toLowerCase().includes(searchTermLower);
+    const emailMatch = lead.email.toLowerCase().includes(searchTermLower);
+
+    let serviceMatch = true;
+    if (filterService !== 'all') {
+      serviceMatch = lead.services.includes(filterService);
     }
-  };
 
-  const onSubmitEdit = async (data: any) => {
-    if (!editingLead) return;
+    let dateMatch = true;
+    if (filterDate !== 'all') {
+      const leadDate = new Date(lead.created_at);
+      const today = new Date();
+      const weekStart = new Date(today.setDate(today.getDate() - today.getDay()));
+      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    try {
-      const { error } = await supabase
-        .from('budget_requests')
-        .update({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          property_type: data.property_type,
-          services: data.services,
-          description: data.description
-        })
-        .eq('id', editingLead.id);
-
-      if (error) throw error;
-
-      await fetchData();
-      setIsEditDialogOpen(false);
-      setEditingLead(null);
-      
-      toast({
-        title: 'Lead atualizado',
-        description: 'O lead foi atualizado com sucesso.',
-      });
-    } catch (error) {
-      console.error('Error updating lead:', error);
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível atualizar o lead.',
-        variant: 'destructive',
-      });
+      if (filterDate === 'today') {
+        dateMatch = leadDate.toDateString() === new Date().toDateString();
+      } else if (filterDate === 'week') {
+        dateMatch = leadDate >= weekStart;
+      } else if (filterDate === 'month') {
+        dateMatch = leadDate >= monthStart;
+      }
     }
+
+    return (nameMatch || emailMatch) && serviceMatch && dateMatch;
+  });
+
+  const exportToCSV = () => {
+    const csvRows = [];
+    const headers = Object.keys(leads[0]);
+    csvRows.push(headers.join(','));
+
+    for (const lead of leads) {
+      const values = headers.map((header) => {
+        const value = lead[header as keyof Lead];
+        return typeof value === 'string' ? `"${value}"` : value;
+      });
+      csvRows.push(values.join(','));
+    }
+
+    const csvData = csvRows.join('\n');
+    const blob = new Blob([csvData], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'leads.csv');
+    a.click();
   };
-
-  const exportData = () => {
-    const csvContent = "data:text/csv;charset=utf-8," 
-      + "Nome,Email,Telefone,Tipo,Serviços,Data\n"
-      + filteredBudgetRequests.map(row => 
-          `${row.name},${row.email},${row.phone},${row.property_type},"${row.services.join(', ')}",${new Date(row.created_at).toLocaleDateString()}`
-        ).join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "leads_orcamento.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  if (isLoading) {
-    return <div className="flex justify-center py-8">Carregando...</div>;
-  }
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold tracking-tight">Gerenciamento de Leads</h2>
+        <Button onClick={() => setShowCreateDialog(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Lead
+        </Button>
+      </div>
+
       <LeadsFilters
         searchTerm={searchTerm}
         filterService={filterService}
@@ -248,64 +210,27 @@ const LeadsManagement = () => {
         onSearchChange={setSearchTerm}
         onServiceFilterChange={setFilterService}
         onDateFilterChange={setFilterDate}
-        onExport={exportData}
+        onExport={exportToCSV}
       />
 
       <Card>
         <CardHeader>
-          <CardTitle>Solicitações de Orçamento ({filteredBudgetRequests.length})</CardTitle>
-          <CardDescription>Leads gerados através do formulário de orçamento</CardDescription>
+          <CardTitle>Lista de Leads ({filteredLeads.length})</CardTitle>
         </CardHeader>
         <CardContent>
           <LeadsTable
-            leads={filteredBudgetRequests}
-            onEdit={handleEditLead}
-            onDelete={handleDeleteLead}
+            leads={filteredLeads}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
           />
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Cadastros de Parceiros ({filteredPartnerRegistrations.length})</CardTitle>
-          <CardDescription>Pessoas interessadas em ser parceiros</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>Cidade</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Consumo Médio</TableHead>
-                <TableHead>Data</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPartnerRegistrations.map((partner) => (
-                <TableRow key={partner.id}>
-                  <TableCell className="font-medium">{partner.full_name}</TableCell>
-                  <TableCell>{partner.email}</TableCell>
-                  <TableCell>{partner.phone}</TableCell>
-                  <TableCell>{partner.city}</TableCell>
-                  <TableCell>{partner.state}</TableCell>
-                  <TableCell>{partner.average_consumption || 'N/A'}</TableCell>
-                  <TableCell>{new Date(partner.created_at).toLocaleDateString()}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
       <EditLeadDialog
-        isOpen={isEditDialogOpen}
-        onClose={() => setIsEditDialogOpen(false)}
         lead={editingLead}
-        form={form}
-        onSubmit={onSubmitEdit}
+        isOpen={!!editingLead}
+        onClose={() => setEditingLead(null)}
+        onSave={handleSave}
       />
     </div>
   );
