@@ -1,12 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../../integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Button } from '../../ui/button';
-import { Badge } from '../../ui/badge';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
-import { Edit, Trash2, Plus } from 'lucide-react';
-import { useToast } from '../../../hooks/use-toast';
+import { supabase } from '../../integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { Button } from '../ui/button';
+import { Plus } from 'lucide-react';
+import { useToast } from '../../hooks/use-toast';
 import LeadsTable from './leads/LeadsTable';
 import LeadsFilters from './leads/LeadsFilters';
 import EditLeadDialog from './leads/EditLeadDialog';
@@ -35,7 +34,7 @@ const LeadsManagement = () => {
   const { data: leadsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('leads').select('*');
+      const { data, error } = await supabase.from('budget_requests').select('*');
       if (error) {
         throw new Error(error.message);
       }
@@ -49,36 +48,34 @@ const LeadsManagement = () => {
     }
   }, [leadsData]);
 
-  const createLeadMutation = useMutation(
-    async (newLead: Omit<Lead, 'id'>) => {
-      const { data, error } = await supabase.from('leads').insert([newLead]);
+  const createLeadMutation = useMutation({
+    mutationFn: async (newLead: Omit<Lead, 'id'>) => {
+      const { data, error } = await supabase.from('budget_requests').insert([newLead]);
       if (error) {
         throw new Error(error.message);
       }
       return data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['leads'] });
-        toast({
-          title: 'Lead criado com sucesso!',
-        });
-        setShowCreateDialog(false);
-      },
-      onError: (error: any) => {
-        toast({
-          title: 'Erro ao criar lead.',
-          description: error.message,
-          variant: 'destructive',
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      toast({
+        title: 'Lead criado com sucesso!',
+      });
+      setShowCreateDialog(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao criar lead.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
-  const updateLeadMutation = useMutation(
-    async (updatedLead: Lead) => {
+  const updateLeadMutation = useMutation({
+    mutationFn: async (updatedLead: Lead) => {
       const { data, error } = await supabase
-        .from('leads')
+        .from('budget_requests')
         .update(updatedLead)
         .eq('id', updatedLead.id);
 
@@ -87,48 +84,44 @@ const LeadsManagement = () => {
       }
       return data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['leads'] });
-        toast({
-          title: 'Lead atualizado com sucesso!',
-        });
-        setEditingLead(null);
-      },
-      onError: (error: any) => {
-        toast({
-          title: 'Erro ao atualizar lead.',
-          description: error.message,
-          variant: 'destructive',
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      toast({
+        title: 'Lead atualizado com sucesso!',
+      });
+      setEditingLead(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao atualizar lead.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
-  const deleteLeadMutation = useMutation(
-    async (id: string) => {
-      const { data, error } = await supabase.from('leads').delete().eq('id', id);
+  const deleteLeadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await supabase.from('budget_requests').delete().eq('id', id);
       if (error) {
         throw new Error(error.message);
       }
       return data;
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['leads'] });
-        toast({
-          title: 'Lead removido com sucesso!',
-        });
-      },
-      onError: (error: any) => {
-        toast({
-          title: 'Erro ao remover lead.',
-          description: error.message,
-          variant: 'destructive',
-        });
-      },
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      toast({
+        title: 'Lead removido com sucesso!',
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Erro ao remover lead.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
 
   const handleEdit = (lead: Lead) => {
     setEditingLead(lead);
@@ -172,6 +165,8 @@ const LeadsManagement = () => {
   });
 
   const exportToCSV = () => {
+    if (leads.length === 0) return;
+    
     const csvRows = [];
     const headers = Object.keys(leads[0]);
     csvRows.push(headers.join(','));
