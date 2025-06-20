@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -8,52 +8,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Plus, Edit, Eye, Search, Calendar } from 'lucide-react';
+import { Plus, Edit, Eye, Search, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Project {
+  id: string;
+  name: string;
+  client: string;
+  type: string;
+  status: string;
+  start_date: string;
+  end_date: string | null;
+  value: number;
+  progress: number;
+  description: string | null;
+  created_at: string;
+}
 
 const ProjectsManagement = () => {
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      name: 'Sistema Solar Residencial - João Silva',
-      client: 'João Silva',
-      type: 'Energia Solar',
-      status: 'em_andamento',
-      startDate: '2024-01-15',
-      endDate: '2024-02-15',
-      value: 45000,
-      progress: 65,
-      description: 'Instalação de sistema fotovoltaico 10kWp'
-    },
-    {
-      id: 2,
-      name: 'Projeto Elétrico Industrial - Empresa ABC',
-      client: 'Empresa ABC Ltda',
-      type: 'Projeto Elétrico',
-      status: 'planejamento',
-      startDate: '2024-02-01',
-      endDate: '2024-03-30',
-      value: 120000,
-      progress: 25,
-      description: 'Projeto elétrico completo para nova fábrica'
-    },
-    {
-      id: 3,
-      name: 'Rede de Distribuição - Condomínio XYZ',
-      client: 'Condomínio XYZ',
-      type: 'Redes de Distribuição',
-      status: 'concluido',
-      startDate: '2023-12-01',
-      endDate: '2024-01-10',
-      value: 75000,
-      progress: 100,
-      description: 'Modernização da rede elétrica do condomínio'
-    }
-  ]);
-  
+  const [projects, setProjects] = useState<Project[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   const form = useForm({
@@ -62,15 +40,103 @@ const ProjectsManagement = () => {
       client: '',
       type: '',
       status: 'planejamento',
-      startDate: '',
-      endDate: '',
+      start_date: '',
+      end_date: '',
       value: '',
       description: ''
     }
   });
 
-  const getStatusBadge = (status) => {
-    const statusConfig = {
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setProjects(data || []);
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível carregar os projetos.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmit = async (data: any) => {
+    try {
+      const projectData = {
+        name: data.name,
+        client: data.client,
+        type: data.type,
+        status: data.status,
+        start_date: data.start_date,
+        end_date: data.end_date || null,
+        value: parseFloat(data.value),
+        description: data.description || null,
+        progress: 0
+      };
+
+      const { error } = await supabase
+        .from('projects')
+        .insert([projectData]);
+
+      if (error) throw error;
+
+      await fetchProjects();
+      setIsDialogOpen(false);
+      form.reset();
+      
+      toast({
+        title: 'Projeto criado',
+        description: 'O projeto foi criado com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error creating project:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível criar o projeto.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const deleteProject = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      await fetchProjects();
+      toast({
+        title: 'Projeto excluído',
+        description: 'O projeto foi excluído com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível excluir o projeto.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig: Record<string, { label: string; variant: any }> = {
       planejamento: { label: 'Planejamento', variant: 'secondary' },
       em_andamento: { label: 'Em Andamento', variant: 'default' },
       pausado: { label: 'Pausado', variant: 'destructive' },
@@ -82,29 +148,11 @@ const ProjectsManagement = () => {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
-  const getProgressColor = (progress) => {
+  const getProgressColor = (progress: number) => {
     if (progress >= 80) return 'bg-green-500';
     if (progress >= 50) return 'bg-blue-500';
     if (progress >= 25) return 'bg-yellow-500';
     return 'bg-red-500';
-  };
-
-  const onSubmit = (data) => {
-    const newProject = {
-      id: projects.length + 1,
-      ...data,
-      value: parseFloat(data.value),
-      progress: 0
-    };
-
-    setProjects([...projects, newProject]);
-    setIsDialogOpen(false);
-    form.reset();
-    
-    toast({
-      title: 'Projeto criado',
-      description: 'O projeto foi criado com sucesso.',
-    });
   };
 
   const filteredProjects = projects.filter(project =>
@@ -112,6 +160,10 @@ const ProjectsManagement = () => {
     project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
     project.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (isLoading) {
+    return <div className="flex justify-center py-8">Carregando projetos...</div>;
+  }
 
   return (
     <div className="space-y-6">
@@ -224,7 +276,7 @@ const ProjectsManagement = () => {
                       <div className="grid grid-cols-3 gap-4">
                         <FormField
                           control={form.control}
-                          name="startDate"
+                          name="start_date"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Data de Início</FormLabel>
@@ -237,7 +289,7 @@ const ProjectsManagement = () => {
                         />
                         <FormField
                           control={form.control}
-                          name="endDate"
+                          name="end_date"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Data Prevista</FormLabel>
@@ -289,7 +341,7 @@ const ProjectsManagement = () => {
               </Dialog>
             </div>
           </CardTitle>
-          <CardDescription>Gerencie todos os projetos em andamento e concluídos</CardDescription>
+          <CardDescription>Gerencie todos os projetos conectados ao Supabase</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -326,8 +378,10 @@ const ProjectsManagement = () => {
                       <span className="text-sm text-gray-600">{project.progress}%</span>
                     </div>
                   </TableCell>
-                  <TableCell>{new Date(project.startDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(project.endDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{new Date(project.start_date).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {project.end_date ? new Date(project.end_date).toLocaleDateString() : 'N/A'}
+                  </TableCell>
                   <TableCell>R$ {project.value.toLocaleString()}</TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
@@ -336,6 +390,14 @@ const ProjectsManagement = () => {
                       </Button>
                       <Button variant="outline" size="sm">
                         <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => deleteProject(project.id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>
