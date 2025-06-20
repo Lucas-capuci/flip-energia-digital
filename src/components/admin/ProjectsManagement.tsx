@@ -8,7 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Plus, Edit, Eye, Search, Trash2 } from 'lucide-react';
+import { Checkbox } from '../ui/checkbox';
+import { Plus, Edit, Search, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,11 +28,19 @@ interface Project {
   created_at: string;
 }
 
-const ProjectsManagement = () => {
+interface ProjectsManagementProps {
+  onTabChange?: (tab: string) => void;
+}
+
+const ProjectsManagement: React.FC<ProjectsManagementProps> = ({ onTabChange }) => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('todos');
+  const [typeFilter, setTypeFilter] = useState('todos');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const form = useForm({
@@ -50,6 +59,10 @@ const ProjectsManagement = () => {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [projects, searchTerm, statusFilter, typeFilter]);
 
   const fetchProjects = async () => {
     try {
@@ -71,6 +84,42 @@ const ProjectsManagement = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    let filtered = projects;
+
+    // Filtro por texto de busca
+    if (searchTerm) {
+      filtered = filtered.filter(project =>
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.type.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtro por status
+    if (statusFilter !== 'todos') {
+      if (statusFilter === 'atrasado') {
+        const today = new Date();
+        filtered = filtered.filter(project => {
+          if (!project.end_date || project.status === 'concluido' || project.status === 'cancelado') {
+            return false;
+          }
+          const endDate = new Date(project.end_date);
+          return endDate < today;
+        });
+      } else {
+        filtered = filtered.filter(project => project.status === statusFilter);
+      }
+    }
+
+    // Filtro por tipo
+    if (typeFilter !== 'todos') {
+      filtered = filtered.filter(project => project.type === typeFilter);
+    }
+
+    setFilteredProjects(filtered);
   };
 
   const onSubmit = async (data: any) => {
@@ -135,6 +184,20 @@ const ProjectsManagement = () => {
     }
   };
 
+  const handleProjectSelection = (projectId: string, checked: boolean) => {
+    const newSelection = new Set(selectedProjects);
+    if (checked) {
+      newSelection.add(projectId);
+      // Navegar automaticamente para a aba de projetos quando um item for selecionado
+      if (onTabChange) {
+        onTabChange('projects');
+      }
+    } else {
+      newSelection.delete(projectId);
+    }
+    setSelectedProjects(newSelection);
+  };
+
   const getStatusBadge = (status: string) => {
     const statusConfig: Record<string, { label: string; variant: any }> = {
       planejamento: { label: 'Planejamento', variant: 'secondary' },
@@ -155,11 +218,14 @@ const ProjectsManagement = () => {
     return 'bg-red-500';
   };
 
-  const filteredProjects = projects.filter(project =>
-    project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.client.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const isProjectLate = (project: Project) => {
+    if (!project.end_date || project.status === 'concluido' || project.status === 'cancelado') {
+      return false;
+    }
+    const today = new Date();
+    const endDate = new Date(project.end_date);
+    return endDate < today;
+  };
 
   if (isLoading) {
     return <div className="flex justify-center py-8">Carregando projetos...</div>;
@@ -170,7 +236,7 @@ const ProjectsManagement = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Gerenciamento de Projetos ({projects.length})</span>
+            <span>Gerenciamento de Projetos ({filteredProjects.length})</span>
             <div className="flex space-x-2">
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -181,6 +247,32 @@ const ProjectsManagement = () => {
                   className="pl-10 w-64"
                 />
               </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos Status</SelectItem>
+                  <SelectItem value="planejamento">Planejamento</SelectItem>
+                  <SelectItem value="em_andamento">Em Andamento</SelectItem>
+                  <SelectItem value="pausado">Pausado</SelectItem>
+                  <SelectItem value="concluido">Concluído</SelectItem>
+                  <SelectItem value="cancelado">Cancelado</SelectItem>
+                  <SelectItem value="atrasado">Atrasados</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="todos">Todos Tipos</SelectItem>
+                  <SelectItem value="Energia Solar">Energia Solar</SelectItem>
+                  <SelectItem value="Projeto Elétrico">Projeto Elétrico</SelectItem>
+                  <SelectItem value="Redes de Distribuição">Redes de Distribuição</SelectItem>
+                  <SelectItem value="Automação">Automação</SelectItem>
+                </SelectContent>
+              </Select>
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="flex items-center space-x-2">
@@ -341,12 +433,18 @@ const ProjectsManagement = () => {
               </Dialog>
             </div>
           </CardTitle>
-          <CardDescription>Gerencie todos os projetos conectados ao Supabase</CardDescription>
+          <CardDescription>
+            Gerencie todos os projetos conectados ao Supabase. 
+            <span className="text-red-600 font-medium">
+              Critério para "atrasado": data de fim menor que hoje e status não concluído/cancelado.
+            </span>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">Seleção</TableHead>
                 <TableHead>Projeto</TableHead>
                 <TableHead>Cliente</TableHead>
                 <TableHead>Tipo</TableHead>
@@ -360,8 +458,22 @@ const ProjectsManagement = () => {
             </TableHeader>
             <TableBody>
               {filteredProjects.map((project) => (
-                <TableRow key={project.id}>
-                  <TableCell className="font-medium">{project.name}</TableCell>
+                <TableRow 
+                  key={project.id}
+                  className={isProjectLate(project) ? 'bg-red-50 border-red-200' : ''}
+                >
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedProjects.has(project.id)}
+                      onCheckedChange={(checked) => handleProjectSelection(project.id, !!checked)}
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {project.name}
+                    {isProjectLate(project) && (
+                      <Badge variant="destructive" className="ml-2 text-xs">ATRASADO</Badge>
+                    )}
+                  </TableCell>
                   <TableCell>{project.client}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{project.type}</Badge>
@@ -385,9 +497,6 @@ const ProjectsManagement = () => {
                   <TableCell>R$ {project.value.toLocaleString()}</TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
                       <Button variant="outline" size="sm">
                         <Edit className="h-4 w-4" />
                       </Button>

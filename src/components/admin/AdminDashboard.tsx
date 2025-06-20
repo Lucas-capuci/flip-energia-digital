@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Download, Filter, Users, FileText, Phone, Briefcase } from 'lucide-react';
+import { Download, Filter, FileText, Phone, Briefcase } from 'lucide-react';
 import LeadsManagement from './LeadsManagement';
 import ProjectsManagement from './ProjectsManagement';
 import ContactsManagement from './ContactsManagement';
 import DashboardStats from './DashboardStats';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('leads');
 
   const exportAllData = async () => {
     // Implementation for exporting all data from Supabase tables
@@ -38,11 +38,7 @@ const AdminDashboard = () => {
       <DashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview" className="flex items-center space-x-2">
-            <Users className="h-4 w-4" />
-            <span>Visão Geral</span>
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="leads" className="flex items-center space-x-2">
             <FileText className="h-4 w-4" />
             <span>Leads & Propostas</span>
@@ -57,10 +53,6 @@ const AdminDashboard = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <DashboardStats />
-        </TabsContent>
-
         <TabsContent value="leads" className="space-y-4">
           <LeadsManagement />
         </TabsContent>
@@ -70,7 +62,7 @@ const AdminDashboard = () => {
         </TabsContent>
 
         <TabsContent value="projects" className="space-y-4">
-          <ProjectsManagement />
+          <ProjectsManagement onTabChange={setActiveTab} />
         </TabsContent>
       </Tabs>
     </div>
