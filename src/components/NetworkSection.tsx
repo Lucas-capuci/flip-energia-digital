@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Network, Shield, TrendingDown, Zap, CheckCircle, Settings, Monitor, Wrench, Power, Cable } from 'lucide-react';
+import { Network, Shield, TrendingDown, Zap, CheckCircle, Settings, Wrench, Power, Cable } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
 const NetworkSection = () => {
@@ -60,12 +59,6 @@ const NetworkSection = () => {
       color: 'from-purple-500 to-purple-600'
     },
     {
-      icon: Monitor,
-      title: 'Monitoramento 24/7',
-      description: 'Monitoramento remoto contínuo para máxima eficiência',
-      color: 'from-green-500 to-green-600'
-    },
-    {
       icon: Wrench,
       title: 'Manutenção Completa',
       description: 'Manutenção preventiva e corretiva especializada',
@@ -97,12 +90,6 @@ const NetworkSection = () => {
       title: 'Proteção Avançada',
       description: 'Sistemas de proteção contra surtos e sobrecargas',
       color: 'from-purple-500 to-purple-600'
-    },
-    {
-      icon: Monitor,
-      title: 'Controle Remoto',
-      description: 'Monitoramento e controle via sistema SCADA',
-      color: 'from-green-500 to-emerald-500'
     },
     {
       icon: Network,
