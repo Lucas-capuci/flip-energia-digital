@@ -7,6 +7,7 @@ import { Plus } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import LeadsTable from './leads/LeadsTable';
 import LeadsFilters from './leads/LeadsFilters';
+import CreateLeadDialog from './leads/CreateLeadDialog';
 import EditLeadDialog from './leads/EditLeadDialog';
 import StatusUpdateDialog from './leads/StatusUpdateDialog';
 import StatusHistoryDialog from './leads/StatusHistoryDialog';
@@ -38,7 +39,7 @@ const LeadsManagement = () => {
   const { data: leadsData, isLoading, isError, refetch } = useQuery({
     queryKey: ['leads'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('budget_requests').select('*');
+      const { data, error } = await supabase.from('budget_requests').select('*').order('created_at', { ascending: false });
       if (error) {
         throw new Error(error.message);
       }
@@ -53,8 +54,11 @@ const LeadsManagement = () => {
   }, [leadsData]);
 
   const createLeadMutation = useMutation({
-    mutationFn: async (newLead: Omit<Lead, 'id'>) => {
-      const { data, error } = await supabase.from('budget_requests').insert([newLead]);
+    mutationFn: async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
+      const { data, error } = await supabase.from('budget_requests').insert([{
+        ...newLead,
+        status: 'novo'
+      }]).select();
       if (error) {
         throw new Error(error.message);
       }
@@ -151,11 +155,11 @@ const LeadsManagement = () => {
 
   const deleteLeadMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { data, error } = await supabase.from('budget_requests').delete().eq('id', id);
+      const { error } = await supabase.from('budget_requests').delete().eq('id', id);
       if (error) {
         throw new Error(error.message);
       }
-      return data;
+      return { id };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
@@ -200,6 +204,10 @@ const LeadsManagement = () => {
 
   const handleViewHistory = (leadId: string) => {
     setHistoryLeadId(leadId);
+  };
+
+  const handleCreateLead = async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
+    await createLeadMutation.mutateAsync(newLead);
   };
 
   const filteredLeads = leads?.filter((lead) => {
@@ -289,6 +297,12 @@ const LeadsManagement = () => {
           />
         </CardContent>
       </Card>
+
+      <CreateLeadDialog
+        isOpen={showCreateDialog}
+        onClose={() => setShowCreateDialog(false)}
+        onSave={handleCreateLead}
+      />
 
       <EditLeadDialog
         lead={editingLead}
