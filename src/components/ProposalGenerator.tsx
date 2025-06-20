@@ -1,12 +1,33 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Calculator, Users } from 'lucide-react';
 import ProposalHeader from './proposal/ProposalHeader';
 import ProposalForm from './proposal/ProposalForm';
 import AdminDashboard from './admin/AdminDashboard';
+import CalculationResults from './proposal/CalculationResults';
+import { FormData } from '../utils/proposalCalculations';
 
 const ProposalGenerator = () => {
+  const [formData, setFormData] = useState<FormData>({
+    clientName: '',
+    monthlyConsumption: 0,
+    localIrradiation: 0,
+    systemEfficiency: 80,
+    panelPower: 550,
+    energyTariff: 0,
+    systemPrice: 0,
+    excessPrice: 0,
+    excessEstimate: 0,
+  });
+
+  const handleInputChange = (field: keyof FormData, value: number | string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <ProposalHeader />
@@ -29,8 +50,13 @@ const ProposalGenerator = () => {
               <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
                 Calcular Proposta Comercial
               </h2>
-              <ProposalForm />
+              <ProposalForm 
+                formData={formData}
+                onInputChange={handleInputChange}
+              />
             </div>
+            
+            <CalculationResults formData={formData} />
           </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">

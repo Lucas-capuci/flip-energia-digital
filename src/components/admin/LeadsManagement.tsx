@@ -59,7 +59,9 @@ const LeadsManagement = () => {
 
   const getStatusBadge = (request) => {
     // Simple logic for demo - you can implement more complex status tracking
-    const daysSinceCreated = Math.floor((new Date() - new Date(request.created_at)) / (1000 * 60 * 60 * 24));
+    const createdDate = new Date(request.created_at);
+    const currentDate = new Date();
+    const daysSinceCreated = Math.floor((currentDate.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
     
     if (daysSinceCreated === 0) return <Badge variant="default">Novo</Badge>;
     if (daysSinceCreated <= 3) return <Badge variant="secondary">Em Análise</Badge>;
