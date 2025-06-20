@@ -6,7 +6,7 @@ import ProposalHeader from './proposal/ProposalHeader';
 import ProposalForm from './proposal/ProposalForm';
 import AdminDashboard from './admin/AdminDashboard';
 import CalculationResults from './proposal/CalculationResults';
-import { FormData } from '../utils/proposalCalculations';
+import { FormData, calculateProposalValues, CalculationResults as CalcResultsType } from '../utils/proposalCalculations';
 
 const ProposalGenerator = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -21,11 +21,18 @@ const ProposalGenerator = () => {
     excessEstimate: 0,
   });
 
+  const [calculations, setCalculations] = useState<CalcResultsType | null>(null);
+
   const handleInputChange = (field: keyof FormData, value: number | string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleCalculate = () => {
+    const results = calculateProposalValues(formData);
+    setCalculations(results);
   };
 
   return (
@@ -56,7 +63,15 @@ const ProposalGenerator = () => {
               />
             </div>
             
-            <CalculationResults formData={formData} />
+            <div className="bg-white rounded-lg shadow-sm border border-flip-blue-100 p-6">
+              <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
+                Resultados dos Cálculos
+              </h2>
+              <CalculationResults 
+                calculations={calculations}
+                onCalculate={handleCalculate}
+              />
+            </div>
           </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
