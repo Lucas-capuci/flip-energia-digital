@@ -1,26 +1,42 @@
+
 import React, { useState } from 'react';
-import { SolarMicroFormData, SubstationFormData, SolarCalculationResults, SubstationCalculationResults, calculateSolarProject, calculateSubstationProject, validateSolarData, validateSubstationData } from '../../utils/electricalCalculations';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Switch } from '../ui/switch';
-import { Slider } from '../ui/slider';
+import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
+import { AlertTriangle, Calculator, FileText, Download, RefreshCw } from 'lucide-react';
 import { toast } from '../ui/use-toast';
-import { useToast } from "@/components/ui/use-toast"
+import SolarProjectForm from './SolarProjectForm';
+import SubstationProjectForm from './SubstationProjectForm';
+import ProjectResults from './ProjectResults';
+import ProjectComparison from './ProjectComparison';
+import { 
+  SolarMicroFormData, 
+  SubstationFormData, 
+  SolarCalculationResults, 
+  SubstationCalculationResults,
+  calculateSolarProject,
+  calculateSubstationProject,
+  validateSolarData,
+  validateSubstationData,
+  exportToPDF
+} from '../../utils/electricalCalculations';
 
-type ProjectType = 'solar-micro' | 'substation';
+type ProjectType = 'solar-micro' | 'solar-mini' | 'substation-aerial' | 'substation-enclosed';
 
 const ElectricalProjectCalculator = () => {
   const [projectType, setProjectType] = useState<ProjectType>('solar-micro');
-  const [solarFormData, setSolarFormData] = useState<SolarMicroFormData>({
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+
+  const [solarFormData, setSolarFormData] = useState<Partial<SolarMicroFormData>>({
     projectType: 'solar-micro',
     monthlyConsumption: 0,
-    solarIrradiation: 5.0,
+    solarIrradiation: 5.2,
     structureType: 'roof',
     inclination: 20,
-    orientation: 180,
+    orientation: 0,
     networkVoltage: '220/380V',
     lossesPercent: 18,
     connectionType: 'triphasic',
@@ -28,11 +44,11 @@ const ElectricalProjectCalculator = () => {
     electricityTariff: 0.85,
     moduleWattage: 550,
     moduleArea: 2.8,
-    costPerKwp: 4500
+    costPerKwp: projectType === 'solar-micro' ? 4500 : 3800
   });
 
-  const [substationFormData, setSubstationFormData] = useState<SubstationFormData>({
-    projectType: 'substation-aerial',
+  const [substationFormData, setSubstationFormData] = useState<Partial<SubstationFormData>>({
+    projectType: projectType as 'substation-aerial' | 'substation-enclosed',
     installedPower: 0,
     powerFactor: 0.92,
     inputVoltage: '13.8kV',
@@ -45,68 +61,98 @@ const ElectricalProjectCalculator = () => {
     projectCostPerKva: 200
   });
 
-  const [solarResults, setSolarResults] = useState<SolarCalculationResults | null>(null);
-  const [substationResults, setSubstationResults] = useState<SubstationCalculationResults | null>(null);
-  const [errors, setErrors] = useState<string[]>([]);
-  const { toast } = useToast()
+  const [calculations, setCalculations] = useState<SolarCalculationResults | SubstationCalculationResults | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const handleProjectTypeChange = (value: string) => {
-    setProjectType(value as ProjectType);
-    setErrors([]);
-    setSolarResults(null);
-    setSubstationResults(null);
+    const newProjectType = value as ProjectType;
+    setProjectType(newProjectType);
+    setCalculations(null);
+    setValidationErrors([]);
+    
+    // Update form data based on project type
+    if (newProjectType.startsWith('solar')) {
+      setSolarFormData(prev => ({
+        ...prev,
+        projectType: newProjectType as 'solar-micro' | 'solar-mini',
+        costPerKwp: newProjectType === 'solar-micro' ? 4500 : 3800
+      }));
+    } else {
+      setSubstationFormData(prev => ({
+        ...prev,
+        projectType: newProjectType as 'substation-aerial' | 'substation-enclosed'
+      }));
+    }
   };
 
-  const handleCalculate = () => {
-    setErrors([]);
-    if (projectType === 'solar-micro') {
-      const validationErrors = validateSolarData(solarFormData);
-      if (validationErrors.length > 0) {
-        setErrors(validationErrors);
-        return;
-      }
-      try {
-        const results = calculateSolarProject(solarFormData);
-        setSolarResults(results);
-        setSubstationResults(null);
-      } catch (error: any) {
+  const validateAndCalculate = async () => {
+    setIsCalculating(true);
+    setValidationErrors([]);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate calculation time
+
+      if (projectType.startsWith('solar')) {
+        const errors = validateSolarData(solarFormData);
+        if (errors.length > 0) {
+          setValidationErrors(errors);
+          toast({
+            variant: "destructive",
+            title: "Dados inválidos",
+            description: "Corrija os erros antes de continuar."
+          });
+          return;
+        }
+
+        const results = calculateSolarProject(solarFormData as SolarMicroFormData);
+        setCalculations(results);
+        
         toast({
-          variant: "destructive",
-          title: "Erro ao calcular projeto solar.",
-          description: error.message,
-        })
-      }
-    } else if (projectType === 'substation') {
-      const validationErrors = validateSubstationData(substationFormData);
-      if (validationErrors.length > 0) {
-        setErrors(validationErrors);
-        return;
-      }
-      try {
-        const results = calculateSubstationProject(substationFormData);
-        setSubstationResults(results);
-        setSolarResults(null);
-      } catch (error: any) {
+          title: "Cálculo concluído",
+          description: "Projeto solar dimensionado com sucesso!"
+        });
+
+      } else {
+        const errors = validateSubstationData(substationFormData);
+        if (errors.length > 0) {
+          setValidationErrors(errors);
+          toast({
+            variant: "destructive",
+            title: "Dados inválidos",
+            description: "Corrija os erros antes de continuar."
+          });
+          return;
+        }
+
+        const results = calculateSubstationProject(substationFormData as SubstationFormData);
+        setCalculations(results);
+        
         toast({
-          variant: "destructive",
-          title: "Erro ao calcular subestação.",
-          description: error.message,
-        })
+          title: "Cálculo concluído",
+          description: "Subestação dimensionada com sucesso!"
+        });
       }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro no cálculo",
+        description: "Verifique os dados e tente novamente."
+      });
+    } finally {
+      setIsCalculating(false);
     }
   };
 
   const handleReset = () => {
-    setSolarResults(null);
-    setSubstationResults(null);
-    setErrors([]);
+    setCalculations(null);
+    setValidationErrors([]);
     setSolarFormData({
       projectType: 'solar-micro',
       monthlyConsumption: 0,
-      solarIrradiation: 5.0,
+      solarIrradiation: 5.2,
       structureType: 'roof',
       inclination: 20,
-      orientation: 180,
+      orientation: 0,
       networkVoltage: '220/380V',
       lossesPercent: 18,
       connectionType: 'triphasic',
@@ -131,226 +177,225 @@ const ElectricalProjectCalculator = () => {
     });
   };
 
+  const handleExportPDF = () => {
+    if (!calculations) return;
+    
+    try {
+      exportToPDF(calculations, projectType, projectType.startsWith('solar') ? solarFormData : substationFormData);
+      toast({
+        title: "PDF exportado",
+        description: "Relatório técnico gerado com sucesso!"
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro na exportação",
+        description: "Não foi possível gerar o PDF."
+      });
+    }
+  };
+
+  const isSolarProject = projectType.startsWith('solar');
+  const projectTypeLabels = {
+    'solar-micro': 'Usina Fotovoltaica - Microgeração',
+    'solar-mini': 'Usina Fotovoltaica - Minigeração',
+    'substation-aerial': 'Subestação Aérea',
+    'substation-enclosed': 'Subestação Abrigada'
+  };
+
   return (
-    <div className="flex flex-col md:flex-row gap-4">
+    <div className="space-y-6">
+      {/* Header Section */}
+      <Card className="border-flip-blue-200">
+        <CardHeader className="bg-gradient-to-r from-flip-blue-50 to-flip-blue-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-2xl text-flip-blue-900 flex items-center">
+                <Calculator className="h-6 w-6 mr-2" />
+                Calculadora de Projetos Elétricos
+              </CardTitle>
+              <CardDescription className="text-flip-blue-700 mt-2">
+                Dimensionamento técnico e estimativa financeira profissional
+              </CardDescription>
+            </div>
+            <Badge variant="outline" className="border-flip-blue-300 text-flip-blue-700">
+              Versão 2.0
+            </Badge>
+          </div>
+        </CardHeader>
+      </Card>
+
       {/* Project Type Selection */}
-      <Card className="w-full md:w-1/3">
+      <Card>
         <CardHeader>
-          <CardTitle>Tipo de Projeto</CardTitle>
-          <CardDescription>Selecione o tipo de projeto elétrico.</CardDescription>
+          <CardTitle className="flex items-center">
+            <FileText className="h-5 w-5 mr-2 text-flip-blue-500" />
+            Tipo de Projeto
+          </CardTitle>
+          <CardDescription>
+            Selecione o tipo de projeto elétrico para dimensionamento
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <Select onValueChange={handleProjectTypeChange}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Selecione um tipo de projeto" defaultValue="solar-micro" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="solar-micro">Sistema Solar (Microgeração)</SelectItem>
-              <SelectItem value="substation">Subestação</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Select value={projectType} onValueChange={handleProjectTypeChange}>
+                <SelectTrigger className="w-full border-flip-blue-200">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="solar-micro">🔆 Usina Fotovoltaica - Microgeração (até 75 kWp)</SelectItem>
+                  <SelectItem value="solar-mini">☀️ Usina Fotovoltaica - Minigeração (acima de 75 kWp)</SelectItem>
+                  <SelectItem value="substation-aerial">⚡ Subestação Aérea</SelectItem>
+                  <SelectItem value="substation-enclosed">🏢 Subestação Abrigada</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge 
+                variant={isSolarProject ? "default" : "secondary"}
+                className={isSolarProject ? "bg-yellow-500" : "bg-blue-500"}
+              >
+                {projectTypeLabels[projectType]}
+              </Badge>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Solar Project Form */}
-      {projectType === 'solar-micro' && (
-        <Card className="w-full md:w-2/3">
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <Card className="border-red-200 bg-red-50">
           <CardHeader>
-            <CardTitle>Cálculo de Projeto Solar (Microgeração)</CardTitle>
-            <CardDescription>Insira os dados para calcular o projeto solar.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="monthlyConsumption">Consumo Mensal (kWh)</Label>
-                <Input
-                  type="number"
-                  id="monthlyConsumption"
-                  value={solarFormData.monthlyConsumption.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, monthlyConsumption: parseFloat(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="solarIrradiation">Irradiação Solar (kWh/m²/dia)</Label>
-                <Input
-                  type="number"
-                  id="solarIrradiation"
-                  value={solarFormData.solarIrradiation.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, solarIrradiation: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="moduleWattage">Potência do Módulo (W)</Label>
-                <Input
-                  type="number"
-                  id="moduleWattage"
-                  value={solarFormData.moduleWattage.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, moduleWattage: parseFloat(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="moduleArea">Área do Módulo (m²)</Label>
-                <Input
-                  type="number"
-                  id="moduleArea"
-                  value={solarFormData.moduleArea.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, moduleArea: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="electricityTariff">Tarifa de Energia (R$/kWh)</Label>
-                <Input
-                  type="number"
-                  id="electricityTariff"
-                  value={solarFormData.electricityTariff.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, electricityTariff: parseFloat(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="costPerKwp">Custo por kWp (R$)</Label>
-                <Input
-                  type="number"
-                  id="costPerKwp"
-                  value={solarFormData.costPerKwp.toString()}
-                  onChange={(e) => setSolarFormData({ ...solarFormData, costPerKwp: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="lossesPercent">Perdas no Sistema (%)</Label>
-              <Slider
-                defaultValue={[solarFormData.lossesPercent]}
-                max={30}
-                min={10}
-                step={1}
-                onValueChange={(value) => setSolarFormData({ ...solarFormData, lossesPercent: value[0] })}
-              />
-              <p className="text-sm text-muted-foreground">Valor: {solarFormData.lossesPercent}%</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Substation Project Form */}
-      {projectType === 'substation' && (
-        <Card className="w-full md:w-2/3">
-          <CardHeader>
-            <CardTitle>Cálculo de Projeto de Subestação</CardTitle>
-            <CardDescription>Insira os dados para calcular o projeto da subestação.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="installedPower">Potência Instalada (kW)</Label>
-                <Input
-                  type="number"
-                  id="installedPower"
-                  value={substationFormData.installedPower.toString()}
-                  onChange={(e) => setSubstationFormData({ ...substationFormData, installedPower: parseFloat(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="powerFactor">Fator de Potência</Label>
-                <Input
-                  type="number"
-                  id="powerFactor"
-                  value={substationFormData.powerFactor.toString()}
-                  onChange={(e) => setSubstationFormData({ ...substationFormData, powerFactor: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="materialCostPerKva">Custo Material por kVA (R$)</Label>
-                <Input
-                  type="number"
-                  id="materialCostPerKva"
-                  value={substationFormData.materialCostPerKva.toString()}
-                  onChange={(e) => setSubstationFormData({ ...substationFormData, materialCostPerKva: parseFloat(e.target.value) })}
-                />
-              </div>
-              <div>
-                <Label htmlFor="laborCostPerKva">Custo Mão de Obra por kVA (R$)</Label>
-                <Input
-                  type="number"
-                  id="laborCostPerKva"
-                  value={substationFormData.laborCostPerKva.toString()}
-                  onChange={(e) => setSubstationFormData({ ...substationFormData, laborCostPerKva: parseFloat(e.target.value) })}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="soilResistivity">Resistividade do Solo (Ω.m)</Label>
-              <Input
-                type="number"
-                id="soilResistivity"
-                value={substationFormData.soilResistivity.toString()}
-                onChange={(e) => setSubstationFormData({ ...substationFormData, soilResistivity: parseFloat(e.target.value) })}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Results Display */}
-      {(solarResults || substationResults) && (
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>Resultados do Cálculo</CardTitle>
-            <CardDescription>Aqui estão os resultados do seu cálculo.</CardDescription>
+            <CardTitle className="text-red-800 flex items-center">
+              <AlertTriangle className="h-5 w-5 mr-2" />
+              Correções necessárias
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {errors.length > 0 && (
-              <div className="mb-4">
-                <h3 className="text-lg font-semibold mb-2">Erros:</h3>
-                <ul>
-                  {errors.map((error, index) => (
-                    <li key={index} className="text-red-500">{error}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {solarResults && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Resultados do Projeto Solar:</h3>
-                <p>Potência do Sistema: {solarResults.systemPower} kWp</p>
-                <p>Número de Módulos: {solarResults.numberOfModules}</p>
-                <p>Geração Anual Estimada: {solarResults.annualGeneration} kWh</p>
-                <p>Economia Mensal Estimada: R$ {solarResults.monthlySavings}</p>
-                <p>Payback Estimado: {solarResults.payback} anos</p>
-              </div>
-            )}
-
-            {substationResults && (
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Resultados do Projeto de Subestação:</h3>
-                <p>Potência do Transformador: {substationResults.transformerPower} kVA</p>
-                <p>Corrente MT: {substationResults.currentMT} A</p>
-                <p>Custo Total Estimado: R$ {substationResults.totalCost}</p>
-                <p>Tempo de Execução Estimado: {substationResults.executionTime}</p>
-              </div>
-            )}
+            <ul className="space-y-1">
+              {validationErrors.map((error, index) => (
+                <li key={index} className="text-red-700 text-sm">• {error}</li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       )}
 
-      {/* Actions */}
-      <div className="w-full flex justify-end gap-2 mt-4">
-        <Button variant="secondary" onClick={handleReset}>
-          Resetar
-        </Button>
-        <Button onClick={handleCalculate}>Calcular</Button>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Form Section */}
+        <div className="lg:col-span-2">
+          {isSolarProject ? (
+            <SolarProjectForm
+              data={solarFormData}
+              onChange={setSolarFormData}
+              projectType={projectType as 'solar-micro' | 'solar-mini'}
+            />
+          ) : (
+            <SubstationProjectForm
+              data={substationFormData}
+              onChange={setSubstationFormData}
+              projectType={projectType as 'substation-aerial' | 'substation-enclosed'}
+            />
+          )}
+        </div>
+
+        {/* Actions Panel */}
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Ações</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <Button 
+                onClick={validateAndCalculate}
+                disabled={isCalculating}
+                className="w-full bg-flip-blue-500 hover:bg-flip-blue-600"
+              >
+                {isCalculating ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Calculando...
+                  </>
+                ) : (
+                  <>
+                    <Calculator className="h-4 w-4 mr-2" />
+                    Calcular Projeto
+                  </>
+                )}
+              </Button>
+
+              <Button 
+                variant="outline" 
+                onClick={handleReset}
+                className="w-full border-flip-blue-200"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Resetar Dados
+              </Button>
+
+              {calculations && (
+                <Button 
+                  variant="outline" 
+                  onClick={handleExportPDF}
+                  className="w-full border-green-200 text-green-700 hover:bg-green-50"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar PDF
+                </Button>
+              )}
+
+              <Separator />
+
+              <Button 
+                variant="ghost" 
+                onClick={() => setShowComparison(!showComparison)}
+                className="w-full text-flip-blue-600"
+              >
+                {showComparison ? 'Ocultar' : 'Mostrar'} Comparação
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Quick Info Panel */}
+          <Card className="bg-flip-blue-50">
+            <CardHeader>
+              <CardTitle className="text-sm text-flip-blue-900">Informações Técnicas</CardTitle>
+            </CardHeader>
+            <CardContent className="text-xs text-flip-blue-800 space-y-2">
+              {isSolarProject ? (
+                <>
+                  <p>• Cálculos baseados na NBR 16274</p>
+                  <p>• Performance Ratio: 82% (padrão)</p>
+                  <p>• Vida útil: 25 anos</p>
+                  <p>• Degradação: 0,7% ao ano</p>
+                </>
+              ) : (
+                <>
+                  <p>• Normas: NBR 5410, NBR 14039</p>
+                  <p>• Fator de demanda: 0,8-1,0</p>
+                  <p>• Vida útil: 30 anos</p>
+                  <p>• Manutenção: Anual</p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {/* Results Section */}
+      {calculations && (
+        <ProjectResults
+          calculations={calculations}
+          projectType={projectType}
+          onExportPDF={handleExportPDF}
+        />
+      )}
+
+      {/* Comparison Section */}
+      {showComparison && (
+        <ProjectComparison />
+      )}
     </div>
   );
 };
