@@ -5,12 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
-import { AlertTriangle, Calculator, FileText, Download, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Calculator, FileText, Download, RefreshCw, TrendingUp } from 'lucide-react';
 import { toast } from '../ui/use-toast';
 import SolarProjectForm from './SolarProjectForm';
 import SubstationProjectForm from './SubstationProjectForm';
 import ProjectResults from './ProjectResults';
-import ProjectComparison from './ProjectComparison';
 import { 
   SolarMicroFormData, 
   SubstationFormData, 
@@ -28,13 +27,13 @@ type ProjectType = 'solar-micro' | 'solar-mini' | 'substation-aerial' | 'substat
 const ElectricalProjectCalculator = () => {
   const [projectType, setProjectType] = useState<ProjectType>('solar-micro');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [showComparison, setShowComparison] = useState(false);
 
   const [solarFormData, setSolarFormData] = useState<Partial<SolarMicroFormData>>({
     projectType: 'solar-micro',
-    monthlyConsumption: 0,
+    targetGeneration: 0,
+    availableBudget: 0,
     solarIrradiation: 5.2,
-    structureType: 'roof',
+    structureType: 'ground',
     inclination: 20,
     orientation: 0,
     networkVoltage: '220/380V',
@@ -109,7 +108,7 @@ const ElectricalProjectCalculator = () => {
         
         toast({
           title: "Cálculo concluído",
-          description: "Projeto solar dimensionado com sucesso!"
+          description: "Usina solar dimensionada com sucesso!"
         });
 
       } else {
@@ -148,9 +147,10 @@ const ElectricalProjectCalculator = () => {
     setValidationErrors([]);
     setSolarFormData({
       projectType: 'solar-micro',
-      monthlyConsumption: 0,
+      targetGeneration: 0,
+      availableBudget: 0,
       solarIrradiation: 5.2,
-      structureType: 'roof',
+      structureType: 'ground',
       inclination: 20,
       orientation: 0,
       networkVoltage: '220/380V',
@@ -197,8 +197,8 @@ const ElectricalProjectCalculator = () => {
 
   const isSolarProject = projectType.startsWith('solar');
   const projectTypeLabels = {
-    'solar-micro': 'Usina Fotovoltaica - Microgeração',
-    'solar-mini': 'Usina Fotovoltaica - Minigeração',
+    'solar-micro': 'Usina Solar - Microgeração (Investimento)',
+    'solar-mini': 'Usina Solar - Minigeração (Investimento)',
     'substation-aerial': 'Subestação Aérea',
     'substation-enclosed': 'Subestação Abrigada'
   };
@@ -207,19 +207,19 @@ const ElectricalProjectCalculator = () => {
     <div className="space-y-6">
       {/* Header Section */}
       <Card className="border-flip-blue-200">
-        <CardHeader className="bg-gradient-to-r from-flip-blue-50 to-flip-blue-100">
+        <CardHeader className="bg-gradient-to-r from-flip-blue-50 to-green-50">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl text-flip-blue-900 flex items-center">
-                <Calculator className="h-6 w-6 mr-2" />
-                Calculadora de Projetos Elétricos
+                <TrendingUp className="h-6 w-6 mr-2" />
+                Calculadora de Investimento em Projetos Elétricos
               </CardTitle>
               <CardDescription className="text-flip-blue-700 mt-2">
-                Dimensionamento técnico e estimativa financeira profissional
+                Dimensionamento técnico e análise de viabilidade econômica para usinas solares e subestações
               </CardDescription>
             </div>
-            <Badge variant="outline" className="border-flip-blue-300 text-flip-blue-700">
-              Versão 2.0
+            <Badge variant="outline" className="border-green-300 text-green-700 bg-green-50">
+              Investimento v2.0
             </Badge>
           </div>
         </CardHeader>
@@ -230,10 +230,10 @@ const ElectricalProjectCalculator = () => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <FileText className="h-5 w-5 mr-2 text-flip-blue-500" />
-            Tipo de Projeto
+            Tipo de Projeto de Investimento
           </CardTitle>
           <CardDescription>
-            Selecione o tipo de projeto elétrico para dimensionamento
+            Selecione o tipo de projeto elétrico para análise de investimento
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -244,8 +244,8 @@ const ElectricalProjectCalculator = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="solar-micro">🔆 Usina Fotovoltaica - Microgeração (até 75 kWp)</SelectItem>
-                  <SelectItem value="solar-mini">☀️ Usina Fotovoltaica - Minigeração (acima de 75 kWp)</SelectItem>
+                  <SelectItem value="solar-micro">🔆 Usina Solar - Microgeração (até 75 kWp)</SelectItem>
+                  <SelectItem value="solar-mini">☀️ Usina Solar - Minigeração (acima de 75 kWp)</SelectItem>
                   <SelectItem value="substation-aerial">⚡ Subestação Aérea</SelectItem>
                   <SelectItem value="substation-enclosed">🏢 Subestação Abrigada</SelectItem>
                 </SelectContent>
@@ -254,7 +254,7 @@ const ElectricalProjectCalculator = () => {
             <div className="flex items-center space-x-2">
               <Badge 
                 variant={isSolarProject ? "default" : "secondary"}
-                className={isSolarProject ? "bg-yellow-500" : "bg-blue-500"}
+                className={isSolarProject ? "bg-green-500" : "bg-blue-500"}
               >
                 {projectTypeLabels[projectType]}
               </Badge>
@@ -310,7 +310,7 @@ const ElectricalProjectCalculator = () => {
               <Button 
                 onClick={validateAndCalculate}
                 disabled={isCalculating}
-                className="w-full bg-flip-blue-500 hover:bg-flip-blue-600"
+                className="w-full bg-green-600 hover:bg-green-700"
               >
                 {isCalculating ? (
                   <>
@@ -320,7 +320,7 @@ const ElectricalProjectCalculator = () => {
                 ) : (
                   <>
                     <Calculator className="h-4 w-4 mr-2" />
-                    Calcular Projeto
+                    Calcular Investimento
                   </>
                 )}
               </Button>
@@ -341,41 +341,33 @@ const ElectricalProjectCalculator = () => {
                   className="w-full border-green-200 text-green-700 hover:bg-green-50"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Exportar PDF
+                  Exportar Relatório
                 </Button>
               )}
-
-              <Separator />
-
-              <Button 
-                variant="ghost" 
-                onClick={() => setShowComparison(!showComparison)}
-                className="w-full text-flip-blue-600"
-              >
-                {showComparison ? 'Ocultar' : 'Mostrar'} Comparação
-              </Button>
             </CardContent>
           </Card>
 
-          {/* Quick Info Panel */}
-          <Card className="bg-flip-blue-50">
+          {/* Investment Info Panel */}
+          <Card className="bg-gradient-to-br from-green-50 to-blue-50">
             <CardHeader>
-              <CardTitle className="text-sm text-flip-blue-900">Informações Técnicas</CardTitle>
+              <CardTitle className="text-sm text-flip-blue-900">💡 Dicas de Investimento</CardTitle>
             </CardHeader>
             <CardContent className="text-xs text-flip-blue-800 space-y-2">
               {isSolarProject ? (
                 <>
-                  <p>• Cálculos baseados na NBR 16274</p>
-                  <p>• Performance Ratio: 82% (padrão)</p>
-                  <p>• Vida útil: 25 anos</p>
-                  <p>• Degradação: 0,7% ao ano</p>
+                  <p>• ROI típico: 15-25% ao ano</p>
+                  <p>• Payback: 3-6 anos</p>
+                  <p>• Vida útil: 25+ anos</p>
+                  <p>• Valorização do imóvel</p>
+                  <p>• Energia limpa e sustentável</p>
                 </>
               ) : (
                 <>
-                  <p>• Normas: NBR 5410, NBR 14039</p>
-                  <p>• Fator de demanda: 0,8-1,0</p>
-                  <p>• Vida útil: 30 anos</p>
-                  <p>• Manutenção: Anual</p>
+                  <p>• Infraestrutura essencial</p>
+                  <p>• Valorização do empreendimento</p>
+                  <p>• Segurança energética</p>
+                  <p>• Conformidade regulatória</p>
+                  <p>• Vida útil: 30+ anos</p>
                 </>
               )}
             </CardContent>
@@ -390,11 +382,6 @@ const ElectricalProjectCalculator = () => {
           projectType={projectType}
           onExportPDF={handleExportPDF}
         />
-      )}
-
-      {/* Comparison Section */}
-      {showComparison && (
-        <ProjectComparison />
       )}
     </div>
   );

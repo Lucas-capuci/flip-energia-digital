@@ -90,42 +90,51 @@ const SolarProjectForm: React.FC<SolarProjectFormProps> = ({ data, onChange, pro
 
   return (
     <div className="space-y-4">
-      {/* Dados de Consumo */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-medium text-flip-gray-900 mb-3">📊 Dados de Consumo</h3>
+      {/* Dados de Investimento */}
+      <div className="bg-gradient-to-br from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
+        <h3 className="font-medium text-flip-gray-900 mb-3">💰 Parâmetros de Investimento</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {renderField(
-            'Consumo Médio Mensal',
-            'monthlyConsumption',
+            'Geração Desejada Mensal',
+            'targetGeneration',
             'number',
-            'Ex: 1500',
-            'Consumo médio mensal em kWh baseado na conta de energia',
+            'Ex: 2000',
+            'Meta de geração mensal em kWh para o projeto de investimento',
             'kWh'
           )}
+          {renderField(
+            'Orçamento Disponível',
+            'availableBudget',
+            'number',
+            'Ex: 100000',
+            'Valor máximo disponível para investimento no projeto',
+            'R$'
+          )}
+        </div>
+      </div>
+
+      {/* Dados Técnicos da Usina */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <h3 className="font-medium text-flip-gray-900 mb-3">⚡ Especificações Técnicas</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {renderField(
             'Irradiação Solar Local',
             'solarIrradiation',
             'number',
             'Ex: 5.0',
-            'Irradiação solar média diária da região em kWh/m²/dia',
+            'Irradiação solar média diária da região em kWh/m²/dia (consulte atlas solar)',
             'kWh/m²/dia'
           )}
-        </div>
-      </div>
-
-      {/* Características Técnicas */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-medium text-flip-gray-900 mb-3">⚡ Características Técnicas</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
           {renderSelect(
             'Tipo de Estrutura',
             'structureType',
             [
-              { value: 'roof', label: 'Telhado' },
-              { value: 'ground', label: 'Solo' },
-              { value: 'carport', label: 'Carport' }
+              { value: 'ground', label: 'Solo (Usina)' },
+              { value: 'roof', label: 'Telhado Industrial' },
+              { value: 'carport', label: 'Carport/Estacionamento' }
             ],
-            'Tipo de estrutura onde os painéis serão instalados'
+            'Tipo de estrutura onde a usina será instalada'
           )}
           
           {renderField(
@@ -133,21 +142,21 @@ const SolarProjectForm: React.FC<SolarProjectFormProps> = ({ data, onChange, pro
             'inclination',
             'number',
             'Ex: 20',
-            'Inclinação ideal dos painéis em graus (0-90°)',
+            'Inclinação ideal dos painéis para máxima geração (varia por região)',
             '°'
           )}
-          
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
           {renderField(
             'Orientação',
             'orientation',
             'number',
             'Ex: 0',
-            'Azimute - orientação dos painéis (0° = Norte)',
+            'Azimute - orientação dos painéis (0° = Norte, ideal para Brasil)',
             '° (Azimute)'
           )}
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          
           {renderSelect(
             'Tensão da Rede',
             'networkVoltage',
@@ -155,7 +164,7 @@ const SolarProjectForm: React.FC<SolarProjectFormProps> = ({ data, onChange, pro
               { value: '220/380V', label: '220/380V (Trifásico)' },
               { value: '127/220V', label: '127/220V (Monofásico)' }
             ],
-            'Tensão da rede elétrica local'
+            'Tensão da rede elétrica do local de conexão'
           )}
           
           {renderField(
@@ -163,84 +172,80 @@ const SolarProjectForm: React.FC<SolarProjectFormProps> = ({ data, onChange, pro
             'lossesPercent',
             'number',
             'Ex: 18',
-            'Perdas do sistema: cabeamento, inversores, sujeira, etc.',
+            'Perdas técnicas: cabeamento, inversores, sujeira, sombreamento',
             '%'
-          )}
-          
-          {renderSelect(
-            'Tipo de Conexão',
-            'connectionType',
-            [
-              { value: 'monophasic', label: 'Monofásica' },
-              { value: 'triphasic', label: 'Trifásica' }
-            ],
-            'Tipo de conexão com a rede elétrica'
           )}
         </div>
       </div>
 
-      {/* Dados Econômicos */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-medium text-flip-gray-900 mb-3">💰 Dados Econômicos</h3>
+      {/* Dados Comerciais */}
+      <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+        <h3 className="font-medium text-flip-gray-900 mb-3">💼 Dados Comerciais</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {renderField(
-            'Tarifa de Energia',
+            'Tarifa de Energia Local',
             'electricityTariff',
             'number',
             'Ex: 0.85',
-            'Valor da tarifa de energia elétrica em R$/kWh',
+            'Tarifa média de energia da região (para cálculo de receita)',
             'R$/kWh'
           )}
           {renderField(
-            'Custo por kWp',
+            'Custo por kWp Instalado',
             'costPerKwp',
             'number',
             'Ex: 4500',
-            `Custo estimado por kWp instalado para ${projectType === 'solar-micro' ? 'microgeração' : 'minigeração'}`,
+            `Custo médio de instalação para ${projectType === 'solar-micro' ? 'microgeração' : 'minigeração'} incluindo equipamentos e instalação`,
             'R$/kWp'
           )}
         </div>
       </div>
 
       {/* Especificações dos Equipamentos */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-medium text-flip-gray-900 mb-3">🔧 Especificações dos Equipamentos</h3>
+      <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h3 className="font-medium text-flip-gray-900 mb-3">🔧 Equipamentos</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {renderField(
             'Potência do Módulo',
             'moduleWattage',
             'number',
             'Ex: 550',
-            'Potência nominal de cada painel fotovoltaico',
+            'Potência unitária dos painéis fotovoltaicos a serem utilizados',
             'Wp'
           )}
           {renderField(
             'Área do Módulo',
             'moduleArea',
             'number',
-            'Ex: 2.7',
-            'Área de cada painel fotovoltaico',
+            'Ex: 2.8',
+            'Área unitária de cada painel fotovoltaico',
             'm²'
           )}
           {renderField(
-            'Local da Instalação',
+            'Local da Usina',
             'location',
             'text',
-            'Ex: São Paulo - SP',
-            'Cidade e estado onde será instalado o sistema'
+            'Ex: Goiânia - GO',
+            'Cidade e estado onde a usina será instalada'
           )}
         </div>
       </div>
 
       {projectType === 'solar-mini' && (
-        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">⚠️ Características da Minigeração</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Potência superior a 75 kWp</li>
-            <li>• Requer projeto específico na concessionária</li>
-            <li>• Maior complexidade de instalação</li>
-            <li>• Possibilidade de venda de energia excedente</li>
-          </ul>
+        <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
+          <h4 className="font-medium text-purple-900 mb-2">🏭 Características da Minigeração</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ul className="text-sm text-purple-800 space-y-1">
+              <li>• Potência superior a 75 kWp</li>
+              <li>• Projeto específico na concessionária</li>
+              <li>• Maior complexidade regulatória</li>
+            </ul>
+            <ul className="text-sm text-purple-800 space-y-1">
+              <li>• Possibilidade de venda de energia</li>
+              <li>• ROI mais atrativo em escala</li>
+              <li>• Ideal para investidores</li>
+            </ul>
+          </div>
         </div>
       )}
     </div>

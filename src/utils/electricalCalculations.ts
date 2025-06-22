@@ -2,7 +2,8 @@
 
 export interface SolarMicroFormData {
   projectType: 'solar-micro' | 'solar-mini';
-  monthlyConsumption: number;
+  targetGeneration: number; // Meta de geração mensal (kWh)
+  availableBudget: number; // Orçamento disponível (R$)
   solarIrradiation: number;
   structureType: 'roof' | 'ground' | 'carport';
   inclination: number;
@@ -44,6 +45,8 @@ export interface SolarCalculationResults {
   monthlySavings: string;
   payback: string;
   co2Avoided: string;
+  budgetUtilization: string;
+  monthlyROI: string;
 }
 
 export interface SubstationCalculationResults {
@@ -61,15 +64,21 @@ export interface SubstationCalculationResults {
   executionTime: string;
 }
 
-// Função para cálculos de energia solar
+// Função para cálculos de energia solar orientados a investimento
 export const calculateSolarProject = (formData: SolarMicroFormData): SolarCalculationResults => {
   const PR = (100 - formData.lossesPercent) / 100; // Performance Ratio
   
-  // Potência necessária (kWp) - mais precisa
-  const systemPower = formData.monthlyConsumption / (formData.solarIrradiation * 30 * PR);
+  // Potência necessária baseada na meta de geração (kWp)
+  const systemPower = formData.targetGeneration / (formData.solarIrradiation * 30 * PR);
   
-  // Número de módulos
-  const numberOfModules = Math.ceil(systemPower / (formData.moduleWattage / 1000));
+  // Verificar se está dentro do orçamento disponível
+  const estimatedCost = systemPower * formData.costPerKwp;
+  const adjustedSystemPower = estimatedCost > formData.availableBudget 
+    ? formData.availableBudget / formData.costPerKwp 
+    : systemPower;
+  
+  // Número de módulos baseado na potência ajustada
+  const numberOfModules = Math.ceil(adjustedSystemPower / (formData.moduleWattage / 1000));
   
   // Potência real do sistema
   const realSystemPower = numberOfModules * (formData.moduleWattage / 1000);
@@ -77,18 +86,24 @@ export const calculateSolarProject = (formData: SolarMicroFormData): SolarCalcul
   // Área estimada
   const estimatedArea = numberOfModules * formData.moduleArea;
   
-  // Inversores (mais detalhado)
+  // Inversores (mais detalhado para usinas)
   const inverterPower = formData.projectType === 'solar-micro' ? 5 : 50; // kW
   const inverterQuantity = Math.ceil(realSystemPower / inverterPower);
-  const inverterType = formData.projectType === 'solar-micro' ? 'String (5kW)' : 'Central (50kW)';
+  const inverterType = formData.projectType === 'solar-micro' 
+    ? 'String (5kW)' 
+    : 'Central (50kW)';
   
-  // Geração anual mais precisa
+  // Geração anual real baseada na potência instalada
   const annualGeneration = realSystemPower * formData.solarIrradiation * 365 * PR;
   
-  // Custos detalhados
+  // Cálculos financeiros para investimento
   const totalCost = realSystemPower * formData.costPerKwp;
-  const monthlySavings = (annualGeneration / 12) * formData.electricityTariff;
-  const payback = totalCost / (monthlySavings * 12);
+  const monthlyRevenue = (annualGeneration / 12) * formData.electricityTariff;
+  const payback = totalCost / (monthlyRevenue * 12);
+  const monthlyROI = (monthlyRevenue / totalCost) * 100;
+  
+  // Utilização do orçamento
+  const budgetUtilization = (totalCost / formData.availableBudget) * 100;
   
   // CO2 evitado (fator brasileiro: 0.0817 kg CO2/kWh)
   const co2Avoided = annualGeneration * 0.0817;
@@ -106,9 +121,11 @@ export const calculateSolarProject = (formData: SolarMicroFormData): SolarCalcul
     annualGeneration: annualGeneration.toFixed(0),
     totalCost: totalCost.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
     costPerKwp: formData.costPerKwp.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
-    monthlySavings: monthlySavings.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
+    monthlySavings: monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 }),
     payback: payback.toFixed(1),
-    co2Avoided: co2Avoided.toFixed(0)
+    co2Avoided: co2Avoided.toFixed(0),
+    budgetUtilization: budgetUtilization.toFixed(1),
+    monthlyROI: monthlyROI.toFixed(2)
   };
 };
 
@@ -176,16 +193,24 @@ export const calculateSubstationProject = (formData: SubstationFormData): Substa
   };
 };
 
-// Validações aprimoradas
+// Validações aprimoradas para investimento
 export const validateSolarData = (data: Partial<SolarMicroFormData>): string[] => {
   const errors: string[] = [];
   
-  if (!data.monthlyConsumption || data.monthlyConsumption <= 0) {
-    errors.push('Consumo mensal deve ser maior que zero');
+  if (!data.targetGeneration || data.targetGeneration <= 0) {
+    errors.push('Meta de geração mensal deve ser maior que zero');
   }
   
-  if (data.monthlyConsumption && data.monthlyConsumption > 50000) {
-    errors.push('Consumo muito alto para o tipo de projeto selecionado');
+  if (data.targetGeneration && data.targetGeneration > 100000) {
+    errors.push('Meta de geração muito alta para o tipo de projeto selecionado');
+  }
+  
+  if (!data.availableBudget || data.availableBudget <= 0) {
+    errors.push('Orçamento disponível deve ser maior que zero');
+  }
+  
+  if (data.availableBudget && data.availableBudget < 10000) {
+    errors.push('Orçamento muito baixo para um projeto de usina solar');
   }
   
   if (!data.solarIrradiation || data.solarIrradiation <= 0) {
@@ -209,7 +234,7 @@ export const validateSolarData = (data: Partial<SolarMicroFormData>): string[] =
   }
   
   if (!data.location || data.location.trim() === '') {
-    errors.push('Local da instalação é obrigatório');
+    errors.push('Local da usina é obrigatório');
   }
   
   if (data.electricityTariff && data.electricityTariff <= 0) {
