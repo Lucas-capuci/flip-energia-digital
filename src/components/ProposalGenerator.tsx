@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Calculator, Users, Zap } from 'lucide-react';
 import ProposalHeader from './proposal/ProposalHeader';
@@ -34,22 +35,11 @@ const ProposalGenerator = () => {
           <TabsContent value="proposals" className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-flip-blue-100 p-6">
               <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
-                Calcular Proposta Comercial
+                Propostas Solares - Em Desenvolvimento
               </h2>
-              <ProposalForm 
-                formData={formData}
-                onInputChange={handleInputChange}
-              />
-            </div>
-            
-            <div className="bg-white rounded-lg shadow-sm border border-flip-blue-100 p-6">
-              <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
-                Resultados dos Cálculos
-              </h2>
-              <CalculationResults 
-                calculations={calculations}
-                onCalculate={handleCalculate}
-              />
+              <p className="text-flip-gray-600">
+                Esta seção estará disponível em breve. Use a aba "Projetos Elétricos" para calcular sistemas solares.
+              </p>
             </div>
           </TabsContent>
 
