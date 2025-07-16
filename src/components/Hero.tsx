@@ -17,15 +17,25 @@ const Hero = () => {
 
   return (
     <section id="inicio" className="min-h-screen relative overflow-hidden flex flex-col">
-      {/* Background mais sutil com gradientes suaves */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100">
-        {/* Gradient orbs mais sutis e menores */}
-        <div className="absolute top-16 left-8 w-48 h-48 bg-gradient-to-r from-flip-blue-200/10 to-slate-200/8 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute top-32 right-8 w-64 h-64 bg-gradient-to-r from-slate-200/8 to-flip-blue-200/8 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute -bottom-16 left-1/4 w-52 h-52 bg-gradient-to-r from-slate-200/6 to-slate-300/6 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
-        
-        {/* Grid pattern mais sutil */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-2"></div>
+      {/* Background com imagem de painéis solares */}
+      <div className="absolute inset-0">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/lovable-uploads/8caad8a8-5ecd-474b-90c0-b2ec116e5353.png')`
+          }}
+        />
+        {/* Overlay gradiente para manter legibilidade */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-slate-50/90 to-slate-100/85"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-white/80 via-transparent to-transparent"></div>
+      </div>
+
+      {/* Elementos decorativos sobre a imagem */}
+      <div className="absolute inset-0">
+        {/* Gradient orbs mais sutis */}
+        <div className="absolute top-16 left-8 w-48 h-48 bg-gradient-to-r from-flip-blue-200/8 to-slate-200/6 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div className="absolute top-32 right-8 w-64 h-64 bg-gradient-to-r from-slate-200/6 to-flip-blue-200/6 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute -bottom-16 left-1/4 w-52 h-52 bg-gradient-to-r from-slate-200/4 to-slate-300/4 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-2000"></div>
         
         {/* Floating particles mais discretas */}
         <div className="absolute inset-0">
