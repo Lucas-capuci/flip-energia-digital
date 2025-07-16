@@ -9,7 +9,7 @@ import { AuthProvider } from "./hooks/useAuth";
 import Index from "./pages/Index";
 import Solar from "./pages/Solar";
 import RedesDistribuicao from "./pages/RedesDistribuicao";
-import ProjetosEletricos from "./pages/ProjetosEletricos";
+
 import SejaParceiro from "./pages/SejaParceiro";
 import Portfolio from "./pages/Portfolio";
 import Contato from "./pages/Contato";
@@ -29,7 +29,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/solar" element={<Solar />} />
             <Route path="/redes-distribuicao" element={<RedesDistribuicao />} />
-            <Route path="/projetos-eletricos" element={<ProjetosEletricos />} />
+            
             <Route path="/seja-parceiro" element={<SejaParceiro />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/contato" element={<Contato />} />

@@ -14,7 +14,7 @@ const Navigation = () => {
     { label: 'Início', path: '/' },
     { label: 'Solar', path: '/solar' },
     { label: 'Redes de Distribuição', path: '/redes-distribuicao' },
-    { label: 'Projetos Elétricos', path: '/projetos-eletricos' },
+    
     { label: 'Seja Parceiro', path: '/seja-parceiro' },
     { label: 'Portfólio', path: '/portfolio' },
     { label: 'Contato', path: '/contato' }

@@ -21,13 +21,6 @@ const HomeHub = () => {
       color: "from-emerald-500 to-teal-500"
     },
     {
-      title: "Projetos Elétricos",
-      description: "Automação residencial e projetos elétricos completos para máximo conforto, eficiência energética e modernidade em sua propriedade.",
-      icon: Home,
-      link: "/projetos-eletricos",
-      color: "from-purple-500 to-pink-500"
-    },
-    {
       title: "Seja um Parceiro",
       description: "Junte-se à rede Flip e tenha acesso a condições especiais, suporte técnico e oportunidades de negócio no setor energético.",
       icon: Users,
