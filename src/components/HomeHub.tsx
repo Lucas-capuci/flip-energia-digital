@@ -20,7 +20,7 @@ const HomeHub = () => {
       icon: Network,
       link: "/redes-distribuicao",
       color: "from-emerald-500 to-teal-500",
-      image: "/lovable-uploads/e626b717-323c-4fdc-a854-900602c999b9.png"
+      image: "/lovable-uploads/babb7af6-dbb6-4095-87ea-6f672ba555db.png"
     },
     {
       title: "Seja um Parceiro",
