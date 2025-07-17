@@ -76,7 +76,7 @@ export const CreateReceitaDialog: React.FC<CreateReceitaDialogProps> = ({
         .from('receitas')
         .insert([{
           tipo_receita: formData.tipo_receita,
-          projeto_id: formData.projeto_id || null,
+          projeto_id: formData.projeto_id === 'none' ? null : formData.projeto_id || null,
           cliente: formData.cliente,
           categoria: formData.categoria,
           valor: parseFloat(formData.valor),
@@ -161,7 +161,7 @@ export const CreateReceitaDialog: React.FC<CreateReceitaDialogProps> = ({
                 <SelectValue placeholder="Selecione um projeto" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nenhum projeto</SelectItem>
+                <SelectItem value="none">Nenhum projeto</SelectItem>
                 {projetos.map((projeto) => (
                   <SelectItem key={projeto.id} value={projeto.id}>
                     {projeto.name}

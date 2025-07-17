@@ -82,7 +82,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
         .from('despesas')
         .insert([{
           tipo_despesa: formData.tipo_despesa,
-          projeto_id: formData.projeto_id || null,
+          projeto_id: formData.projeto_id === 'none' ? null : formData.projeto_id || null,
           fornecedor: formData.fornecedor,
           categoria: formData.categoria,
           valor: parseFloat(formData.valor),
@@ -182,7 +182,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
                 <SelectValue placeholder="Selecione um projeto" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nenhum projeto</SelectItem>
+                <SelectItem value="none">Nenhum projeto</SelectItem>
                 {projetos.map((projeto) => (
                   <SelectItem key={projeto.id} value={projeto.id}>
                     {projeto.name}
