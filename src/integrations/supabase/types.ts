@@ -89,6 +89,71 @@ export type Database = {
         }
         Relationships: []
       }
+      despesas: {
+        Row: {
+          categoria: string
+          created_at: string
+          data_saida: string
+          duracao_meses: number | null
+          eh_recorrente: boolean
+          forma_pagamento: string
+          fornecedor: string
+          frequencia: string | null
+          id: string
+          indefinida: boolean
+          observacoes: string | null
+          projeto_id: string | null
+          tipo_custo: string
+          tipo_despesa: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          created_at?: string
+          data_saida: string
+          duracao_meses?: number | null
+          eh_recorrente?: boolean
+          forma_pagamento: string
+          fornecedor: string
+          frequencia?: string | null
+          id?: string
+          indefinida?: boolean
+          observacoes?: string | null
+          projeto_id?: string | null
+          tipo_custo: string
+          tipo_despesa: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          created_at?: string
+          data_saida?: string
+          duracao_meses?: number | null
+          eh_recorrente?: boolean
+          forma_pagamento?: string
+          fornecedor?: string
+          frequencia?: string | null
+          id?: string
+          indefinida?: boolean
+          observacoes?: string | null
+          projeto_id?: string | null
+          tipo_custo?: string
+          tipo_despesa?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "despesas_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_status_history: {
         Row: {
           changed_by: string | null
@@ -208,12 +273,65 @@ export type Database = {
         }
         Relationships: []
       }
+      receitas: {
+        Row: {
+          categoria: string
+          cliente: string
+          created_at: string
+          data_entrada: string
+          forma_pagamento: string
+          id: string
+          observacoes: string | null
+          projeto_id: string | null
+          tipo_receita: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          categoria: string
+          cliente: string
+          created_at?: string
+          data_entrada: string
+          forma_pagamento: string
+          id?: string
+          observacoes?: string | null
+          projeto_id?: string | null
+          tipo_receita: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          categoria?: string
+          cliente?: string
+          created_at?: string
+          data_entrada?: string
+          forma_pagamento?: string
+          id?: string
+          observacoes?: string | null
+          projeto_id?: string | null
+          tipo_receita?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receitas_projeto_id_fkey"
+            columns: ["projeto_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      processar_despesas_recorrentes: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

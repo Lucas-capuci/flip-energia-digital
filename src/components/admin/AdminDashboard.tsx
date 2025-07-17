@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Download, Filter, FileText, Phone, Briefcase } from 'lucide-react';
+import { Download, Filter, FileText, Phone, Briefcase, DollarSign } from 'lucide-react';
 import LeadsManagement from './LeadsManagement';
 import ProjectsManagement from './ProjectsManagement';
 import ContactsManagement from './ContactsManagement';
 import DashboardStats from './DashboardStats';
+import { FinancialManagement } from './FinancialManagement';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('leads');
@@ -38,7 +39,7 @@ const AdminDashboard = () => {
       <DashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="leads" className="flex items-center space-x-2">
             <FileText className="h-4 w-4" />
             <span>Leads & Propostas</span>
@@ -50,6 +51,10 @@ const AdminDashboard = () => {
           <TabsTrigger value="projects" className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4" />
             <span>Projetos</span>
+          </TabsTrigger>
+          <TabsTrigger value="financial" className="flex items-center space-x-2">
+            <DollarSign className="h-4 w-4" />
+            <span>Financeiro</span>
           </TabsTrigger>
         </TabsList>
 
@@ -63,6 +68,10 @@ const AdminDashboard = () => {
 
         <TabsContent value="projects" className="space-y-4">
           <ProjectsManagement onTabChange={setActiveTab} />
+        </TabsContent>
+
+        <TabsContent value="financial" className="space-y-4">
+          <FinancialManagement />
         </TabsContent>
       </Tabs>
     </div>
