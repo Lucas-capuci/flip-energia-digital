@@ -8,10 +8,12 @@ import {
   TrendingDown, 
   Calculator,
   Repeat,
-  Calendar
+  Calendar,
+  RefreshCw
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { 
   BarChart, 
   Bar, 
@@ -62,6 +64,7 @@ export const FinancialDashboard = () => {
   const [categoriesData, setCategoriesData] = useState<CategoryData[]>([]);
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewType, setViewType] = useState<'categoria' | 'fornecedor'>('categoria');
 
   const loadDashboardData = async () => {
     try {
@@ -100,10 +103,11 @@ export const FinancialDashboard = () => {
         .select('valor')
         .eq('eh_recorrente', true);
 
-      // Buscar categorias de despesas do mês
+      // Buscar dados de despesas do mês (categoria ou fornecedor)
+      const selectField = viewType === 'categoria' ? 'categoria' : 'fornecedor';
       const { data: categoriesDespesas } = await supabase
         .from('despesas')
-        .select('categoria, valor')
+        .select(`${selectField}, valor`)
         .gte('data_saida', startOfMonth)
         .lte('data_saida', endOfMonthStr);
 
@@ -124,14 +128,17 @@ export const FinancialDashboard = () => {
         despesasRecorrentes: despesasRecorrentesValue,
       });
 
-      // Processar dados de categorias
-      const categoryMap = new Map<string, number>();
+      // Processar dados de categorias/fornecedores
+      const dataMap = new Map<string, number>();
+      const fieldName = viewType === 'categoria' ? 'categoria' : 'fornecedor';
+      
       categoriesDespesas?.forEach(item => {
-        const current = categoryMap.get(item.categoria) || 0;
-        categoryMap.set(item.categoria, current + Number(item.valor));
+        const key = item[fieldName];
+        const current = dataMap.get(key) || 0;
+        dataMap.set(key, current + Number(item.valor));
       });
 
-      const categoryData: CategoryData[] = Array.from(categoryMap.entries()).map(([categoria, valor], index) => ({
+      const categoryData: CategoryData[] = Array.from(dataMap.entries()).map(([categoria, valor], index) => ({
         categoria,
         valor,
         color: COLORS[index % COLORS.length]
@@ -183,7 +190,7 @@ export const FinancialDashboard = () => {
 
   useEffect(() => {
     loadDashboardData();
-  }, [selectedMonth]);
+  }, [selectedMonth, viewType]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -213,27 +220,49 @@ export const FinancialDashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Filtro de Mês */}
-      <div className="flex items-center gap-4">
-        <Calendar className="h-5 w-5" />
-        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+      {/* Filtros e Controles */}
+      <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-5 w-5" />
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Selecione o mês" />
+            </SelectTrigger>
+            <SelectContent>
+              {[...Array(12)].map((_, i) => {
+                const date = new Date();
+                date.setMonth(date.getMonth() - i);
+                const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                const label = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                return (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Select value={viewType} onValueChange={(value: 'categoria' | 'fornecedor') => setViewType(value)}>
           <SelectTrigger className="w-48">
-            <SelectValue placeholder="Selecione o mês" />
+            <SelectValue placeholder="Visualizar por" />
           </SelectTrigger>
           <SelectContent>
-            {[...Array(12)].map((_, i) => {
-              const date = new Date();
-              date.setMonth(date.getMonth() - i);
-              const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-              const label = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-              return (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              );
-            })}
+            <SelectItem value="categoria">Por Categoria</SelectItem>
+            <SelectItem value="fornecedor">Por Fornecedor</SelectItem>
           </SelectContent>
         </Select>
+
+        <Button 
+          onClick={loadDashboardData} 
+          variant="outline" 
+          size="sm"
+          disabled={loading}
+        >
+          <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+          Atualizar
+        </Button>
       </div>
 
       {/* Cards de Resumo */}
@@ -360,10 +389,10 @@ export const FinancialDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Gráfico de Categorias de Despesas */}
+        {/* Gráfico de Categorias/Fornecedores de Despesas */}
         <Card>
           <CardHeader>
-            <CardTitle>Despesas por Categoria (Mês)</CardTitle>
+            <CardTitle>Despesas por {viewType === 'categoria' ? 'Categoria' : 'Fornecedor'} (Mês)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
