@@ -21,6 +21,7 @@ import {
 import { Plus, Search, Edit, Trash2, Filter } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { EditReceitaDialog } from './EditReceitaDialog';
 
 interface Receita {
   id: string;
@@ -48,6 +49,8 @@ export const ReceitasManagement: React.FC<ReceitasManagementProps> = ({ onCreate
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('todos');
   const [filterCategory, setFilterCategory] = useState<string>('todos');
+  const [editingReceita, setEditingReceita] = useState<Receita | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const loadReceitas = async () => {
@@ -281,7 +284,10 @@ export const ReceitasManagement: React.FC<ReceitasManagementProps> = ({ onCreate
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {/* TODO: Implementar edição */}}
+                          onClick={() => {
+                            setEditingReceita(receita);
+                            setEditDialogOpen(true);
+                          }}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -301,6 +307,18 @@ export const ReceitasManagement: React.FC<ReceitasManagementProps> = ({ onCreate
             </TableBody>
           </Table>
         </div>
+
+        <EditReceitaDialog
+          receita={editingReceita}
+          isOpen={editDialogOpen}
+          onClose={() => {
+            setEditDialogOpen(false);
+            setEditingReceita(null);
+          }}
+          onSuccess={() => {
+            loadReceitas();
+          }}
+        />
       </CardContent>
     </Card>
   );

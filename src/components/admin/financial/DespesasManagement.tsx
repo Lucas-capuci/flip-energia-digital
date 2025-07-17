@@ -21,6 +21,7 @@ import {
 import { Plus, Search, Edit, Trash2, Filter, Repeat } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { EditDespesaDialog } from './EditDespesaDialog';
 
 interface Despesa {
   id: string;
@@ -33,6 +34,7 @@ interface Despesa {
   tipo_custo: string;
   eh_recorrente: boolean;
   frequencia?: string;
+  duracao_meses?: number | null;
   indefinida: boolean;
   observacoes?: string;
   projeto_id?: string;
@@ -54,6 +56,8 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
   const [filterCategory, setFilterCategory] = useState<string>('todos');
   const [filterCostType, setFilterCostType] = useState<string>('todos');
   const [filterRecurrent, setFilterRecurrent] = useState<string>('todos');
+  const [editingDespesa, setEditingDespesa] = useState<Despesa | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const loadDespesas = async () => {
@@ -347,7 +351,10 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => {/* TODO: Implementar edição */}}
+                          onClick={() => {
+                            setEditingDespesa(despesa);
+                            setEditDialogOpen(true);
+                          }}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -367,6 +374,18 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
             </TableBody>
           </Table>
         </div>
+
+        <EditDespesaDialog
+          despesa={editingDespesa}
+          isOpen={editDialogOpen}
+          onClose={() => {
+            setEditDialogOpen(false);
+            setEditingDespesa(null);
+          }}
+          onSuccess={() => {
+            loadDespesas();
+          }}
+        />
       </CardContent>
     </Card>
   );
