@@ -1,5 +1,7 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,10 +43,9 @@ serve(async (req) => {
       )
     }
 
-    // Hash da senha usando bcrypt
+    // Hash da senha usando bcrypt compatível com Deno
     let password_hash
     try {
-      const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts')
       password_hash = await bcrypt.hash(password)
       console.log('Password hashed successfully')
     } catch (hashError) {
