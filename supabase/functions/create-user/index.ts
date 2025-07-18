@@ -13,6 +13,8 @@ serve(async (req) => {
 
   try {
     const { username, password, full_name, email, is_active } = await req.json()
+    
+    console.log('Creating user with data:', { username, full_name, email, is_active })
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -20,13 +22,16 @@ serve(async (req) => {
     )
 
     // Verificar se username já existe
-    const { data: existingUser } = await supabaseClient
+    const { data: existingUser, error: checkError } = await supabaseClient
       .from('system_users')
       .select('id')
       .eq('username', username)
-      .single()
+      .maybeSingle()
+
+    console.log('Existing user check:', { exists: !!existingUser, error: checkError })
 
     if (existingUser) {
+      console.log('Username already exists')
       return new Response(
         JSON.stringify({ success: false, message: 'Nome de usuário já existe' }),
         {
@@ -36,9 +41,22 @@ serve(async (req) => {
       )
     }
 
-    // Hash da senha
-    const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts')
-    const password_hash = await bcrypt.hash(password)
+    // Hash da senha usando bcrypt
+    let password_hash
+    try {
+      const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts')
+      password_hash = await bcrypt.hash(password)
+      console.log('Password hashed successfully')
+    } catch (hashError) {
+      console.error('Error hashing password:', hashError)
+      return new Response(
+        JSON.stringify({ success: false, message: 'Erro ao processar senha' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      )
+    }
 
     // Criar usuário
     const { data: user, error } = await supabaseClient
@@ -53,7 +71,20 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (error) throw error
+    console.log('User creation result:', { user: user ? 'created' : 'failed', error })
+
+    if (error) {
+      console.error('Database error:', error)
+      return new Response(
+        JSON.stringify({ success: false, message: 'Erro ao criar usuário no banco de dados' }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      )
+    }
+
+    console.log('User created successfully with id:', user.id)
 
     return new Response(
       JSON.stringify({ 
@@ -68,7 +99,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('Erro ao criar usuário:', error)
+    console.error('General error creating user:', error)
     return new Response(
       JSON.stringify({ success: false, message: 'Erro interno do servidor' }),
       {
