@@ -2,15 +2,18 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Download, Filter, FileText, Phone, Briefcase, DollarSign } from 'lucide-react';
+import { Download, Filter, FileText, Phone, Briefcase, DollarSign, Users } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 import LeadsManagement from './LeadsManagement';
 import ProjectsManagement from './ProjectsManagement';
 import ContactsManagement from './ContactsManagement';
 import DashboardStats from './DashboardStats';
 import { FinancialManagement } from './FinancialManagement';
+import { UserManagement } from './UserManagement';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState('leads');
+  const { hasPermission } = useAuth();
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   const exportAllData = async () => {
     // Implementation for exporting all data from Supabase tables
@@ -36,43 +39,78 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      <DashboardStats />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="leads" className="flex items-center space-x-2">
-            <FileText className="h-4 w-4" />
-            <span>Leads & Propostas</span>
-          </TabsTrigger>
-          <TabsTrigger value="contacts" className="flex items-center space-x-2">
-            <Phone className="h-4 w-4" />
-            <span>Contatos</span>
-          </TabsTrigger>
-          <TabsTrigger value="projects" className="flex items-center space-x-2">
+        <TabsList className="grid w-full grid-cols-6">
+          <TabsTrigger value="dashboard" className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4" />
-            <span>Projetos</span>
+            <span>Dashboard</span>
           </TabsTrigger>
-          <TabsTrigger value="financial" className="flex items-center space-x-2">
-            <DollarSign className="h-4 w-4" />
-            <span>Financeiro</span>
-          </TabsTrigger>
+          {hasPermission('leads', 'view') && (
+            <TabsTrigger value="leads" className="flex items-center space-x-2">
+              <FileText className="h-4 w-4" />
+              <span>Leads</span>
+            </TabsTrigger>
+          )}
+          {hasPermission('contacts', 'view') && (
+            <TabsTrigger value="contacts" className="flex items-center space-x-2">
+              <Phone className="h-4 w-4" />
+              <span>Contatos</span>
+            </TabsTrigger>
+          )}
+          {hasPermission('projects', 'view') && (
+            <TabsTrigger value="projects" className="flex items-center space-x-2">
+              <Briefcase className="h-4 w-4" />
+              <span>Projetos</span>
+            </TabsTrigger>
+          )}
+          {hasPermission('financial', 'view') && (
+            <TabsTrigger value="financial" className="flex items-center space-x-2">
+              <DollarSign className="h-4 w-4" />
+              <span>Financeiro</span>
+            </TabsTrigger>
+          )}
+          {hasPermission('user_management', 'view') && (
+            <TabsTrigger value="users" className="flex items-center space-x-2">
+              <Users className="h-4 w-4" />
+              <span>Usuários</span>
+            </TabsTrigger>
+          )}
         </TabsList>
 
-        <TabsContent value="leads" className="space-y-4">
-          <LeadsManagement />
+        <TabsContent value="dashboard" className="space-y-4">
+          <DashboardStats />
         </TabsContent>
 
-        <TabsContent value="contacts" className="space-y-4">
-          <ContactsManagement />
-        </TabsContent>
+        {hasPermission('leads', 'view') && (
+          <TabsContent value="leads" className="space-y-4">
+            <LeadsManagement />
+          </TabsContent>
+        )}
 
-        <TabsContent value="projects" className="space-y-4">
-          <ProjectsManagement onTabChange={setActiveTab} />
-        </TabsContent>
+        {hasPermission('contacts', 'view') && (
+          <TabsContent value="contacts" className="space-y-4">
+            <ContactsManagement />
+          </TabsContent>
+        )}
 
-        <TabsContent value="financial" className="space-y-4">
-          <FinancialManagement />
-        </TabsContent>
+        {hasPermission('projects', 'view') && (
+          <TabsContent value="projects" className="space-y-4">
+            <ProjectsManagement onTabChange={setActiveTab} />
+          </TabsContent>
+        )}
+
+        {hasPermission('financial', 'view') && (
+          <TabsContent value="financial" className="space-y-4">
+            <FinancialManagement />
+          </TabsContent>
+        )}
+
+        {hasPermission('user_management', 'view') && (
+          <TabsContent value="users" className="space-y-4">
+            <UserManagement />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );

@@ -12,13 +12,23 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(username, password);
-    if (!success) {
-      setError('Usuário ou senha incorretos');
+    setLoading(true);
+    setError('');
+    
+    try {
+      const success = await login(username, password);
+      if (!success) {
+        setError('Usuário ou senha incorretos');
+      }
+    } catch (error) {
+      setError('Erro ao fazer login');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,9 +103,10 @@ const LoginPage = () => {
 
           <Button 
             type="submit" 
+            disabled={loading}
             className="w-full bg-flip-blue-500 hover:bg-flip-blue-600 text-white py-3"
           >
-            Entrar
+            {loading ? 'Entrando...' : 'Entrar'}
           </Button>
         </form>
       </Card>
