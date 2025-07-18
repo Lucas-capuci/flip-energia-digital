@@ -1,9 +1,20 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+// Função para hash de senha usando Web Crypto API (mesmo método usado na criação)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'flip_salt_2024') // mesmo salt usado na criação
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 serve(async (req) => {
@@ -42,27 +53,10 @@ serve(async (req) => {
       )
     }
 
-    // Verificar senha simples para teste (remover em produção)
-    if (username === 'admin' && password === '123456') {
-      console.log('Admin login successful with simple check')
-      const { password_hash, ...userWithoutPassword } = user
-      
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          user: userWithoutPassword 
-        }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 200,
-        }
-      )
-    }
-
-    // Verificar senha usando bcrypt para outros usuários
+    // Verificar senha
     try {
-      const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts')
-      const isValid = await bcrypt.compare(password, user.password_hash)
+      const hashedPassword = await hashPassword(password)
+      const isValid = hashedPassword === user.password_hash
       
       console.log('Password verification result:', isValid)
 
@@ -89,8 +83,8 @@ serve(async (req) => {
           status: 200,
         }
       )
-    } catch (bcryptError) {
-      console.error('Bcrypt error:', bcryptError)
+    } catch (hashError) {
+      console.error('Hash verification error:', hashError)
       return new Response(
         JSON.stringify({ success: false, message: 'Erro na verificação da senha' }),
         {

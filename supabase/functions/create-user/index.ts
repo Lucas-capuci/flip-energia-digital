@@ -1,11 +1,20 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts"
+import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
+
+// Função para hash de senha usando Web Crypto API (mais confiável no Deno)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'flip_salt_2024') // adiciona salt
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 serve(async (req) => {
@@ -43,11 +52,11 @@ serve(async (req) => {
       )
     }
 
-    // Hash da senha usando bcrypt compatível com Deno
+    // Hash da senha usando Web Crypto API
     let password_hash
     try {
-      password_hash = await bcrypt.hash(password)
-      console.log('Password hashed successfully')
+      password_hash = await hashPassword(password)
+      console.log('Password hashed successfully with Web Crypto API')
     } catch (hashError) {
       console.error('Error hashing password:', hashError)
       return new Response(
