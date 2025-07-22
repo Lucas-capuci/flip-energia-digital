@@ -229,9 +229,10 @@ export const FinancialDashboard = () => {
               <SelectValue placeholder="Selecione o mês" />
             </SelectTrigger>
             <SelectContent>
-              {[...Array(12)].map((_, i) => {
+              {[...Array(25)].map((_, i) => {
                 const date = new Date();
-                date.setMonth(date.getMonth() - i);
+                // Permitir 12 meses no passado e 12 meses no futuro
+                date.setMonth(date.getMonth() - 12 + i);
                 const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                 const label = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
                 return (
