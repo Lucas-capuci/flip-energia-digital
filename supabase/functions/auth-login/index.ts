@@ -8,14 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Função para hash de senha usando Web Crypto API (mesmo método usado na criação)
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + 'flip_salt_2024') // mesmo salt usado na criação
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -53,10 +45,9 @@ serve(async (req) => {
       )
     }
 
-    // Verificar senha
+    // Verificar senha (sem criptografia)
     try {
-      const hashedPassword = await hashPassword(password)
-      const isValid = hashedPassword === user.password_hash
+      const isValid = password === user.password_hash
       
       console.log('Password verification result:', isValid)
 

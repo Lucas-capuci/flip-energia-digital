@@ -8,14 +8,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// Função para hash de senha usando Web Crypto API (mais confiável no Deno)
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + 'flip_salt_2024') // adiciona salt
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -52,21 +44,9 @@ serve(async (req) => {
       )
     }
 
-    // Hash da senha usando Web Crypto API
-    let password_hash
-    try {
-      password_hash = await hashPassword(password)
-      console.log('Password hashed successfully with Web Crypto API')
-    } catch (hashError) {
-      console.error('Error hashing password:', hashError)
-      return new Response(
-        JSON.stringify({ success: false, message: 'Erro ao processar senha' }),
-        {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 500,
-        }
-      )
-    }
+    // Usar senha em texto simples (sem criptografia)
+    const password_hash = password
+    console.log('Using plain text password')
 
     // Criar usuário
     const { data: user, error } = await supabaseClient
