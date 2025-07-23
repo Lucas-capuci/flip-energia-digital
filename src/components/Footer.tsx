@@ -118,14 +118,6 @@ const Footer = () => {
             </h3>
             
             <div className="space-y-3">
-              <a 
-                href="/solar"
-                className="group flex items-center p-3 rounded-lg hover:bg-flip-red-600/20 transition-all duration-300 w-full text-left"
-              >
-                <Zap className="h-5 w-5 text-flip-red-400 mr-3 group-hover:text-flip-red-300" />
-                <span className="text-flip-gray-300 group-hover:text-white transition-colors">Energia Solar</span>
-                <ArrowRight className="h-4 w-4 ml-auto text-flip-gray-500 group-hover:text-flip-red-400 opacity-0 group-hover:opacity-100 transition-all" />
-              </a>
               
               <a 
                 href="/solucoes"
