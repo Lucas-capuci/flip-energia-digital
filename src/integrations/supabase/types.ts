@@ -154,6 +154,53 @@ export type Database = {
           },
         ]
       }
+      lead_follow_ups: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          follow_up_date: string
+          id: string
+          lead_id: string
+          notes: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          follow_up_date: string
+          id?: string
+          lead_id: string
+          notes?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          follow_up_date?: string
+          id?: string
+          lead_id?: string
+          notes?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_follow_ups_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "budget_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lead_status_history: {
         Row: {
           changed_by: string | null

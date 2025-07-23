@@ -3,7 +3,7 @@ import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Button } from '../../ui/button';
 import { Badge } from '../../ui/badge';
-import { Edit, Trash2, RefreshCw, History } from 'lucide-react';
+import { Edit, Trash2, RefreshCw, History, Calendar } from 'lucide-react';
 
 interface Lead {
   id: string;
@@ -23,6 +23,7 @@ interface LeadsTableProps {
   onDelete: (id: string) => void;
   onUpdateStatus: (lead: Lead) => void;
   onViewHistory: (leadId: string) => void;
+  onScheduleFollowUp: (lead: Lead) => void;
 }
 
 const LeadsTable: React.FC<LeadsTableProps> = ({ 
@@ -30,7 +31,8 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
   onEdit, 
   onDelete, 
   onUpdateStatus, 
-  onViewHistory 
+  onViewHistory,
+  onScheduleFollowUp 
 }) => {
   const getStatusBadge = (lead: Lead) => {
     if (!lead.status) {
@@ -105,6 +107,14 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
                   title="Atualizar Status"
                 >
                   <RefreshCw className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => onScheduleFollowUp(request)}
+                  title="Agendar Follow-up"
+                >
+                  <Calendar className="h-4 w-4" />
                 </Button>
                 <Button 
                   variant="outline" 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../integrations/supabase/client';
@@ -5,12 +6,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Plus } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import LeadsTable from './leads/LeadsTable';
 import LeadsFilters from './leads/LeadsFilters';
 import CreateLeadDialog from './leads/CreateLeadDialog';
 import EditLeadDialog from './leads/EditLeadDialog';
 import StatusUpdateDialog from './leads/StatusUpdateDialog';
 import StatusHistoryDialog from './leads/StatusHistoryDialog';
+import LeadsAnalytics from './leads/LeadsAnalytics';
+import FollowUpsList from './leads/FollowUpsList';
+import FollowUpDialog from './leads/FollowUpDialog';
 
 interface Lead {
   id: string;
@@ -33,6 +38,7 @@ const LeadsManagement = () => {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [statusUpdateLead, setStatusUpdateLead] = useState<Lead | null>(null);
   const [historyLeadId, setHistoryLeadId] = useState<string | null>(null);
+  const [followUpLead, setFollowUpLead] = useState<Lead | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -60,7 +66,6 @@ const LeadsManagement = () => {
     mutationFn: async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
       console.log('Creating lead with data:', newLead);
       
-      // Ensure all required fields are present
       const leadData = {
         name: newLead.name,
         email: newLead.email,
@@ -150,7 +155,6 @@ const LeadsManagement = () => {
     mutationFn: async ({ leadId, status, observation }: { leadId: string; status: string; observation: string }) => {
       console.log('Updating status for lead:', leadId, 'to:', status);
       
-      // Update the lead status
       const { error: leadError } = await supabase
         .from('budget_requests')
         .update({ status })
@@ -161,7 +165,6 @@ const LeadsManagement = () => {
         throw new Error(leadError.message);
       }
 
-      // Add status history entry
       const { error: historyError } = await supabase
         .from('lead_status_history')
         .insert([{
@@ -192,6 +195,45 @@ const LeadsManagement = () => {
       console.error('Status update failed:', error);
       toast({
         title: 'Erro ao atualizar status.',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const createFollowUpMutation = useMutation({
+    mutationFn: async ({ leadId, followUpData }: { leadId: string; followUpData: any }) => {
+      console.log('Creating follow-up for lead:', leadId, followUpData);
+      
+      const { error } = await supabase
+        .from('lead_follow_ups')
+        .insert([{
+          lead_id: leadId,
+          type: followUpData.type,
+          follow_up_date: followUpData.follow_up_date,
+          notes: followUpData.notes,
+          created_by: 'Usuário Admin'
+        }]);
+
+      if (error) {
+        console.error('Follow-up creation error:', error);
+        throw new Error(error.message);
+      }
+
+      return { leadId, followUpData };
+    },
+    onSuccess: () => {
+      console.log('Follow-up creation successful');
+      queryClient.invalidateQueries({ queryKey: ['follow-ups'] });
+      toast({
+        title: 'Follow-up agendado com sucesso!',
+      });
+      setFollowUpLead(null);
+    },
+    onError: (error: any) => {
+      console.error('Follow-up creation failed:', error);
+      toast({
+        title: 'Erro ao agendar follow-up.',
         description: error.message,
         variant: 'destructive',
       });
@@ -254,6 +296,19 @@ const LeadsManagement = () => {
 
   const handleViewHistory = (leadId: string) => {
     setHistoryLeadId(leadId);
+  };
+
+  const handleScheduleFollowUp = (lead: Lead) => {
+    setFollowUpLead(lead);
+  };
+
+  const handleFollowUpSave = async (followUpData: any) => {
+    if (followUpLead) {
+      await createFollowUpMutation.mutateAsync({
+        leadId: followUpLead.id,
+        followUpData
+      });
+    }
   };
 
   const handleCreateLead = async (newLead: Omit<Lead, 'id' | 'created_at'>) => {
@@ -324,30 +379,49 @@ const LeadsManagement = () => {
         </Button>
       </div>
 
-      <LeadsFilters
-        searchTerm={searchTerm}
-        filterService={filterService}
-        filterDate={filterDate}
-        onSearchChange={setSearchTerm}
-        onServiceFilterChange={setFilterService}
-        onDateFilterChange={setFilterDate}
-        onExport={exportToCSV}
-      />
+      <Tabs defaultValue="leads" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="leads">Lista de Leads</TabsTrigger>
+          <TabsTrigger value="analytics">Análises</TabsTrigger>
+          <TabsTrigger value="followups">Follow-ups</TabsTrigger>
+        </TabsList>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Lista de Leads ({filteredLeads.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LeadsTable
-            leads={filteredLeads}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            onUpdateStatus={handleUpdateStatus}
-            onViewHistory={handleViewHistory}
+        <TabsContent value="leads" className="space-y-4">
+          <LeadsFilters
+            searchTerm={searchTerm}
+            filterService={filterService}
+            filterDate={filterDate}
+            onSearchChange={setSearchTerm}
+            onServiceFilterChange={setFilterService}
+            onDateFilterChange={setFilterDate}
+            onExport={exportToCSV}
           />
-        </CardContent>
-      </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Lista de Leads ({filteredLeads.length})</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <LeadsTable
+                leads={filteredLeads}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onUpdateStatus={handleUpdateStatus}
+                onViewHistory={handleViewHistory}
+                onScheduleFollowUp={handleScheduleFollowUp}
+              />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <LeadsAnalytics />
+        </TabsContent>
+
+        <TabsContent value="followups">
+          <FollowUpsList />
+        </TabsContent>
+      </Tabs>
 
       <CreateLeadDialog
         isOpen={showCreateDialog}
@@ -373,6 +447,13 @@ const LeadsManagement = () => {
         isOpen={!!historyLeadId}
         onClose={() => setHistoryLeadId(null)}
         leadId={historyLeadId || ''}
+      />
+
+      <FollowUpDialog
+        isOpen={!!followUpLead}
+        onClose={() => setFollowUpLead(null)}
+        onSave={handleFollowUpSave}
+        leadName={followUpLead?.name || ''}
       />
     </div>
   );
