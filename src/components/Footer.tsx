@@ -95,17 +95,6 @@ const Footer = () => {
                 </div>
               </div>
               
-              <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-red-400/50 transition-colors group">
-                <div className="flex items-start">
-                  <Mail className="h-4 w-4 mr-3 text-flip-red-400 mt-1 flex-shrink-0" />
-                  <div className="space-y-1 min-w-0 flex-1">
-                    <a href="mailto:eduardo.gomes@flipeng.com.br" className="text-flip-blue-300 hover:text-flip-blue-200 text-sm font-medium block transition-colors break-all">
-                      eduardo.gomes@flipeng.com.br
-                    </a>
-                    <p className="text-flip-gray-400 text-xs">Projetos Residencial</p>
-                  </div>
-                </div>
-              </div>
               
               <div className="bg-flip-gray-800/50 p-4 rounded-lg border border-flip-gray-700/50 hover:border-flip-red-400/50 transition-colors group">
                 <div className="flex items-start">
