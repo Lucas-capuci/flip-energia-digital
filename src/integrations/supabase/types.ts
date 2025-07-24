@@ -103,10 +103,14 @@ export type Database = {
           indefinida: boolean
           observacoes: string | null
           projeto_id: string | null
+          proxima_recorrencia: string | null
+          status_pagamento: string | null
           tipo_custo: string
           tipo_despesa: string
           updated_at: string
           valor: number
+          valor_pago: number | null
+          valor_total: number | null
         }
         Insert: {
           categoria: string
@@ -121,10 +125,14 @@ export type Database = {
           indefinida?: boolean
           observacoes?: string | null
           projeto_id?: string | null
+          proxima_recorrencia?: string | null
+          status_pagamento?: string | null
           tipo_custo: string
           tipo_despesa: string
           updated_at?: string
           valor: number
+          valor_pago?: number | null
+          valor_total?: number | null
         }
         Update: {
           categoria?: string
@@ -139,10 +147,14 @@ export type Database = {
           indefinida?: boolean
           observacoes?: string | null
           projeto_id?: string | null
+          proxima_recorrencia?: string | null
+          status_pagamento?: string | null
           tipo_custo?: string
           tipo_despesa?: string
           updated_at?: string
           valor?: number
+          valor_pago?: number | null
+          valor_total?: number | null
         }
         Relationships: [
           {

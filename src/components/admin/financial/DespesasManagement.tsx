@@ -29,6 +29,9 @@ interface Despesa {
   fornecedor: string;
   categoria: string;
   valor: number;
+  valor_total?: number;
+  valor_pago?: number;
+  status_pagamento?: string;
   forma_pagamento: string;
   data_saida: string;
   tipo_custo: string;
@@ -185,6 +188,53 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
       : 'bg-yellow-100 text-yellow-800';
   };
 
+  const getPaymentStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      pendente: 'bg-red-100 text-red-800',
+      parcial: 'bg-yellow-100 text-yellow-800',
+      pago: 'bg-green-100 text-green-800',
+    };
+    return colors[status] || colors.pendente;
+  };
+
+  const handlePayment = async (despesa: Despesa, valorPagamento: number) => {
+    try {
+      const novoValorPago = (despesa.valor_pago || 0) + valorPagamento;
+      const valorTotal = despesa.valor_total || despesa.valor;
+      let novoStatus = 'parcial';
+      
+      if (novoValorPago >= valorTotal) {
+        novoStatus = 'pago';
+      } else if (novoValorPago === 0) {
+        novoStatus = 'pendente';
+      }
+
+      const { error } = await supabase
+        .from('despesas')
+        .update({
+          valor_pago: novoValorPago,
+          status_pagamento: novoStatus
+        })
+        .eq('id', despesa.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sucesso",
+        description: `Pagamento de ${formatCurrency(valorPagamento)} registrado`,
+      });
+      
+      loadDespesas();
+    } catch (error) {
+      console.error('Erro ao registrar pagamento:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao registrar pagamento",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Obter categorias únicas para o filtro
   const uniqueCategories = Array.from(new Set(despesas.map(d => d.categoria)));
 
@@ -301,6 +351,7 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
                 <TableHead>Custo</TableHead>
                 <TableHead>Projeto</TableHead>
                 <TableHead>Valor</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Recorrente</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -308,7 +359,7 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
             <TableBody>
               {filteredDespesas.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-muted-foreground">
+                  <TableCell colSpan={10} className="text-center text-muted-foreground">
                     Nenhuma despesa encontrada
                   </TableCell>
                 </TableRow>
@@ -333,8 +384,25 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
                     <TableCell>
                       {despesa.projects?.name || 'N/A'}
                     </TableCell>
-                    <TableCell className="font-mono text-red-600">
-                      {formatCurrency(despesa.valor)}
+                    <TableCell className="font-mono">
+                      <div className="space-y-1">
+                        <div className="text-red-600">
+                          {formatCurrency(despesa.valor_total || despesa.valor)}
+                        </div>
+                        {despesa.valor_total && despesa.valor_pago !== undefined && (
+                          <div className="text-xs text-muted-foreground">
+                            Pago: {formatCurrency(despesa.valor_pago)}
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {despesa.status_pagamento && (
+                        <Badge className={getPaymentStatusColor(despesa.status_pagamento)}>
+                          {despesa.status_pagamento === 'pendente' ? 'Pendente' :
+                           despesa.status_pagamento === 'parcial' ? 'Parcial' : 'Pago'}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       {despesa.eh_recorrente ? (
@@ -348,6 +416,23 @@ export const DespesasManagement: React.FC<DespesasManagementProps> = ({ onCreate
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {despesa.status_pagamento !== 'pago' && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const valorRestante = (despesa.valor_total || despesa.valor) - (despesa.valor_pago || 0);
+                              const valorPagamento = prompt(`Valor a pagar (Restante: ${formatCurrency(valorRestante)}):`, valorRestante.toString());
+                              if (valorPagamento && !isNaN(parseFloat(valorPagamento))) {
+                                handlePayment(despesa, parseFloat(valorPagamento));
+                              }
+                            }}
+                            className="text-green-600 hover:text-green-700"
+                            title="Registrar Pagamento"
+                          >
+                            💰
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"

@@ -37,6 +37,8 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
     fornecedor: '',
     categoria: '',
     valor: '',
+    valor_total: '',
+    valor_pago: '',
     forma_pagamento: '',
     data_saida: '',
     tipo_custo: '',
@@ -78,6 +80,16 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
     setLoading(true);
 
     try {
+      const valorTotal = parseFloat(formData.valor_total || formData.valor);
+      const valorPago = parseFloat(formData.valor_pago || '0');
+      let statusPagamento = 'pendente';
+      
+      if (valorPago >= valorTotal) {
+        statusPagamento = 'pago';
+      } else if (valorPago > 0) {
+        statusPagamento = 'parcial';
+      }
+
       const { error } = await supabase
         .from('despesas')
         .insert([{
@@ -85,7 +97,10 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
           projeto_id: formData.projeto_id === 'none' ? null : formData.projeto_id || null,
           fornecedor: formData.fornecedor,
           categoria: formData.categoria,
-          valor: parseFloat(formData.valor),
+          valor: valorTotal,
+          valor_total: valorTotal,
+          valor_pago: valorPago,
+          status_pagamento: statusPagamento,
           forma_pagamento: formData.forma_pagamento,
           data_saida: formData.data_saida,
           tipo_custo: formData.tipo_custo,
@@ -112,6 +127,8 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
         fornecedor: '',
         categoria: '',
         valor: '',
+        valor_total: '',
+        valor_pago: '',
         forma_pagamento: '',
         data_saida: '',
         tipo_custo: '',
@@ -214,18 +231,39 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="valor">Valor (R$) *</Label>
-            <Input
-              id="valor"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.valor}
-              onChange={(e) => handleInputChange('valor', e.target.value)}
-              placeholder="0,00"
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="valor">Valor Total (R$) *</Label>
+              <Input
+                id="valor"
+                type="number"
+                step="0.01"
+                min="0"
+                value={formData.valor_total || formData.valor}
+                onChange={(e) => {
+                  handleInputChange('valor', e.target.value);
+                  if (!formData.valor_total) {
+                    handleInputChange('valor_total', e.target.value);
+                  }
+                }}
+                placeholder="0,00"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="valor_pago">Valor Pago (R$)</Label>
+              <Input
+                id="valor_pago"
+                type="number"
+                step="0.01"
+                min="0"
+                max={formData.valor_total || formData.valor}
+                value={formData.valor_pago}
+                onChange={(e) => handleInputChange('valor_pago', e.target.value)}
+                placeholder="0,00"
+              />
+            </div>
           </div>
 
           <div className="space-y-2">
