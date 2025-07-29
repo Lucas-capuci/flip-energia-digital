@@ -5,6 +5,7 @@ import { Calculator, Users, Zap } from 'lucide-react';
 import ProposalHeader from './proposal/ProposalHeader';
 import AdminDashboard from './admin/AdminDashboard';
 import ElectricalProjectCalculator from './electrical/ElectricalProjectCalculator';
+import SolarProposalForm from './proposal/SolarProposalForm';
 
 const ProposalGenerator = () => {
   return (
@@ -33,14 +34,7 @@ const ProposalGenerator = () => {
           </TabsContent>
 
           <TabsContent value="proposals" className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-flip-blue-100 p-6">
-              <h2 className="text-xl font-semibold text-flip-gray-900 mb-4">
-                Propostas Solares - Em Desenvolvimento
-              </h2>
-              <p className="text-flip-gray-600">
-                Esta seção estará disponível em breve para cálculos de sistemas solares.
-              </p>
-            </div>
+            <SolarProposalForm />
           </TabsContent>
 
           <TabsContent value="dashboard" className="space-y-6">
