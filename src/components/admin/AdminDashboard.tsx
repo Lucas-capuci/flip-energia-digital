@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Download, Filter, FileText, Phone, Briefcase, DollarSign, Users } from 'lucide-react';
+import { Download, Filter, FileText, Phone, Briefcase, DollarSign, Users, CheckSquare } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import LeadsManagement from './LeadsManagement';
 import ProjectsManagement from './ProjectsManagement';
@@ -10,6 +10,7 @@ import ContactsManagement from './ContactsManagement';
 import DashboardStats from './DashboardStats';
 import { FinancialManagement } from './FinancialManagement';
 import { UserManagement } from './UserManagement';
+import TasksManagement from './TasksManagement';
 
 const AdminDashboard = () => {
   const { hasPermission } = useAuth();
@@ -41,7 +42,7 @@ const AdminDashboard = () => {
 
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="dashboard" className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4" />
             <span>Dashboard</span>
@@ -62,6 +63,12 @@ const AdminDashboard = () => {
             <TabsTrigger value="projects" className="flex items-center space-x-2">
               <Briefcase className="h-4 w-4" />
               <span>Projetos</span>
+            </TabsTrigger>
+          )}
+          {hasPermission('tasks', 'view') && (
+            <TabsTrigger value="tasks" className="flex items-center space-x-2">
+              <CheckSquare className="h-4 w-4" />
+              <span>Tarefas</span>
             </TabsTrigger>
           )}
           {hasPermission('financial', 'view') && (
@@ -109,6 +116,12 @@ const AdminDashboard = () => {
         {hasPermission('user_management', 'view') && (
           <TabsContent value="users" className="space-y-4">
             <UserManagement />
+          </TabsContent>
+        )}
+
+        {hasPermission('tasks', 'view') && (
+          <TabsContent value="tasks" className="space-y-4">
+            <TasksManagement />
           </TabsContent>
         )}
       </Tabs>
