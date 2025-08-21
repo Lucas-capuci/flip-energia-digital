@@ -33,7 +33,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
   const [projetos, setProjetos] = useState<Projeto[]>([]);
   const [formData, setFormData] = useState({
     tipo_despesa: '',
-    projeto_id: '',
+    projeto_id: 'none',
     fornecedor: '',
     categoria: '',
     valor: '',
@@ -80,7 +80,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
     setLoading(true);
 
     try {
-      const valorTotal = parseFloat(formData.valor_total || formData.valor);
+      const valorTotal = parseFloat(formData.valor_total || '0');
       const valorPago = parseFloat(formData.valor_pago || '0');
       let statusPagamento = 'pendente';
       
@@ -123,7 +123,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
       // Reset form
       setFormData({
         tipo_despesa: '',
-        projeto_id: '',
+        projeto_id: 'none',
         fornecedor: '',
         categoria: '',
         valor: '',
@@ -233,19 +233,14 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="valor">Valor Total (R$) *</Label>
+              <Label htmlFor="valor_total">Valor Total (R$) *</Label>
               <Input
-                id="valor"
+                id="valor_total"
                 type="number"
                 step="0.01"
                 min="0"
-                value={formData.valor_total || formData.valor}
-                onChange={(e) => {
-                  handleInputChange('valor', e.target.value);
-                  if (!formData.valor_total) {
-                    handleInputChange('valor_total', e.target.value);
-                  }
-                }}
+                value={formData.valor_total}
+                onChange={(e) => handleInputChange('valor_total', e.target.value)}
                 placeholder="0,00"
                 required
               />
@@ -258,7 +253,7 @@ export const CreateDespesaDialog: React.FC<CreateDespesaDialogProps> = ({
                 type="number"
                 step="0.01"
                 min="0"
-                max={formData.valor_total || formData.valor}
+                max={formData.valor_total}
                 value={formData.valor_pago}
                 onChange={(e) => handleInputChange('valor_pago', e.target.value)}
                 placeholder="0,00"
