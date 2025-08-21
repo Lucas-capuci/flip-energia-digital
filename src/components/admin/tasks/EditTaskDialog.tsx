@@ -47,7 +47,7 @@ const EditTaskDialog: React.FC<EditTaskDialogProps> = ({
     due_date: task.due_date || '',
     responsible: task.responsible || '',
     priority: task.priority,
-    project_id: task.project_id || '',
+    project_id: task.project_id || 'none',
   });
 
   const fetchProjects = async () => {
@@ -74,7 +74,7 @@ const EditTaskDialog: React.FC<EditTaskDialogProps> = ({
         due_date: task.due_date || '',
         responsible: task.responsible || '',
         priority: task.priority,
-        project_id: task.project_id || '',
+        project_id: task.project_id || 'none',
       });
     }
   }, [open, task]);
@@ -91,7 +91,7 @@ const EditTaskDialog: React.FC<EditTaskDialogProps> = ({
         due_date: formData.due_date || null,
         responsible: formData.responsible || null,
         priority: formData.priority,
-        project_id: formData.project_id || null,
+        project_id: formData.project_id === 'none' ? null : formData.project_id,
       };
 
       const { error } = await supabase
@@ -209,7 +209,7 @@ const EditTaskDialog: React.FC<EditTaskDialogProps> = ({
                   <SelectValue placeholder="Selecione um projeto" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Nenhum projeto</SelectItem>
+                  <SelectItem value="none">Nenhum projeto</SelectItem>
                   {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
                       {project.name}

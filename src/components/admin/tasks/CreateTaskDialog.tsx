@@ -35,7 +35,7 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
     due_date: '',
     responsible: '',
     priority: 'B',
-    project_id: '',
+        project_id: 'none',
   });
 
   const fetchProjects = async () => {
@@ -77,7 +77,7 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
         due_date: formData.due_date || null,
         responsible: formData.responsible || null,
         priority: formData.priority,
-        project_id: formData.project_id || null,
+        project_id: formData.project_id === 'none' ? null : formData.project_id,
         created_by: user?.full_name || user?.username || null,
       };
 
@@ -95,7 +95,7 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
         due_date: '',
         responsible: '',
         priority: 'B',
-        project_id: '',
+        project_id: 'none',
       });
       onTaskCreated();
     } catch (error) {
@@ -204,7 +204,7 @@ const CreateTaskDialog: React.FC<CreateTaskDialogProps> = ({
                   <SelectValue placeholder="Selecione um projeto" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Nenhum projeto</SelectItem>
+                  <SelectItem value="none">Nenhum projeto</SelectItem>
                   {projects.map((project) => (
                     <SelectItem key={project.id} value={project.id}>
                       {project.name}
