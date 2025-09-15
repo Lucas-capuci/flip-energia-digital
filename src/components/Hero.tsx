@@ -92,7 +92,7 @@ const Hero = () => {
                   
                   {/* Parágrafo com melhor espaçamento mobile */}
                   <p className="mt-4 sm:mt-6 text-sm sm:text-base lg:text-lg text-slate-600 leading-relaxed">
-                    Energia solar, automação residencial e redes de distribuição privadas. 
+                    Energia solar, automação residencial e redes de distribuição. 
                     Transformamos sua propriedade em um <span className="font-semibold text-flip-blue-700">ecossistema energético inteligente</span>, 
                     sustentável e econômico.
                   </p>

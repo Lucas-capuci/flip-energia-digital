@@ -16,11 +16,19 @@ const HomeHub = () => {
     },
     {
       title: "Redes de Distribuição",
-      description: "Infraestrutura elétrica segura e confiável para condomínios, empresas e propriedades rurais com sistemas de distribuição privados.",
+      description: "Infraestrutura elétrica segura e confiável para condomínios, empresas e propriedades rurais com sistemas de distribuição.",
       icon: Network,
       link: "/redes-distribuicao",
       color: "from-emerald-500 to-teal-500",
       image: "/lovable-uploads/babb7af6-dbb6-4095-87ea-6f672ba555db.png"
+    },
+    {
+      title: "Projetos Elétricos",
+      description: "Subestações, SPDA, carregadores VE e projetos residenciais/comerciais com tecnologia REVIT.",
+      icon: Zap,
+      link: "/projetos-eletricos",
+      color: "from-yellow-500 to-orange-500",
+      image: "/lovable-uploads/e626b717-323c-4fdc-a854-900602c999b9.png"
     },
     {
       title: "Seja um Parceiro",

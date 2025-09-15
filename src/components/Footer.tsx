@@ -29,7 +29,7 @@ const Footer = () => {
                 className="h-16 w-auto drop-shadow-md"
               />
               <p className="text-flip-gray-300 leading-relaxed text-sm">
-                Soluções integradas em energia solar, automação residencial e redes de distribuição privadas com tecnologia de ponta.
+                Soluções integradas em energia solar, automação residencial e redes de distribuição com tecnologia de ponta.
               </p>
             </div>
             
