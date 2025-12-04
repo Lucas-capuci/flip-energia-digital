@@ -89,6 +89,56 @@ export type Database = {
         }
         Relationships: []
       }
+      contracts: {
+        Row: {
+          cpf_cnpj: string
+          created_at: string
+          data_contrato: string
+          endereco: string
+          geracao: string
+          id: string
+          nome_cliente: string
+          project_id: string | null
+          tipo_pagamento: string
+          updated_at: string
+          valor: number
+        }
+        Insert: {
+          cpf_cnpj: string
+          created_at?: string
+          data_contrato: string
+          endereco: string
+          geracao: string
+          id?: string
+          nome_cliente: string
+          project_id?: string | null
+          tipo_pagamento: string
+          updated_at?: string
+          valor: number
+        }
+        Update: {
+          cpf_cnpj?: string
+          created_at?: string
+          data_contrato?: string
+          endereco?: string
+          geracao?: string
+          id?: string
+          nome_cliente?: string
+          project_id?: string | null
+          tipo_pagamento?: string
+          updated_at?: string
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       despesas: {
         Row: {
           categoria: string
