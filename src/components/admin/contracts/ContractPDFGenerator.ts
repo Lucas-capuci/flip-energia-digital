@@ -14,98 +14,92 @@ interface ContractData {
 export async function generateContractPDF(data: ContractData): Promise<void> {
   const doc = new jsPDF('p', 'mm', 'a4');
   const pageWidth = 210;
-  const margin = 20;
-  const contentWidth = pageWidth - (margin * 2);
+  const pageHeight = 297;
+  const marginLeft = 25;
+  const marginRight = 25;
+  const contentWidth = pageWidth - marginLeft - marginRight;
   
   // Load logo
   const logoImg = await loadImage('/images/flip-logo-contract.jpg');
   
   // Colors
-  const blueColor: [number, number, number] = [0, 82, 147]; // flip-blue
-  const blackColor: [number, number, number] = [0, 0, 0];
+  const primaryBlue: [number, number, number] = [0, 82, 147];
+  const darkGray: [number, number, number] = [51, 51, 51];
+  const mediumGray: [number, number, number] = [102, 102, 102];
+  const lightGray: [number, number, number] = [200, 200, 200];
   
   // ============ PAGE 1 ============
-  let y = 15;
+  let y = 20;
   
-  // Logo centered
+  // Header with logo - properly sized
   if (logoImg) {
-    const logoWidth = 40;
-    const logoHeight = 20;
+    const logoWidth = 50;
+    const logoHeight = 18;
     doc.addImage(logoImg, 'JPEG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
-    y += logoHeight + 10;
+    y += logoHeight + 12;
   }
+  
+  // Decorative line under logo
+  doc.setDrawColor(...primaryBlue);
+  doc.setLineWidth(0.8);
+  doc.line(marginLeft, y, pageWidth - marginRight, y);
+  y += 12;
   
   // Title
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.setTextColor(...blueColor);
+  doc.setFontSize(13);
+  doc.setTextColor(...primaryBlue);
   const title = 'CONTRATO DE PRESTAÇÃO DE SERVIÇOS E FORNECIMENTO DE SISTEMA FOTOVOLTAICO';
   const titleLines = doc.splitTextToSize(title, contentWidth);
   doc.text(titleLines, pageWidth / 2, y, { align: 'center' });
-  y += titleLines.length * 6 + 8;
+  y += titleLines.length * 6 + 12;
   
-  // CONTRATANTE
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CONTRATANTE (Cliente):', margin, y);
-  y += 7;
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
-  doc.text(`Nome: ${data.nome}`, margin, y);
-  y += 5;
-  doc.text(`CPF/CNPJ: ${data.cpf}`, margin, y);
-  y += 5;
-  doc.text(`Endereço: ${data.endereco}`, margin, y);
+  // CONTRATANTE Section
+  drawSectionHeader(doc, 'CONTRATANTE (Cliente)', marginLeft, y, contentWidth, primaryBlue);
   y += 10;
   
-  // CONTRATADA
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CONTRATADA (Empresa):', margin, y);
-  y += 7;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(...darkGray);
+  
+  y = drawLabelValue(doc, 'Nome:', data.nome, marginLeft, y, contentWidth);
+  y = drawLabelValue(doc, 'CPF/CNPJ:', data.cpf, marginLeft, y, contentWidth);
+  y = drawLabelValue(doc, 'Endereço:', data.endereco, marginLeft, y, contentWidth);
+  y += 8;
+  
+  // CONTRATADA Section
+  drawSectionHeader(doc, 'CONTRATADA (Empresa)', marginLeft, y, contentWidth, primaryBlue);
+  y += 10;
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
-  doc.text('Nome: FLIP Soluções em energia', margin, y);
-  y += 5;
-  doc.text('CNPJ: 61.775.834/0001-63', margin, y);
-  y += 5;
-  doc.text('Endereço: AV pl-3, Parque Lozandes, N° 205', margin, y);
-  y += 5;
-  doc.text('Representante legal: Lucas Capuci Arroyo Souza', margin, y);
-  y += 12;
+  doc.setTextColor(...darkGray);
+  
+  y = drawLabelValue(doc, 'Nome:', 'FLIP Soluções em energia', marginLeft, y, contentWidth);
+  y = drawLabelValue(doc, 'CNPJ:', '61.775.834/0001-63', marginLeft, y, contentWidth);
+  y = drawLabelValue(doc, 'Endereço:', 'AV pl-3, Parque Lozandes, N° 205', marginLeft, y, contentWidth);
+  y = drawLabelValue(doc, 'Representante legal:', 'Lucas Capuci Arroyo Souza', marginLeft, y, contentWidth);
+  y += 10;
   
   // CLÁUSULA 1
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 1 – OBJETO', margin, y);
-  y += 7;
+  y = drawClauseHeader(doc, 'CLÁUSULA 1 – OBJETO', marginLeft, y, primaryBlue);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
+  doc.setTextColor(...darkGray);
   const clausula1 = `O presente contrato tem por objeto a venda, elaboração de projeto elétrico, homologação junto à concessionária de energia e instalação de sistema de geração de energia solar fotovoltaica, conforme dimensionamento aprovado pelo CONTRATANTE de ${data.geracao} kwh/mês.`;
   const clausula1Lines = doc.splitTextToSize(clausula1, contentWidth);
-  doc.text(clausula1Lines, margin, y);
-  y += clausula1Lines.length * 5 + 8;
+  doc.text(clausula1Lines, marginLeft, y);
+  y += clausula1Lines.length * 5 + 10;
   
   // CLÁUSULA 2
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 2 – ESCOPO DOS SERVIÇOS', margin, y);
-  y += 7;
+  y = drawClauseHeader(doc, 'CLÁUSULA 2 – ESCOPO DOS SERVIÇOS', marginLeft, y, primaryBlue);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
-  doc.text('A CONTRATADA se responsabiliza por:', margin, y);
-  y += 6;
+  doc.setTextColor(...darkGray);
+  doc.text('A CONTRATADA se responsabiliza por:', marginLeft, y);
+  y += 7;
   
   const escopoItems = [
     'a) Fornecimento de módulos fotovoltaicos, inversores e demais equipamentos necessários;',
@@ -116,159 +110,249 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   ];
   
   escopoItems.forEach(item => {
-    const itemLines = doc.splitTextToSize(item, contentWidth - 5);
-    doc.text(itemLines, margin + 5, y);
+    const itemLines = doc.splitTextToSize(item, contentWidth - 8);
+    doc.text(itemLines, marginLeft + 8, y);
     y += itemLines.length * 5 + 2;
   });
-  y += 5;
+  y += 6;
   
   // CLÁUSULA 3
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 3 – VALOR E FORMA DE PAGAMENTO', margin, y);
-  y += 7;
+  y = drawClauseHeader(doc, 'CLÁUSULA 3 – VALOR E FORMA DE PAGAMENTO', marginLeft, y, primaryBlue);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
+  doc.setTextColor(...darkGray);
   const valorFormatado = formatCurrency(data.valor);
   const valorExtenso = numberToWords(data.valor);
   const clausula3 = `O valor total do contrato é de R$ ${valorFormatado} (${valorExtenso}).`;
   const clausula3Lines = doc.splitTextToSize(clausula3, contentWidth);
-  doc.text(clausula3Lines, margin, y);
-  y += clausula3Lines.length * 5 + 4;
+  doc.text(clausula3Lines, marginLeft, y);
+  y += clausula3Lines.length * 5 + 5;
   
-  doc.text('O pagamento será realizado da seguinte forma:', margin, y);
-  y += 5;
+  doc.text('O pagamento será realizado da seguinte forma:', marginLeft, y);
+  y += 6;
   const pagamentoLines = doc.splitTextToSize(data.tipodepagamento + '.', contentWidth);
-  doc.text(pagamentoLines, margin, y);
-  y += pagamentoLines.length * 5 + 8;
+  doc.text(pagamentoLines, marginLeft, y);
+  y += pagamentoLines.length * 5 + 10;
   
   // CLÁUSULA 4
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 4 – GARANTIAS', margin, y);
-  y += 7;
+  y = drawClauseHeader(doc, 'CLÁUSULA 4 – GARANTIAS', marginLeft, y, primaryBlue);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
-  doc.text('a) Os módulos fotovoltaicos possuem garantia especificada pela fábrica.', margin + 5, y);
-  y += 5;
-  doc.text('b) O inversor possui garantia especificada pela fábrica.', margin + 5, y);
+  doc.setTextColor(...darkGray);
+  doc.text('a) Os módulos fotovoltaicos possuem garantia especificada pela fábrica.', marginLeft + 8, y);
+  y += 6;
+  doc.text('b) O inversor possui garantia especificada pela fábrica.', marginLeft + 8, y);
   
-  // Footer logo page 1
-  if (logoImg) {
-    doc.addImage(logoImg, 'JPEG', (pageWidth - 30) / 2, 275, 30, 15);
-  }
+  // Footer page 1
+  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, primaryBlue, lightGray);
   
   // ============ PAGE 2 ============
   doc.addPage();
-  y = 15;
+  y = 20;
   
-  // Logo
+  // Header with logo
   if (logoImg) {
-    doc.addImage(logoImg, 'JPEG', (pageWidth - 40) / 2, y, 40, 20);
-    y += 30;
+    const logoWidth = 50;
+    const logoHeight = 18;
+    doc.addImage(logoImg, 'JPEG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
+    y += logoHeight + 8;
   }
+  
+  // Decorative line
+  doc.setDrawColor(...primaryBlue);
+  doc.setLineWidth(0.8);
+  doc.line(marginLeft, y, pageWidth - marginRight, y);
+  y += 12;
   
   // Continue CLÁUSULA 4
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
-  doc.text('c) A instalação e serviços prestados possuem garantia de 12 meses pela CONTRATADA.', margin + 5, y);
-  y += 12;
+  doc.setTextColor(...darkGray);
+  doc.text('c) A instalação e serviços prestados possuem garantia de 12 meses pela CONTRATADA.', marginLeft + 8, y);
+  y += 14;
   
   // CLÁUSULA 5
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 5 – OBRIGAÇÕES DAS PARTES', margin, y);
-  y += 8;
+  y = drawClauseHeader(doc, 'CLÁUSULA 5 – OBRIGAÇÕES DAS PARTES', marginLeft, y, primaryBlue);
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(...blueColor);
-  doc.text('Da CONTRATADA:', margin, y);
-  y += 6;
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...blackColor);
-  doc.text('• Cumprir as normas técnicas aplicáveis;', margin + 5, y);
-  y += 5;
-  doc.text('• Entregar o sistema em pleno funcionamento;', margin + 5, y);
-  y += 5;
-  doc.text('• Fornecer suporte técnico durante o período de garantia.', margin + 5, y);
-  y += 8;
-  
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...blueColor);
-  doc.text('Do CONTRATANTE:', margin, y);
-  y += 6;
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...blackColor);
-  doc.text('• Disponibilizar acesso ao local da instalação;', margin + 5, y);
-  y += 5;
-  doc.text('• Fornecer documentos solicitados para homologação;', margin + 5, y);
-  y += 5;
-  doc.text('• Cumprir com os pagamentos nas condições acordadas.', margin + 5, y);
-  y += 12;
-  
-  // CLÁUSULA 6
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...blueColor);
-  doc.text('CLÁUSULA 6 – RESCISÃO E MULTAS', margin, y);
+  doc.setTextColor(...primaryBlue);
+  doc.text('Da CONTRATADA:', marginLeft, y);
   y += 7;
   
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...darkGray);
+  const contratadaObrigacoes = [
+    '• Cumprir as normas técnicas aplicáveis;',
+    '• Entregar o sistema em pleno funcionamento;',
+    '• Fornecer suporte técnico durante o período de garantia.'
+  ];
+  contratadaObrigacoes.forEach(item => {
+    doc.text(item, marginLeft + 8, y);
+    y += 6;
+  });
+  y += 6;
+  
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...primaryBlue);
+  doc.text('Do CONTRATANTE:', marginLeft, y);
+  y += 7;
+  
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...darkGray);
+  const contratanteObrigacoes = [
+    '• Disponibilizar acesso ao local da instalação;',
+    '• Fornecer documentos solicitados para homologação;',
+    '• Cumprir com os pagamentos nas condições acordadas.'
+  ];
+  contratanteObrigacoes.forEach(item => {
+    doc.text(item, marginLeft + 8, y);
+    y += 6;
+  });
+  y += 10;
+  
+  // CLÁUSULA 6
+  y = drawClauseHeader(doc, 'CLÁUSULA 6 – RESCISÃO E MULTAS', marginLeft, y, primaryBlue);
+  
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(...blackColor);
+  doc.setTextColor(...darkGray);
   const clausula6 = 'Em caso de desistência do CONTRATANTE após início do processo de homologação, será cobrada multa de 10% do valor do contrato, referente a custos administrativos, projeto e taxas.';
   const clausula6Lines = doc.splitTextToSize(clausula6, contentWidth);
-  doc.text(clausula6Lines, margin, y);
-  y += clausula6Lines.length * 5 + 8;
+  doc.text(clausula6Lines, marginLeft, y);
+  y += clausula6Lines.length * 5 + 10;
   
+  // Agreement text
+  doc.setFont('helvetica', 'italic');
   const acordo = 'E por estarem de pleno acordo, assinam as partes o presente contrato em duas vias de igual teor.';
   const acordoLines = doc.splitTextToSize(acordo, contentWidth);
-  doc.text(acordoLines, margin, y);
-  y += acordoLines.length * 5 + 10;
+  doc.text(acordoLines, marginLeft, y);
+  y += acordoLines.length * 5 + 15;
   
-  // City and Date
-  doc.text('Cidade: GOIÂNIA - GO', margin, y);
-  y += 6;
-  doc.text(`Data: ${data.data}`, margin, y);
-  y += 15;
-  
-  // Signatures
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...blueColor);
-  doc.text('CONTRATANTE:', margin, y);
-  y += 8;
+  // City and Date - centered
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...blackColor);
-  doc.text('Assinatura: _____________________________________', margin, y);
-  y += 15;
+  doc.setTextColor(...darkGray);
+  doc.text(`Cidade: GOIÂNIA - GO`, pageWidth / 2, y, { align: 'center' });
+  y += 7;
+  doc.text(`Data: ${data.data}`, pageWidth / 2, y, { align: 'center' });
+  y += 20;
   
+  // Signatures - side by side
+  const signatureWidth = (contentWidth - 20) / 2;
+  const leftSignX = marginLeft;
+  const rightSignX = marginLeft + signatureWidth + 20;
+  
+  // CONTRATANTE signature
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...blueColor);
-  doc.text('CONTRATADA:', margin, y);
-  y += 8;
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...blackColor);
-  doc.text('Assinatura: _____________________________________', margin, y);
+  doc.setTextColor(...primaryBlue);
+  doc.text('CONTRATANTE:', leftSignX, y);
+  y += 20;
   
-  // Footer logo page 2
-  if (logoImg) {
-    doc.addImage(logoImg, 'JPEG', (pageWidth - 30) / 2, 275, 30, 15);
-  }
+  doc.setDrawColor(...darkGray);
+  doc.setLineWidth(0.3);
+  doc.line(leftSignX, y, leftSignX + signatureWidth, y);
+  
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...mediumGray);
+  doc.text('Assinatura', leftSignX + signatureWidth / 2, y + 5, { align: 'center' });
+  
+  // CONTRATADA signature
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...primaryBlue);
+  doc.text('CONTRATADA:', rightSignX, y - 20);
+  
+  doc.setDrawColor(...darkGray);
+  doc.line(rightSignX, y, rightSignX + signatureWidth, y);
+  
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...mediumGray);
+  doc.text('Assinatura', rightSignX + signatureWidth / 2, y + 5, { align: 'center' });
+  
+  // Footer page 2
+  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, primaryBlue, lightGray);
   
   // Save
   const fileName = `CONTRATO_${data.nome.replace(/\s+/g, '_').toUpperCase()}.pdf`;
   doc.save(fileName);
+}
+
+function drawSectionHeader(
+  doc: jsPDF, 
+  text: string, 
+  x: number, 
+  y: number, 
+  width: number,
+  color: [number, number, number]
+): void {
+  doc.setFillColor(...color);
+  doc.rect(x, y - 5, width, 8, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(255, 255, 255);
+  doc.text(text, x + 4, y);
+}
+
+function drawClauseHeader(
+  doc: jsPDF, 
+  text: string, 
+  x: number, 
+  y: number,
+  color: [number, number, number]
+): number {
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...color);
+  doc.text(text, x, y);
+  return y + 8;
+}
+
+function drawLabelValue(
+  doc: jsPDF,
+  label: string,
+  value: string,
+  x: number,
+  y: number,
+  maxWidth: number
+): number {
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.text(label, x, y);
+  
+  const labelWidth = doc.getTextWidth(label) + 2;
+  doc.setFont('helvetica', 'normal');
+  
+  const valueLines = doc.splitTextToSize(value, maxWidth - labelWidth - 5);
+  doc.text(valueLines, x + labelWidth, y);
+  
+  return y + (valueLines.length * 5) + 2;
+}
+
+function drawFooter(
+  doc: jsPDF,
+  logoImg: string | null,
+  pageWidth: number,
+  pageHeight: number,
+  marginLeft: number,
+  marginRight: number,
+  primaryColor: [number, number, number],
+  lineColor: [number, number, number]
+): void {
+  const footerY = pageHeight - 20;
+  
+  // Line above footer
+  doc.setDrawColor(...lineColor);
+  doc.setLineWidth(0.3);
+  doc.line(marginLeft, footerY - 5, pageWidth - marginRight, footerY - 5);
+  
+  // Small logo in footer
+  if (logoImg) {
+    doc.addImage(logoImg, 'JPEG', (pageWidth - 25) / 2, footerY - 2, 25, 10);
+  }
 }
 
 async function loadImage(src: string): Promise<string | null> {
