@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Download, Filter, FileText, Phone, Briefcase, DollarSign, Users, CheckSquare } from 'lucide-react';
+import { Download, Filter, FileText, Phone, Briefcase, DollarSign, Users, CheckSquare, ScrollText } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import LeadsManagement from './LeadsManagement';
 import ProjectsManagement from './ProjectsManagement';
@@ -11,6 +11,7 @@ import DashboardStats from './DashboardStats';
 import { FinancialManagement } from './FinancialManagement';
 import { UserManagement } from './UserManagement';
 import TasksManagement from './TasksManagement';
+import ContractGenerator from './contracts/ContractGenerator';
 
 const AdminDashboard = () => {
   const { hasPermission } = useAuth();
@@ -42,7 +43,7 @@ const AdminDashboard = () => {
 
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="dashboard" className="flex items-center space-x-2">
             <Briefcase className="h-4 w-4" />
             <span>Dashboard</span>
@@ -71,6 +72,10 @@ const AdminDashboard = () => {
               <span>Tarefas</span>
             </TabsTrigger>
           )}
+          <TabsTrigger value="contracts" className="flex items-center space-x-2">
+            <ScrollText className="h-4 w-4" />
+            <span>Contratos</span>
+          </TabsTrigger>
           {hasPermission('financial', 'view') && (
             <TabsTrigger value="financial" className="flex items-center space-x-2">
               <DollarSign className="h-4 w-4" />
@@ -124,6 +129,10 @@ const AdminDashboard = () => {
             <TasksManagement />
           </TabsContent>
         )}
+
+        <TabsContent value="contracts" className="space-y-4">
+          <ContractGenerator />
+        </TabsContent>
       </Tabs>
     </div>
   );
