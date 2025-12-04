@@ -20,10 +20,10 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   const contentWidth = pageWidth - marginLeft - marginRight;
   
   // Load logo
-  const logoImg = await loadImage('/images/flip-logo-contract.jpg');
+  const logoImg = await loadImage('/images/flip-logo-contract.png');
   
-  // Colors
-  const primaryBlue: [number, number, number] = [0, 82, 147];
+  // Colors - #490780 converted to RGB
+  const primaryPurple: [number, number, number] = [73, 7, 128];
   const darkGray: [number, number, number] = [51, 51, 51];
   const mediumGray: [number, number, number] = [102, 102, 102];
   const lightGray: [number, number, number] = [200, 200, 200];
@@ -31,16 +31,16 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   // ============ PAGE 1 ============
   let y = 20;
   
-  // Header with logo - properly sized
+  // Header with logo - properly sized maintaining aspect ratio
   if (logoImg) {
-    const logoWidth = 50;
-    const logoHeight = 18;
-    doc.addImage(logoImg, 'JPEG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
+    const logoHeight = 28;
+    const logoWidth = 28;
+    doc.addImage(logoImg, 'PNG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
     y += logoHeight + 12;
   }
   
   // Decorative line under logo
-  doc.setDrawColor(...primaryBlue);
+  doc.setDrawColor(...primaryPurple);
   doc.setLineWidth(0.8);
   doc.line(marginLeft, y, pageWidth - marginRight, y);
   y += 12;
@@ -48,14 +48,14 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   // Title
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
-  doc.setTextColor(...primaryBlue);
+  doc.setTextColor(...primaryPurple);
   const title = 'CONTRATO DE PRESTAÇÃO DE SERVIÇOS E FORNECIMENTO DE SISTEMA FOTOVOLTAICO';
   const titleLines = doc.splitTextToSize(title, contentWidth);
   doc.text(titleLines, pageWidth / 2, y, { align: 'center' });
   y += titleLines.length * 6 + 12;
   
   // CONTRATANTE Section
-  drawSectionHeader(doc, 'CONTRATANTE (Cliente)', marginLeft, y, contentWidth, primaryBlue);
+  drawSectionHeader(doc, 'CONTRATANTE (Cliente)', marginLeft, y, contentWidth, primaryPurple);
   y += 10;
   
   doc.setFont('helvetica', 'normal');
@@ -68,7 +68,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 8;
   
   // CONTRATADA Section
-  drawSectionHeader(doc, 'CONTRATADA (Empresa)', marginLeft, y, contentWidth, primaryBlue);
+  drawSectionHeader(doc, 'CONTRATADA (Empresa)', marginLeft, y, contentWidth, primaryPurple);
   y += 10;
   
   doc.setFont('helvetica', 'normal');
@@ -82,7 +82,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 10;
   
   // CLÁUSULA 1
-  y = drawClauseHeader(doc, 'CLÁUSULA 1 – OBJETO', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 1 – OBJETO', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
@@ -93,7 +93,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += clausula1Lines.length * 5 + 10;
   
   // CLÁUSULA 2
-  y = drawClauseHeader(doc, 'CLÁUSULA 2 – ESCOPO DOS SERVIÇOS', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 2 – ESCOPO DOS SERVIÇOS', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
@@ -117,7 +117,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 6;
   
   // CLÁUSULA 3
-  y = drawClauseHeader(doc, 'CLÁUSULA 3 – VALOR E FORMA DE PAGAMENTO', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 3 – VALOR E FORMA DE PAGAMENTO', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
@@ -136,7 +136,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += pagamentoLines.length * 5 + 10;
   
   // CLÁUSULA 4
-  y = drawClauseHeader(doc, 'CLÁUSULA 4 – GARANTIAS', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 4 – GARANTIAS', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
@@ -146,22 +146,22 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   doc.text('b) O inversor possui garantia especificada pela fábrica.', marginLeft + 8, y);
   
   // Footer page 1
-  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, primaryBlue, lightGray);
+  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, lightGray);
   
   // ============ PAGE 2 ============
   doc.addPage();
   y = 20;
   
-  // Header with logo
+  // Header with logo - same size as page 1
   if (logoImg) {
-    const logoWidth = 50;
-    const logoHeight = 18;
-    doc.addImage(logoImg, 'JPEG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
+    const logoHeight = 28;
+    const logoWidth = 28;
+    doc.addImage(logoImg, 'PNG', (pageWidth - logoWidth) / 2, y, logoWidth, logoHeight);
     y += logoHeight + 8;
   }
   
   // Decorative line
-  doc.setDrawColor(...primaryBlue);
+  doc.setDrawColor(...primaryPurple);
   doc.setLineWidth(0.8);
   doc.line(marginLeft, y, pageWidth - marginRight, y);
   y += 12;
@@ -174,11 +174,11 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 14;
   
   // CLÁUSULA 5
-  y = drawClauseHeader(doc, 'CLÁUSULA 5 – OBRIGAÇÕES DAS PARTES', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 5 – OBRIGAÇÕES DAS PARTES', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(...primaryBlue);
+  doc.setTextColor(...primaryPurple);
   doc.text('Da CONTRATADA:', marginLeft, y);
   y += 7;
   
@@ -196,7 +196,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 6;
   
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...primaryBlue);
+  doc.setTextColor(...primaryPurple);
   doc.text('Do CONTRATANTE:', marginLeft, y);
   y += 7;
   
@@ -214,7 +214,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   y += 10;
   
   // CLÁUSULA 6
-  y = drawClauseHeader(doc, 'CLÁUSULA 6 – RESCISÃO E MULTAS', marginLeft, y, primaryBlue);
+  y = drawClauseHeader(doc, 'CLÁUSULA 6 – RESCISÃO E MULTAS', marginLeft, y, primaryPurple);
   
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
@@ -246,7 +246,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   
   // CONTRATANTE signature
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...primaryBlue);
+  doc.setTextColor(...primaryPurple);
   doc.text('CONTRATANTE:', leftSignX, y);
   y += 20;
   
@@ -262,7 +262,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   // CONTRATADA signature
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(10);
-  doc.setTextColor(...primaryBlue);
+  doc.setTextColor(...primaryPurple);
   doc.text('CONTRATADA:', rightSignX, y - 20);
   
   doc.setDrawColor(...darkGray);
@@ -274,7 +274,7 @@ export async function generateContractPDF(data: ContractData): Promise<void> {
   doc.text('Assinatura', rightSignX + signatureWidth / 2, y + 5, { align: 'center' });
   
   // Footer page 2
-  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, primaryBlue, lightGray);
+  drawFooter(doc, logoImg, pageWidth, pageHeight, marginLeft, marginRight, lightGray);
   
   // Save
   const fileName = `CONTRATO_${data.nome.replace(/\s+/g, '_').toUpperCase()}.pdf`;
@@ -339,7 +339,6 @@ function drawFooter(
   pageHeight: number,
   marginLeft: number,
   marginRight: number,
-  primaryColor: [number, number, number],
   lineColor: [number, number, number]
 ): void {
   const footerY = pageHeight - 20;
@@ -349,9 +348,10 @@ function drawFooter(
   doc.setLineWidth(0.3);
   doc.line(marginLeft, footerY - 5, pageWidth - marginRight, footerY - 5);
   
-  // Small logo in footer
+  // Small logo in footer - maintaining aspect ratio
   if (logoImg) {
-    doc.addImage(logoImg, 'JPEG', (pageWidth - 25) / 2, footerY - 2, 25, 10);
+    const footerLogoSize = 12;
+    doc.addImage(logoImg, 'PNG', (pageWidth - footerLogoSize) / 2, footerY - 2, footerLogoSize, footerLogoSize);
   }
 }
 
@@ -365,7 +365,7 @@ async function loadImage(src: string): Promise<string | null> {
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
       ctx?.drawImage(img, 0, 0);
-      resolve(canvas.toDataURL('image/jpeg'));
+      resolve(canvas.toDataURL('image/png'));
     };
     img.onerror = () => resolve(null);
     img.src = src;
