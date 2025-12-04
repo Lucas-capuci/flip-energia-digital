@@ -548,14 +548,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_task_number: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      processar_despesas_recorrentes: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
+      generate_task_number: { Args: never; Returns: string }
+      processar_despesas_recorrentes: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
