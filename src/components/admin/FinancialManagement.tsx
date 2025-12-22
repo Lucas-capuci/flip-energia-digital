@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Plus, DollarSign, TrendingUp, TrendingDown, Calculator } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Calculator, FolderOpen } from 'lucide-react';
 import { FinancialDashboard } from './financial/FinancialDashboard';
 import { ReceitasManagement } from './financial/ReceitasManagement';
 import { DespesasManagement } from './financial/DespesasManagement';
+import { ProjectFinancialView } from './financial/ProjectFinancialView';
 import { CreateReceitaDialog } from './financial/CreateReceitaDialog';
 import { CreateDespesaDialog } from './financial/CreateDespesaDialog';
 
@@ -16,7 +17,7 @@ export const FinancialManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Controle Financeiro</h2>
           <p className="text-muted-foreground">
@@ -57,7 +58,7 @@ export const FinancialManagement = () => {
             Despesas
           </TabsTrigger>
           <TabsTrigger value="projetos" className="gap-2">
-            <DollarSign className="h-4 w-4" />
+            <FolderOpen className="h-4 w-4" />
             Por Projeto
           </TabsTrigger>
         </TabsList>
@@ -75,16 +76,7 @@ export const FinancialManagement = () => {
         </TabsContent>
 
         <TabsContent value="projetos" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Visão por Projeto</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                Funcionalidade em desenvolvimento - Análise financeira por projeto específico
-              </p>
-            </CardContent>
-          </Card>
+          <ProjectFinancialView />
         </TabsContent>
       </Tabs>
 
