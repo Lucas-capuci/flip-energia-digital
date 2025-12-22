@@ -1,19 +1,45 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Plus, TrendingUp, TrendingDown, Calculator, FolderOpen } from 'lucide-react';
+import { Plus, TrendingUp, TrendingDown, Calculator, FolderOpen, RefreshCw } from 'lucide-react';
 import { FinancialDashboard } from './financial/FinancialDashboard';
 import { ReceitasManagement } from './financial/ReceitasManagement';
 import { DespesasManagement } from './financial/DespesasManagement';
 import { ProjectFinancialView } from './financial/ProjectFinancialView';
-import { CreateReceitaDialog } from './financial/CreateReceitaDialog';
-import { CreateDespesaDialog } from './financial/CreateDespesaDialog';
+import { QuickReceitaDialog } from './financial/QuickReceitaDialog';
+import { QuickDespesaDialog } from './financial/QuickDespesaDialog';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 export const FinancialManagement = () => {
-  const [createReceitaOpen, setCreateReceitaOpen] = useState(false);
-  const [createDespesaOpen, setCreateDespesaOpen] = useState(false);
+  const [quickReceitaOpen, setQuickReceitaOpen] = useState(false);
+  const [quickDespesaOpen, setQuickDespesaOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [processingRecorrentes, setProcessingRecorrentes] = useState(false);
+  const { toast } = useToast();
+
+  const processarRecorrentes = async () => {
+    setProcessingRecorrentes(true);
+    try {
+      const { data, error } = await supabase.rpc('processar_despesas_recorrentes');
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Processamento concluído",
+        description: `${data || 0} despesas recorrentes processadas`,
+      });
+    } catch (error) {
+      console.error('Erro ao processar recorrentes:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao processar despesas recorrentes",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingRecorrentes(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -21,24 +47,35 @@ export const FinancialManagement = () => {
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Controle Financeiro</h2>
           <p className="text-muted-foreground">
-            Gerencie receitas, despesas e acompanhe a saúde financeira da empresa
+            Gerencie receitas, despesas e acompanhe a saúde financeira
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
-            onClick={() => setCreateReceitaOpen(true)}
+            onClick={processarRecorrentes}
+            variant="outline"
+            size="sm"
+            disabled={processingRecorrentes}
+            className="gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${processingRecorrentes ? 'animate-spin' : ''}`} />
+            Processar Recorrentes
+          </Button>
+          <Button
+            onClick={() => setQuickReceitaOpen(true)}
             className="gap-2"
             variant="outline"
           >
             <Plus className="h-4 w-4" />
-            Nova Receita
+            Receita
           </Button>
           <Button
-            onClick={() => setCreateDespesaOpen(true)}
+            onClick={() => setQuickDespesaOpen(true)}
             className="gap-2"
+            variant="destructive"
           >
             <Plus className="h-4 w-4" />
-            Nova Despesa
+            Despesa
           </Button>
         </div>
       </div>
@@ -68,11 +105,11 @@ export const FinancialManagement = () => {
         </TabsContent>
 
         <TabsContent value="receitas" className="space-y-4">
-          <ReceitasManagement onCreateNew={() => setCreateReceitaOpen(true)} />
+          <ReceitasManagement onCreateNew={() => setQuickReceitaOpen(true)} />
         </TabsContent>
 
         <TabsContent value="despesas" className="space-y-4">
-          <DespesasManagement onCreateNew={() => setCreateDespesaOpen(true)} />
+          <DespesasManagement onCreateNew={() => setQuickDespesaOpen(true)} />
         </TabsContent>
 
         <TabsContent value="projetos" className="space-y-4">
@@ -80,14 +117,14 @@ export const FinancialManagement = () => {
         </TabsContent>
       </Tabs>
 
-      <CreateReceitaDialog 
-        open={createReceitaOpen} 
-        onOpenChange={setCreateReceitaOpen}
+      <QuickReceitaDialog 
+        open={quickReceitaOpen} 
+        onOpenChange={setQuickReceitaOpen}
       />
       
-      <CreateDespesaDialog 
-        open={createDespesaOpen} 
-        onOpenChange={setCreateDespesaOpen}
+      <QuickDespesaDialog 
+        open={quickDespesaOpen} 
+        onOpenChange={setQuickDespesaOpen}
       />
     </div>
   );
