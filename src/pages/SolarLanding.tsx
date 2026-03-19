@@ -20,10 +20,10 @@ const SolarLanding = () => {
   const firstName = name.split(' ')[0];
 
   const billLabels: Record<string, string> = {
-    '1': 'R$ 200 - R$ 400',
-    '2': 'R$ 401 - R$ 700',
-    '3': 'R$ 701 - R$ 1.000',
-    '4': 'Acima de R$ 1.000',
+    '1': 'R$ 600 - R$ 900',
+    '2': 'R$ 900 - R$ 1.200',
+    '3': 'R$ 1.200 - R$ 2.500',
+    '4': 'Acima de R$ 2.500',
   };
 
   const goToStep = (next: number) => {
@@ -54,7 +54,12 @@ const SolarLanding = () => {
 
     try {
       const services = ['Solar'];
-      if (selectedPriority === 'sustainability') services.push('Sustentabilidade');
+
+      const priorityLabels: Record<string, string> = {
+        'sim': 'Sim, é prioridade!',
+        'interessante': 'É interessante, porém não urgente',
+        'nao_urgente': 'Não é urgente',
+      };
 
       await supabase.from('budget_requests').insert({
         name: name.trim(),
@@ -63,7 +68,7 @@ const SolarLanding = () => {
         property_type: propertyType,
         services,
         budget: billLabels[billValue] || '',
-        description: `Prioridade: ${selectedPriority === 'economy' ? 'Economizar Dinheiro' : 'Sustentabilidade'}`,
+        description: `Prioridade: ${priorityLabels[selectedPriority] || selectedPriority}`,
         status: 'novo',
       });
     } catch (e) {
@@ -424,8 +429,7 @@ const SolarLanding = () => {
         </div>
 
         <div className="logo-landing">
-          <span className="logo-icon-landing">☀</span>
-          <div className="logo-text-landing">FLIP</div>
+          <img src="/lovable-uploads/128626de-5c4d-45a6-a710-143c406139e6.png" alt="FLIP Engenharia" style={{ height: '40px', width: 'auto' }} />
         </div>
 
         <div className={`progress-container-landing ${showProgress ? 'visible' : ''}`}>
@@ -498,10 +502,10 @@ const SolarLanding = () => {
                 }}
               >
                 <option value="" disabled>Selecione um valor</option>
-                <option value="1">R$ 200 - R$ 400</option>
-                <option value="2">R$ 401 - R$ 700</option>
-                <option value="3">R$ 701 - R$ 1.000</option>
-                <option value="4">Acima de R$ 1.000</option>
+                <option value="1">R$ 600 - R$ 900</option>
+                <option value="2">R$ 900 - R$ 1.200</option>
+                <option value="3">R$ 1.200 - R$ 2.500</option>
+                <option value="4">Acima de R$ 2.500</option>
               </select>
             </div>
             <button className="btn-primary-landing btn-next-landing" onClick={() => handleNextStep(3)}>
@@ -547,41 +551,73 @@ const SolarLanding = () => {
                   <span>Comercial</span>
                 </label>
               </div>
+              <div className="radio-card-landing">
+                <input
+                  type="radio"
+                  name="propertyType"
+                  id="agro"
+                  value="agro/rural"
+                  checked={propertyType === 'agro/rural'}
+                  onChange={() => {
+                    setPropertyType('agro/rural');
+                    setTimeout(() => goToStep(5), 300);
+                  }}
+                />
+                <label className="radio-label-landing" htmlFor="agro">
+                  <span className="icon">🌾</span>
+                  <span>Agro/Rural</span>
+                </label>
+              </div>
             </div>
           </div>
 
           {/* STEP 5: PRIORITY */}
           <div className={stepClass(5)}>
-            <h2>Qual sua maior prioridade hoje?</h2>
-            <div className="radio-group-landing">
+            <h2>Energia solar é prioridade para você?</h2>
+            <div className="radio-group-landing" style={{ flexDirection: 'column', maxWidth: '500px' }}>
               <div className="radio-card-landing">
                 <input
                   type="radio"
                   name="priority"
-                  id="economy"
-                  value="economy"
-                  checked={priority === 'economy'}
-                  onChange={() => finishForm('economy')}
+                  id="priority-yes"
+                  value="sim"
+                  checked={priority === 'sim'}
+                  onChange={() => finishForm('sim')}
                   disabled={submitting}
                 />
-                <label className="radio-label-landing" htmlFor="economy">
-                  <span className="icon">💰</span>
-                  <span>Economizar Dinheiro</span>
+                <label className="radio-label-landing" htmlFor="priority-yes" style={{ flexDirection: 'row', gap: '15px', padding: '20px 25px' }}>
+                  <span className="icon" style={{ marginBottom: 0 }}>🔥</span>
+                  <span>Sim, é prioridade!</span>
                 </label>
               </div>
               <div className="radio-card-landing">
                 <input
                   type="radio"
                   name="priority"
-                  id="sustainability"
-                  value="sustainability"
-                  checked={priority === 'sustainability'}
-                  onChange={() => finishForm('sustainability')}
+                  id="priority-maybe"
+                  value="interessante"
+                  checked={priority === 'interessante'}
+                  onChange={() => finishForm('interessante')}
                   disabled={submitting}
                 />
-                <label className="radio-label-landing" htmlFor="sustainability">
-                  <span className="icon">🌱</span>
-                  <span>Sustentabilidade</span>
+                <label className="radio-label-landing" htmlFor="priority-maybe" style={{ flexDirection: 'row', gap: '15px', padding: '20px 25px' }}>
+                  <span className="icon" style={{ marginBottom: 0 }}>🤔</span>
+                  <span>É interessante, porém não urgente</span>
+                </label>
+              </div>
+              <div className="radio-card-landing">
+                <input
+                  type="radio"
+                  name="priority"
+                  id="priority-no"
+                  value="nao_urgente"
+                  checked={priority === 'nao_urgente'}
+                  onChange={() => finishForm('nao_urgente')}
+                  disabled={submitting}
+                />
+                <label className="radio-label-landing" htmlFor="priority-no" style={{ flexDirection: 'row', gap: '15px', padding: '20px 25px' }}>
+                  <span className="icon" style={{ marginBottom: 0 }}>⏳</span>
+                  <span>Não é urgente</span>
                 </label>
               </div>
             </div>
