@@ -54,7 +54,12 @@ const SolarLanding = () => {
 
     try {
       const services = ['Solar'];
-      if (selectedPriority === 'sustainability') services.push('Sustentabilidade');
+
+      const priorityLabels: Record<string, string> = {
+        'sim': 'Sim, é prioridade!',
+        'interessante': 'É interessante, porém não urgente',
+        'nao_urgente': 'Não é urgente',
+      };
 
       await supabase.from('budget_requests').insert({
         name: name.trim(),
@@ -63,7 +68,7 @@ const SolarLanding = () => {
         property_type: propertyType,
         services,
         budget: billLabels[billValue] || '',
-        description: `Prioridade: ${selectedPriority === 'economy' ? 'Economizar Dinheiro' : 'Sustentabilidade'}`,
+        description: `Prioridade: ${priorityLabels[selectedPriority] || selectedPriority}`,
         status: 'novo',
       });
     } catch (e) {
