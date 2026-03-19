@@ -424,8 +424,7 @@ const SolarLanding = () => {
         </div>
 
         <div className="logo-landing">
-          <span className="logo-icon-landing">☀</span>
-          <div className="logo-text-landing">FLIP</div>
+          <img src="/lovable-uploads/128626de-5c4d-45a6-a710-143c406139e6.png" alt="FLIP Engenharia" style={{ height: '40px', width: 'auto' }} />
         </div>
 
         <div className={`progress-container-landing ${showProgress ? 'visible' : ''}`}>
