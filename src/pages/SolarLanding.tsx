@@ -20,10 +20,10 @@ const SolarLanding = () => {
   const firstName = name.split(' ')[0];
 
   const billLabels: Record<string, string> = {
-    '1': 'R$ 200 - R$ 400',
-    '2': 'R$ 401 - R$ 700',
-    '3': 'R$ 701 - R$ 1.000',
-    '4': 'Acima de R$ 1.000',
+    '1': 'R$ 600 - R$ 900',
+    '2': 'R$ 900 - R$ 1.200',
+    '3': 'R$ 1.200 - R$ 2.500',
+    '4': 'Acima de R$ 2.500',
   };
 
   const goToStep = (next: number) => {
