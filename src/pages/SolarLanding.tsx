@@ -497,10 +497,10 @@ const SolarLanding = () => {
                 }}
               >
                 <option value="" disabled>Selecione um valor</option>
-                <option value="1">R$ 200 - R$ 400</option>
-                <option value="2">R$ 401 - R$ 700</option>
-                <option value="3">R$ 701 - R$ 1.000</option>
-                <option value="4">Acima de R$ 1.000</option>
+                <option value="1">R$ 600 - R$ 900</option>
+                <option value="2">R$ 900 - R$ 1.200</option>
+                <option value="3">R$ 1.200 - R$ 2.500</option>
+                <option value="4">Acima de R$ 2.500</option>
               </select>
             </div>
             <button className="btn-primary-landing btn-next-landing" onClick={() => handleNextStep(3)}>
