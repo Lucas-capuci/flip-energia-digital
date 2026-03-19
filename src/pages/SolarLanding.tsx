@@ -546,6 +546,23 @@ const SolarLanding = () => {
                   <span>Comercial</span>
                 </label>
               </div>
+              <div className="radio-card-landing">
+                <input
+                  type="radio"
+                  name="propertyType"
+                  id="agro"
+                  value="agro/rural"
+                  checked={propertyType === 'agro/rural'}
+                  onChange={() => {
+                    setPropertyType('agro/rural');
+                    setTimeout(() => goToStep(5), 300);
+                  }}
+                />
+                <label className="radio-label-landing" htmlFor="agro">
+                  <span className="icon">🌾</span>
+                  <span>Agro/Rural</span>
+                </label>
+              </div>
             </div>
           </div>
 
