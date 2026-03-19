@@ -15,6 +15,7 @@ import Portfolio from "./pages/Portfolio";
 import Contato from "./pages/Contato";
 import ProposalPage from "./pages/ProposalPage";
 import NotFound from "./pages/NotFound";
+import SolarLanding from "./pages/SolarLanding";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/contato" element={<Contato />} />
             <Route path="/propostas" element={<ProposalPage />} />
+            <Route path="/energia-solar" element={<SolarLanding />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
