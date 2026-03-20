@@ -30,7 +30,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm border-b border-flip-blue-100 z-50">
+    <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-xl border-b border-border z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -53,10 +53,10 @@ const Navigation = () => {
                   to={item.path}
                   className={`transition-colors duration-200 font-medium text-sm ${
                     isActivePath(item.path)
-                      ? 'text-flip-blue-600 font-semibold border-b-2 border-flip-blue-600'
+                      ? 'text-[#E100FF] font-semibold border-b-2 border-[#E100FF]'
                       : item.label === 'Seja Parceiro' 
-                        ? 'text-flip-blue-500 hover:text-flip-blue-600 font-semibold' 
-                        : 'text-flip-gray-600 hover:text-flip-blue-500'
+                        ? 'text-[#E100FF]/80 hover:text-[#E100FF] font-semibold' 
+                        : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {item.label}
@@ -66,7 +66,7 @@ const Navigation = () => {
               {/* Botão de Orçamento separado */}
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm">
+                  <button className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium text-sm">
                     Orçamento
                   </button>
                 </DialogTrigger>
@@ -81,7 +81,7 @@ const Navigation = () => {
               {/* Botão de Propostas */}
               <button
                 onClick={navigateToProposals}
-                className="text-flip-gray-600 hover:text-flip-blue-500 transition-colors duration-200 font-medium text-sm"
+                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium text-sm"
               >
                 Restrito
               </button>
@@ -91,7 +91,7 @@ const Navigation = () => {
           {/* Botão de Contato */}
           <div className="hidden md:block">
             <Link to="/contato">
-              <Button className="bg-flip-red-500 hover:bg-flip-red-600 text-white">
+              <Button className="btn-glow rounded-full px-6 text-sm font-semibold">
                 <Phone className="w-4 h-4 mr-2" />
                 Contato
               </Button>
@@ -103,7 +103,7 @@ const Navigation = () => {
             <Button
               variant="ghost"
               onClick={() => setIsOpen(!isOpen)}
-              className="text-flip-gray-600"
+              className="text-foreground"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -114,7 +114,7 @@ const Navigation = () => {
       {/* Navegação Mobile */}
       {isOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-flip-blue-100">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-background/95 backdrop-blur-xl border-t border-border">
             {navigationItems.map((item) => (
               <Link
                 key={item.label}
@@ -122,10 +122,10 @@ const Navigation = () => {
                 onClick={() => setIsOpen(false)}
                 className={`block px-3 py-2 font-medium w-full text-left ${
                   isActivePath(item.path)
-                    ? 'text-flip-blue-600 font-semibold bg-flip-blue-50'
+                    ? 'text-[#E100FF] font-semibold bg-[#E100FF]/10'
                     : item.label === 'Seja Parceiro' 
-                      ? 'text-flip-blue-500 font-semibold' 
-                      : 'text-flip-gray-600 hover:text-flip-blue-500'
+                      ? 'text-[#E100FF]/80 font-semibold' 
+                      : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {item.label}
@@ -135,7 +135,7 @@ const Navigation = () => {
             {/* Botão de Orçamento no mobile */}
             <Dialog>
               <DialogTrigger asChild>
-                <button className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left">
+                <button className="block px-3 py-2 text-muted-foreground hover:text-foreground font-medium w-full text-left">
                   Orçamento
                 </button>
               </DialogTrigger>
@@ -150,14 +150,14 @@ const Navigation = () => {
             {/* Botão de Propostas no mobile */}
             <button
               onClick={navigateToProposals}
-              className="block px-3 py-2 text-flip-gray-600 hover:text-flip-blue-500 font-medium w-full text-left"
+              className="block px-3 py-2 text-muted-foreground hover:text-foreground font-medium w-full text-left"
             >
               Restrito
             </button>
             
             <div className="px-3 py-2">
               <Link to="/contato" onClick={() => setIsOpen(false)}>
-                <Button className="w-full bg-flip-red-500 hover:bg-flip-red-600 text-white">
+                <Button className="w-full btn-glow rounded-full font-semibold">
                   <Phone className="w-4 h-4 mr-2" />
                   Contato
                 </Button>
