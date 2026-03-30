@@ -18,18 +18,47 @@ const CartaoVisita = () => {
   const handleExportPDF = async () => {
     if (!cardRef.current) return;
 
-    const canvas = await html2canvas(cardRef.current, {
-      scale: 2,
+    const element = cardRef.current;
+
+    // Force the element to render at full size for capture
+    const canvas = await html2canvas(element, {
+      scale: 3,
       backgroundColor: '#0a0a0f',
       useCORS: true,
+      allowTaint: true,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
+      width: element.scrollWidth,
+      height: element.scrollHeight,
     });
 
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    const imgRatio = canvas.width / canvas.height;
+    const pageRatio = pdfWidth / pdfHeight;
+
+    let finalWidth = pdfWidth;
+    let finalHeight = pdfWidth / imgRatio;
+
+    // If image is taller than page, fit to height
+    if (finalHeight > pdfHeight) {
+      finalHeight = pdfHeight;
+      finalWidth = pdfHeight * imgRatio;
+    }
+
+    const xOffset = (pdfWidth - finalWidth) / 2;
+    const yOffset = (pdfHeight - finalHeight) / 2;
+
+    // Fill background
+    pdf.setFillColor(10, 10, 15);
+    pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+
+    pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
     pdf.save('FLIP_Energia_Cartao.pdf');
   };
 
