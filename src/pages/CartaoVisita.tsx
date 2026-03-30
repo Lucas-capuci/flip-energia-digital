@@ -20,7 +20,6 @@ const CartaoVisita = () => {
 
     const element = cardRef.current;
 
-    // Force the element to render at full size for capture
     const canvas = await html2canvas(element, {
       scale: 3,
       backgroundColor: '#0a0a0f',
@@ -40,12 +39,10 @@ const CartaoVisita = () => {
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
     const imgRatio = canvas.width / canvas.height;
-    const pageRatio = pdfWidth / pdfHeight;
 
     let finalWidth = pdfWidth;
     let finalHeight = pdfWidth / imgRatio;
 
-    // If image is taller than page, fit to height
     if (finalHeight > pdfHeight) {
       finalHeight = pdfHeight;
       finalWidth = pdfHeight * imgRatio;
@@ -59,6 +56,42 @@ const CartaoVisita = () => {
     pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
 
     pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+
+    // Helper: convert element-relative px position to PDF mm coordinates
+    const elWidth = element.scrollWidth;
+    const elHeight = element.scrollHeight;
+    const toX = (px: number) => xOffset + (px / elWidth) * finalWidth;
+    const toY = (py: number) => yOffset + (py / elHeight) * finalHeight;
+    const toW = (pw: number) => (pw / elWidth) * finalWidth;
+    const toH = (ph: number) => (ph / elHeight) * finalHeight;
+
+    // Find clickable elements and add PDF links
+    const links = element.querySelectorAll('a[href]');
+    links.forEach((link) => {
+      const anchor = link as HTMLAnchorElement;
+      const href = anchor.getAttribute('href');
+      if (!href || href === '#') return;
+
+      const rect = anchor.getBoundingClientRect();
+      const elRect = element.getBoundingClientRect();
+
+      const relX = rect.left - elRect.left;
+      const relY = rect.top - elRect.top;
+      const relW = rect.width;
+      const relH = rect.height;
+
+      const pdfX = toX(relX);
+      const pdfY = toY(relY);
+      const pdfLinkW = toW(relW);
+      const pdfLinkH = toH(relH);
+
+      const fullUrl = href.startsWith('/') 
+        ? `${window.location.origin}${href}` 
+        : href;
+
+      pdf.link(pdfX, pdfY, pdfLinkW, pdfLinkH, { url: fullUrl });
+    });
+
     pdf.save('FLIP_Energia_Cartao.pdf');
   };
 
