@@ -16,6 +16,7 @@ import Contato from "./pages/Contato";
 import ProposalPage from "./pages/ProposalPage";
 import NotFound from "./pages/NotFound";
 import SolarLanding from "./pages/SolarLanding";
+import CartaoVisita from "./pages/CartaoVisita";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/contato" element={<Contato />} />
             <Route path="/propostas" element={<ProposalPage />} />
             <Route path="/energia-solar" element={<SolarLanding />} />
+            <Route path="/cartao" element={<CartaoVisita />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
