@@ -74,7 +74,8 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const apiKey = Deno.env.get('CRM_API_KEY');
+    const rawKey = Deno.env.get('CRM_API_KEY');
+    const apiKey = rawKey?.trim().replace(/^Bearer\s+/i, '').replace(/[\r\n]+/g, '');
     if (!apiKey) {
       console.error('CRM_API_KEY não configurada');
       return new Response(
@@ -82,6 +83,7 @@ Deno.serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    console.log('CRM_API_KEY length:', apiKey.length);
 
     const body: IncomingPayload = await req.json().catch(() => ({}));
 
