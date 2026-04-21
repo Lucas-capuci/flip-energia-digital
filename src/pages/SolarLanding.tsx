@@ -73,6 +73,31 @@ const SolarLanding = () => {
         status: 'novo',
       });
 
+      // Envia o lead para o CRM externo via edge function (não bloqueia o fluxo)
+      try {
+        const { data: crmData, error: crmError } = await supabase.functions.invoke('send-lead-to-crm', {
+          body: {
+            nome: name.trim(),
+            telefone: whatsapp.trim(),
+            email: '',
+            conta_luz: billLabels[billValue] || '',
+            tipo_imovel: propertyType,
+            prioridade: selectedPriority === 'sim' ? 'sim' : 'nao',
+            origem: 'landing_page',
+            status: 'proposta',
+          },
+        });
+
+        if (crmError || !(crmData as any)?.success) {
+          console.error('Falha ao enviar lead ao CRM:', crmError || crmData);
+          toast.warning('Recebemos seus dados, mas houve um atraso na sincronização.');
+        } else {
+          toast.success('Lead enviado para o CRM!');
+        }
+      } catch (crmErr) {
+        console.error('Erro ao chamar send-lead-to-crm:', crmErr);
+      }
+
       // Meta Pixel - dispara conversão de Lead ao finalizar o formulário
       if (typeof window !== 'undefined' && (window as any).fbq) {
         (window as any).fbq('track', 'Lead', {
