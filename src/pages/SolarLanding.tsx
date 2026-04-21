@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const SolarLanding = () => {
   const [currentStep, setCurrentStep] = useState(0);
