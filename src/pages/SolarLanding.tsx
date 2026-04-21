@@ -71,6 +71,19 @@ const SolarLanding = () => {
         description: `Prioridade: ${priorityLabels[selectedPriority] || selectedPriority}`,
         status: 'novo',
       });
+
+      // Meta Pixel - dispara conversão de Lead ao finalizar o formulário
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Lead', {
+          content_name: 'Energia Solar - Landing',
+          content_category: propertyType,
+          value: 1,
+          currency: 'BRL',
+        });
+        (window as any).fbq('track', 'CompleteRegistration', {
+          content_name: 'Formulário Energia Solar',
+        });
+      }
     } catch (e) {
       console.error('Erro ao salvar:', e);
     }
