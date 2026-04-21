@@ -139,6 +139,10 @@ const SolarLanding = () => {
           0% { transform: translate(0, 0); }
           100% { transform: translate(30px, 30px); }
         }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
         .solar-landing {
           font-family: system-ui, -apple-system, sans-serif;
           background-color: #0a0a0f;
