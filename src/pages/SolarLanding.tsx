@@ -139,6 +139,10 @@ const SolarLanding = () => {
           0% { transform: translate(0, 0); }
           100% { transform: translate(30px, 30px); }
         }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+        }
         .solar-landing {
           font-family: system-ui, -apple-system, sans-serif;
           background-color: #0a0a0f;
@@ -662,14 +666,38 @@ const SolarLanding = () => {
             </div>
           </div>
 
-          {/* FINAL */}
+          {/* FINAL - TELA DE OBRIGADO */}
           <div className={stepClass(6)}>
-            <div style={{ fontSize: '64px', color: '#E100FF', marginBottom: '20px' }}>✅</div>
-            <h1>Cálculo Concluído!</h1>
-            <p className="desc">Recebemos seus dados. Um de nossos especialistas em energia solar entrará em contato pelo WhatsApp em instantes com sua proposta personalizada.</p>
-            <button className="btn-primary-landing" style={{ marginTop: '20px' }} onClick={() => navigate('/')}>
-              Voltar ao site
-            </button>
+            <div style={{ 
+              fontSize: '64px', 
+              marginBottom: '20px',
+              animation: 'pulse 2s ease-in-out infinite'
+            }}>🎉</div>
+            <h1>Obrigado, {firstName || ' '}!</h1>
+            <p className="desc" style={{ maxWidth: '500px' }}>
+              Seus dados foram recebidos com sucesso! Em breve nosso time de especialistas em energia solar entrará em contato pelo WhatsApp com sua proposta personalizada.
+            </p>
+            <div style={{ 
+              display: 'flex', 
+              gap: '15px', 
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginTop: '10px'
+            }}>
+              <div style={{ 
+                padding: '20px 30px', 
+                background: 'rgba(225,0,255,0.1)', 
+                borderRadius: '16px',
+                border: '1px solid rgba(225,0,255,0.3)',
+                maxWidth: '400px'
+              }}>
+                <p style={{ fontSize: '14px', color: '#a0a0a0', marginBottom: '8px' }}>📱 WhatsApp cadastrado</p>
+                <p style={{ fontSize: '18px', fontWeight: '600', color: '#fff' }}>{whatsapp}</p>
+              </div>
+              <button className="btn-primary-landing" style={{ marginTop: '20px' }} onClick={() => navigate('/')}>
+                ← Voltar ao site
+              </button>
+            </div>
           </div>
         </div>
       </div>
