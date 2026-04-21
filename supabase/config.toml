@@ -1,1 +1,4 @@
 project_id = "wxmklewotbcfrvuboeaz"
+
+[functions.send-lead-to-crm]
+verify_jwt = false
